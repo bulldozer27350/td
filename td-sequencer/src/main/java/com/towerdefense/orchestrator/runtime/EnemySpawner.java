@@ -1,10 +1,10 @@
-package com.towerdefense.orchestrator.spawn;
+package com.towerdefense.orchestrator.runtime;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 import com.towerdefense.domain.GameState;
-import com.towerdefense.domain.enemy.Enemy;
+import com.towerdefense.domain.dynamik.enemy.Enemy;
 
 /**
  * Gère le séquencement d'apparition des ennemis. Cette classe connaît les

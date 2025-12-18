@@ -1,6 +1,6 @@
 package com.towerdefense.viewer.renderers;
 
-import com.towerdefense.domain.tower.Tower;
+import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.viewer.Renderer;
 
 public class TowerRenderer implements Renderer<Tower> {

@@ -3,6 +3,7 @@ package com.towerdefense.viewer;
 import com.towerdefense.domain.GameObject;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
+import com.towerdefense.domain.dynamik.LevelProgress;
 
 public class GameStateAsciiRenderer {
 
@@ -21,6 +22,22 @@ public class GameStateAsciiRenderer {
         int height = state.gridHeight();
 
         StringBuilder out = new StringBuilder();
+        
+        LevelProgress p = state.levelProgress();
+
+        out.append("Level ");
+        out.append(p.levelIndex() + 1);
+        out.append(" | Attack ");
+        out.append(p.attackIndex() + 1);
+        out.append("\n");
+        
+        out.append("Player ");
+        out.append(state.player().id().value().toString());
+        out.append(" $$$: ");
+        out.append(state.player().gold());
+        out.append(" ❤️: ");
+        out.append(state.player().lives());
+        out.append("\n");
 
         for (int y = 0; y < height; y++) {
 

@@ -1,5 +1,6 @@
-package com.towerdefense.domain.enemy;
+package com.towerdefense.domain.statik.enemy;
 
+import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.map.EnemyPath;
 
 /**

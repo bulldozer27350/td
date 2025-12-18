@@ -9,22 +9,29 @@ import com.moe.td.back.tower.TowerBack;
 import com.moe.td.back.tower.api.TowerManagement;
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
-import com.towerdefense.domain.enemy.Enemy;
-import com.towerdefense.domain.intentions.PlaceTowerIntention;
+import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.intentions.ShootIntention;
 import com.towerdefense.domain.projectile.Projectile;
-import com.towerdefense.domain.tower.Tower;
 import com.towerdefense.orchestrator.listener.GameStateObserver;
-import com.towerdefense.orchestrator.spawn.EnemySpawner;
+import com.towerdefense.orchestrator.runtime.EnemySpawner;
+import com.towerdefense.orchestrator.runtime.LevelScenario;
 
 @Component
 public class Sequencer {
+
+	private LevelScenario level;
 
 	private final TowerManagement towerBack = new TowerBack();
 	
 	private final EnemySpawner spawner = new EnemySpawner();
 
 	private final List<GameStateObserver> observers = new ArrayList<>();
+	
+
+    public void setLevel(LevelScenario level) {
+        this.level = level;
+    }
 
 	public void addObserver(GameStateObserver obs) {
 		this.observers.add(obs);
@@ -36,6 +43,12 @@ public class Sequencer {
 
 	public void tick(GameState state, int tick) {
 
+		if (level != null) {
+            level.tick(state, tick, spawner);
+            
+            state.setLevelProgress(level.snapshot());
+        }
+		
 		// 0. Spawn ennemis si nécessaire
         this.spawner.tick(state, tick);
 		
@@ -89,18 +102,19 @@ public class Sequencer {
 		}
 
 		hitProjectiles.forEach(state::removeProjectile);
-		state.enemies().removeIf(e -> e.health().isDead());
+		state.enemies().removeIf(enemy -> {
+		    if (enemy.health().isDead()) {
+		        state.player().earnGold(enemy.bounty());
+		        return true;
+		    }
+		    if (enemy.isAtEnd()) {
+		    	state.player().loseLife();
+		    	return true;
+		    }
+		    return false;
+		});
 
 		this.observers.forEach(o -> o.onStateUpdated(state, tick));
-	}
-
-	public boolean attemptPlaceTower(GameState state, PlaceTowerIntention intent) {
-		if (!towerBack.canPlaceTower(state, intent.position()))
-			return false;
-
-		Tower t = new Tower(EntityId.random(), intent.position(), 3.5, 10, 1.0);
-		state.addTower(t);
-		return true;
 	}
 
 	public boolean attemptShoot(GameState state, ShootIntention intent) {

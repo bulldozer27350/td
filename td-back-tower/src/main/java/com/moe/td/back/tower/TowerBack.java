@@ -3,9 +3,9 @@ package com.moe.td.back.tower;
 import com.moe.td.back.tower.api.TowerManagement;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
-import com.towerdefense.domain.enemy.Enemy;
+import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.intentions.ShootIntention;
-import com.towerdefense.domain.tower.Tower;
 
 public class TowerBack implements TowerManagement {
 

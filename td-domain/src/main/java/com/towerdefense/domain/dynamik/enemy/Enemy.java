@@ -1,4 +1,4 @@
-package com.towerdefense.domain.enemy;
+package com.towerdefense.domain.dynamik.enemy;
 
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
@@ -26,13 +26,15 @@ public class Enemy implements GameObject {
 	private final double speed; // cases per second
 	private final EnemyPath path;
 	private int waypointIndex;
+	private int bounty;
 
-	public Enemy(EntityId id, EnemyPath path, int hp, double speed) {
+	public Enemy(EntityId id, EnemyPath path, int hp, double speed, int bounty) {
 		this.id = id;
 		this.path = path;
 		this.position = path.startPosition();
 		this.health = new Health(hp);
 		this.speed = speed;
+		this.bounty = bounty;
 	}
 
 	public EntityId id() {
@@ -49,6 +51,10 @@ public class Enemy implements GameObject {
 
 	public double speed() {
 		return this.speed;
+	}
+	
+	public int bounty() {
+		return bounty;
 	}
 
 	/**
@@ -88,7 +94,7 @@ public class Enemy implements GameObject {
 		}
 	}
 
-	private boolean isAtEnd() {
+	public boolean isAtEnd() {
 		return this.waypointIndex >= this.path.size();
 	}
 

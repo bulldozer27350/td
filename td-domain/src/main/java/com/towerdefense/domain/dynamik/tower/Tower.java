@@ -1,6 +1,10 @@
-package com.towerdefense.domain.tower;
+package com.towerdefense.domain.dynamik.tower;
 
-import com.towerdefense.domain.*;
+import com.towerdefense.domain.EntityId;
+import com.towerdefense.domain.GameObject;
+import com.towerdefense.domain.Position;
+import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
+import com.towerdefense.domain.statik.tower.TowerType;
 
 /**
  * Représente une tour dans le jeu.
@@ -34,15 +38,34 @@ public class Tower implements GameObject {
 
     /** Cooldown restant avant que la tour puisse tirer à nouveau */
     private double cooldownRemaining = 0.0;
+    
+    private final TowerType type;
+    private int level = 1;
 
-    public Tower(EntityId id, Position pos, double range, int damage, double reloadSeconds) {
+    public Tower(EntityId id, Position pos, TowerType type) {
         this.id = id;
         this.position = pos;
-        this.range = range;
-        this.damage = damage;
-        this.reloadSeconds = reloadSeconds;
+        this.type = type;
+        this.range = currentStats().range();
+        this.damage = currentStats().damage();
+        this.reloadSeconds = currentStats().reloadSeconds();
     }
 
+    public int level() {
+        return level;
+    }
+
+    public TowerLevelDefinition currentStats() {
+        return type.level(level);
+    }
+
+    public void upgrade() {
+        if (level >= type.maxLevel()) {
+            throw new IllegalStateException("Max level reached");
+        }
+        level++;
+    }
+    
     public EntityId id() { return id; }
     public Position position() { return position; }
     public double range() { return range; }

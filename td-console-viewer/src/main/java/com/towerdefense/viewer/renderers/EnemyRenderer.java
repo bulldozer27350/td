@@ -1,6 +1,6 @@
 package com.towerdefense.viewer.renderers;
 
-import com.towerdefense.domain.enemy.Enemy;
+import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.viewer.Renderer;
 
 public class EnemyRenderer implements Renderer<Enemy> {

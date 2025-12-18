@@ -1,10 +1,14 @@
 package com.towerdefense.domain;
 
-import com.towerdefense.domain.enemy.Enemy;
-import com.towerdefense.domain.projectile.Projectile;
-import com.towerdefense.domain.tower.Tower;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.*;
+import com.towerdefense.domain.dynamik.LevelProgress;
+import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.domain.dynamik.tower.Tower;
+import com.towerdefense.domain.player.PlayerState;
+import com.towerdefense.domain.projectile.Projectile;
 
 public class GameState {
 
@@ -12,15 +16,9 @@ public class GameState {
     private final Map<EntityId, Enemy> enemies = new HashMap<>();
     private final Map<EntityId, Projectile> projectiles = new HashMap<>();
 
-    private int playerMoney = 0;
-
     public Collection<Tower> towers() { return towers.values(); }
     public Collection<Enemy> enemies() { return enemies.values(); }
     public Collection<Projectile> projectiles() { return projectiles.values(); }
-    public int playerMoney() { return playerMoney; }
-
-    public void addMoney(int amount) { playerMoney += amount; }
-    public void removeMoney(int amount) { playerMoney -= amount; }
 
     public void addTower(Tower t) { towers.put(t.id(), t); }
     public void removeTower(EntityId id) { towers.remove(id); }
@@ -30,6 +28,27 @@ public class GameState {
 
     public void addProjectile(Projectile p) { projectiles.put(p.id(), p); }
     public void removeProjectile(EntityId id) { projectiles.remove(id); }
+    
+    private LevelProgress levelProgress;
+
+    public LevelProgress levelProgress() {
+        return levelProgress;
+    }
+
+    public void setLevelProgress(LevelProgress progress) {
+        this.levelProgress = progress;
+    }
+    
+    private PlayerState player;
+    
+    public PlayerState player() {
+    	return player;
+    }
+    
+    public void setPlayer(PlayerState playerState) {
+    	this.player = playerState;
+    }
+    
 	public int gridWidth() {
 		return 15;
 	}
@@ -39,14 +58,14 @@ public class GameState {
 	
 	public GameObject objectAt(Position pos) {
 
-	    // Towers (déjà positionnées à des entiers — pas de changement)
+	    // Towers 
 	    for (Tower t : towers.values()) {
 	        if (t.position().equals(pos)) {
 	            return t;
 	        }
 	    }
 
-	    // Enemies : positions flottantes → arrondi
+	    // Enemies
 	    for (Enemy e : enemies.values()) {
 	        int ex = (int) Math.round(e.position().x());
 	        int ey = (int) Math.round(e.position().y());
@@ -55,7 +74,7 @@ public class GameState {
 	        }
 	    }
 
-	    // Projectiles : positions flottantes → arrondi
+	    // Projectiles
 	    for (Projectile p : projectiles.values()) {
 	        int px = (int) Math.round(p.position().x());
 	        int py = (int) Math.round(p.position().y());
@@ -83,8 +102,6 @@ public class GameState {
 	    	builder.append("\n");
 	    	projectiles.values().stream().forEach(p->builder.append(p).append(", "));
 	    	builder.append("\n");
-	    	builder.append("}, playerMoney:");
-	    	builder.append(playerMoney);
 	    	builder.append("}");
 	    	return builder.toString();
 	    }
