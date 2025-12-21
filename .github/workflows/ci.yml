@@ -1,0 +1,73 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout léger (sans tout l'historique)
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # requis pour accéder aux tags
+
+      # 2. Setup Java + Maven cache
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      # 3. Détection du dernier tag
+      - name: Detect last tag
+        id: last_tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "last_tag=$LAST_TAG" >> $GITHUB_OUTPUT
+
+      # 4. Détection des modules modifiés
+      - name: Detect changed modules
+        id: modules
+        run: |
+          if [ -z "${{ steps.last_tag.outputs.last_tag }}" ]; then
+            echo "No tag found, building all modules"
+            MODULES=$(ls -d td-*/ | sed 's#/##' | paste -sd, -)
+          else
+            echo "Last tag: ${{ steps.last_tag.outputs.last_tag }}"
+            CHANGED_FILES=$(git diff --name-only ${{ steps.last_tag.outputs.last_tag }} HEAD)
+
+            # Si le pom parent change → build complet
+            if echo "$CHANGED_FILES" | grep -q "^pom.xml"; then
+              MODULES=$(ls -d td-*/ | sed 's#/##' | paste -sd, -)
+            else
+              MODULES=$(echo "$CHANGED_FILES" \
+                | awk -F/ '/^td-/ {print $1}' \
+                | sort -u \
+                | paste -sd, -)
+            fi
+          fi
+
+          echo "modules=$MODULES"
+          echo "modules=$MODULES" >> $GITHUB_OUTPUT
+
+      # 5. Build Maven ciblé
+      - name: Build changed modules
+        if: steps.modules.outputs.modules != ''
+        run: |
+          echo "Building modules: ${{ steps.modules.outputs.modules }}"
+          mvn -B -pl ${{ steps.modules.outputs.modules }} -am clean verify
+
+      # 6. Création du tag si succès (push sur main uniquement)
+      - name: Tag release
+        if: github.ref == 'refs/heads/main'
+        run: |
+          VERSION=$(date +'%Y.%m.%d.%H%M')
+          git tag "ci-$VERSION"
+          git push origin "ci-$VERSION"
