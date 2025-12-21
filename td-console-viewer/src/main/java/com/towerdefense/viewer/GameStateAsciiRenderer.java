@@ -3,7 +3,7 @@ package com.towerdefense.viewer;
 import com.towerdefense.domain.GameObject;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
-import com.towerdefense.domain.dynamik.LevelProgress;
+import com.towerdefense.domain.dynamik.level.LevelProgress;
 
 public class GameStateAsciiRenderer {
 

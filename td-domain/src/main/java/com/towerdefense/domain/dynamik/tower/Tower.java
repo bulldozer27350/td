@@ -27,28 +27,17 @@ public class Tower implements GameObject {
     /** Position actuelle de la tour */
     private Position position;
 
-    /** Portée maximale du tir */
-    private final double range;
-
-    /** Dégâts infligés par un projectile créé par cette tour */
-    private final int damage;
-
-    /** Durée du cooldown entre deux tirs (en secondes/ticks) */
-    private final double reloadSeconds;
-
     /** Cooldown restant avant que la tour puisse tirer à nouveau */
     private double cooldownRemaining = 0.0;
     
     private final TowerType type;
     private int level = 1;
+    private int upgradeRemainingTicks = 0;
 
     public Tower(EntityId id, Position pos, TowerType type) {
         this.id = id;
         this.position = pos;
         this.type = type;
-        this.range = currentStats().range();
-        this.damage = currentStats().damage();
-        this.reloadSeconds = currentStats().reloadSeconds();
     }
 
     public int level() {
@@ -68,10 +57,22 @@ public class Tower implements GameObject {
     
     public EntityId id() { return id; }
     public Position position() { return position; }
-    public double range() { return range; }
-    public int damage() { return damage; }
-    public double reloadSeconds() { return reloadSeconds; }
+    public double range() { return currentStats().range(); }
+    public int damage() { return currentStats().damage(); }
+    public double reloadSeconds() { return currentStats().reloadSeconds(); }
 
+    public boolean canUpgrade() {
+        return upgradeRemainingTicks == 0 && level < type.maxLevel();
+    }
+
+    public TowerLevelDefinition nextLevelDefinition() {
+        return type.level(level + 1);
+    }
+
+    public void startUpgrade(TowerLevelDefinition next) {
+        this.upgradeRemainingTicks = next.buildTimeTicks();
+    }
+    
     /**
      * Indique si la tour est prête à tirer.
      * Une tour est prête lorsque son cooldown est écoulé.
@@ -79,12 +80,23 @@ public class Tower implements GameObject {
     public boolean isReady() {
         return cooldownRemaining <= 0;
     }
+    
+    public boolean isUnderBuilding() {
+    	return this.upgradeRemainingTicks > 0;
+    }
 
     /**
      * Appelé à chaque tick : réduit le cooldown si nécessaire.
      * Lorsqu'il atteint zéro, la tour peut tirer.
      */
     public void tick() {
+    	if (upgradeRemainingTicks > 0) {
+            upgradeRemainingTicks--;
+            if (upgradeRemainingTicks == 0) {
+                upgrade();
+            }
+            return;
+        }
         if (cooldownRemaining > 0) {
             cooldownRemaining -= 1;
         }
@@ -94,21 +106,21 @@ public class Tower implements GameObject {
      * Indique si une position cible donnée est dans la portée de la tour.
      */
     public boolean canShootTarget(Position target) {
-        return position.distanceTo(target) <= range;
+        return position.distanceTo(target) <= currentStats().range();
     }
 
     /** 
      * Donne les dégâts infligés par un projectile tiré par cette tour.
      */
     public int computeShotDamage() {
-        return damage;
+        return currentStats().damage();
     }
 
     /**
      * Déclenche un tir : remet le cooldown au temps de rechargement.
      */
     public void triggerShot() {
-        cooldownRemaining = reloadSeconds;
+        cooldownRemaining = currentStats().reloadSeconds();
     }
 
     @Override
@@ -120,9 +132,9 @@ public class Tower implements GameObject {
         builder.append(", position:");
         builder.append(position);
         builder.append(", range:");
-        builder.append(range);
+        builder.append(currentStats().range());
         builder.append(", reloadSeconds:");
-        builder.append(reloadSeconds);
+        builder.append(currentStats().reloadSeconds());
         builder.append(", ready:");
         builder.append(isReady());
         builder.append("}");

@@ -1,18 +1,20 @@
 package com.towerdefense.domain.player;
 
+import com.towerdefense.domain.EntityId;
+
 public class PlayerState {
 
-    private final PlayerId id;
+    private final EntityId id;
     private int gold;
     private int lives;
 
-    public PlayerState(PlayerId id, int gold, int lives) {
+    public PlayerState(EntityId id, int gold, int lives) {
         this.id = id;
         this.gold = gold;
         this.lives = lives;
     }
 
-    public PlayerId id() { return id; }
+    public EntityId id() { return id; }
     public int gold() { return gold; }
     public int lives() { return lives; }
 

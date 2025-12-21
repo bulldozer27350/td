@@ -1,0 +1,34 @@
+{
+  "id": 0,
+  "attacks": [
+    {
+      "waves": [
+        {
+          "startTick": 0,
+          "spawnInterval": 2,
+          "count": 20,
+          "enemyType": "fast",
+          "pathId": "0"
+        },
+        {
+          "startTick": 3,
+          "spawnInterval": 3,
+          "count": 10,
+          "enemyType": "tank",
+          "pathId": "1"
+        }
+      ]
+    },
+    {
+      "waves": [
+        {
+          "startTick": 0,
+          "spawnInterval": 1,
+          "count": 1,
+          "enemyType": "boss",
+          "pathId": "0"
+        }
+      ]
+    }
+  ]
+}

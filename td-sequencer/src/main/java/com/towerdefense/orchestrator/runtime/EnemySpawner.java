@@ -35,4 +35,8 @@ public class EnemySpawner {
 			}
 		}
 	}
+	
+	public boolean isFinished() {
+		return waves.isEmpty();
+	}
 }

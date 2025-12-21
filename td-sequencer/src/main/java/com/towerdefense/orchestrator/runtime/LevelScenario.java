@@ -3,7 +3,7 @@ package com.towerdefense.orchestrator.runtime;
 import java.util.List;
 
 import com.towerdefense.domain.GameState;
-import com.towerdefense.domain.dynamik.LevelProgress;
+import com.towerdefense.domain.dynamik.level.LevelProgress;
 
 public class LevelScenario {
 
@@ -16,7 +16,7 @@ public class LevelScenario {
 		this.attacks = attacks;
 	}
 
-	public void tick(GameState state, int tick, EnemySpawner spawner) {
+	public void tick(GameState state, int tick) {
 		if (isFinished())
 			return;
 

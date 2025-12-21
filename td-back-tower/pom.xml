@@ -1,14 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.moe</groupId>
-  <artifactId>td-back-tower</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <description>Management of buisness rules for towers</description>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.moe</groupId>
-  		<artifactId>td-domain</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>td-back-tower</artifactId>
+	<description>Management of buisness rules for towers</description>
+
+	<parent>
+		<groupId>com.moe</groupId>
+		<artifactId>tower-defense</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>

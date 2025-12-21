@@ -7,6 +7,13 @@ public class TowerRenderer implements Renderer<Tower> {
 
     @Override
     public String[][] render(Tower t) {
+        if (t.isUnderBuilding()) {
+        	return new String[][]{
+        		{ "  🏗️ " },
+        		{ "P " + pad(t.damage(), 3) },
+        		{ "R" + pad(t.isReady(), 3) }
+        	};
+        }
         return new String[][]{
             { "  🗼 " },
             { "P " + pad(t.damage(), 3) },

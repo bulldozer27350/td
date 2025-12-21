@@ -1,36 +1,42 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.moe</groupId>
-  <artifactId>td-console-viewer</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <description>Affichage en console de l'état du plateau</description>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>td-console-viewer</artifactId>
+	<description>Affichage en console de l'état du plateau</description>
 
-        <!-- Dépend du modèle -->
-        <dependency>
-            <groupId>com.moe</groupId>
-  			<artifactId>td-domain</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+	<parent>
+		<groupId>com.moe</groupId>
+		<artifactId>tower-defense</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-        <dependency>
-            <groupId>com.moe</groupId>
-            <artifactId>td-sequencer</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+	<dependencies>
 
-        <!-- Logging SLF4J obligatoire -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.12</version>
-        </dependency>
+		<!-- Dépend du modèle -->
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-sequencer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Logging SLF4J obligatoire -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.12</version>
+		</dependency>
+
+	</dependencies>
 </project>

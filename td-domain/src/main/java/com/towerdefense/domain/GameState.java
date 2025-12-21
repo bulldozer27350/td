@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.towerdefense.domain.dynamik.LevelProgress;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.domain.dynamik.level.LevelProgress;
 import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.projectile.Projectile;
@@ -22,6 +22,7 @@ public class GameState {
 
     public void addTower(Tower t) { towers.put(t.id(), t); }
     public void removeTower(EntityId id) { towers.remove(id); }
+    public Tower getTower(EntityId id) { return towers.get(id);}
 
     public void addEnemy(Enemy e) { enemies.put(e.id(), e); }
     public void removeEnemy(EntityId id) { enemies.remove(id); }
@@ -30,7 +31,18 @@ public class GameState {
     public void removeProjectile(EntityId id) { projectiles.remove(id); }
     
     private LevelProgress levelProgress;
-
+    
+    private StateEnum state;
+    private PlayerState player;
+    
+    public void setState(StateEnum state) {
+		this.state = state;
+	}
+    
+    public StateEnum getState() {
+		return state;
+	}
+    
     public LevelProgress levelProgress() {
         return levelProgress;
     }
@@ -38,8 +50,6 @@ public class GameState {
     public void setLevelProgress(LevelProgress progress) {
         this.levelProgress = progress;
     }
-    
-    private PlayerState player;
     
     public PlayerState player() {
     	return player;

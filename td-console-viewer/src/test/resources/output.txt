@@ -1,4 +1,6 @@
-Nombre de tours de jeu : 59
+Nombre de tours de jeu : 70
+Level 1 | Attack 3
+Player 1c7c3ab6-a33f-491d-beaa-3648bac884ba $$$: 350 ❤️: 10
                                                                            
                                                                            
                                                                            
@@ -9,7 +11,7 @@ Nombre de tours de jeu : 59
                                                                            
                                                                            
             🗼                                                             
-          P  10                                                            
+          P  35                                                            
           R  ✔                                                            
                                                                            
                                                                            
@@ -30,11 +32,11 @@ Nombre de tours de jeu : 59
                                                                            
                                                                            
                            🗼                                              
-                         P   5                                             
+                         P  40                                             
                          R  ✔                                             
-  👾                                                                       
-S 1.0                                                                      
-H  15                                                                      
+                                                                           
+                                                                           
+                                                                           
                                                                            
                                                                            
                                                                            

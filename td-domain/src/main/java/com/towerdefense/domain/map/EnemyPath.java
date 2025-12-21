@@ -12,14 +12,21 @@ import com.towerdefense.domain.Position;
 public class EnemyPath {
 
 	private final List<Position> waypoints;
+	private String identifier;
 
-	public EnemyPath(List<Position> waypoints) {
+	public EnemyPath(String identifier, List<Position> waypoints) {
+		this.identifier = identifier;
 		if (waypoints == null || waypoints.isEmpty()) {
 			throw new IllegalArgumentException("Path must contain at least one waypoint");
 		}
 		this.waypoints = List.copyOf(waypoints);
 	}
 
+	
+	public String getIdentifier() {
+		return identifier;
+	}
+	
 	/**
 	 * Récupère le point de départ du chemin (et pas forcément le point de départ de
 	 * la direction en cours)
