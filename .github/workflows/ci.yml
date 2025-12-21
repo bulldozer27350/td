@@ -17,14 +17,19 @@ jobs:
         with:
           fetch-depth: 0   # requis pour accéder aux tags
 
-      # 2. Setup Java + Maven cache
-      - name: Setup JDK
+      - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: maven
-
+      
+      # 2. Setup Java 21 + cache Maven
+      - name: Debug Java & Maven
+        run: |
+          java -version
+          mvn -version
+      
       # 3. Détection du dernier tag
       - name: Detect last tag
         id: last_tag
