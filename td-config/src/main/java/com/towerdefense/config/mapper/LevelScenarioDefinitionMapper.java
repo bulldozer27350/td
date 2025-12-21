@@ -16,7 +16,6 @@ public class LevelScenarioDefinitionMapper {
                 .map(LevelScenarioDefinitionMapper::toAttack)
                 .toList()
         );
-        System.out.println("DEBUG LEVEL SCENARIO DEFINITION ATTACKS :" +levelScenarioDefinition.getAttacks());
 		return levelScenarioDefinition;
     }
 

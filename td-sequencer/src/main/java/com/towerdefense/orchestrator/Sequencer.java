@@ -15,7 +15,6 @@ import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.intentions.ShootIntention;
 import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.orchestrator.listener.GameStateObserver;
-import com.towerdefense.orchestrator.runtime.EnemySpawner;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
 
 @Component

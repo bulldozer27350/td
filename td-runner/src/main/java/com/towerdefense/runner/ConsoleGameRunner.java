@@ -127,15 +127,9 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	private void initializeGameState(GameState state, Sequencer sequencerParam) {
 		state.setPlayer(new PlayerState(playerId, 400, 10));
 
-		LevelScenarioDefinition levelDefinition =
-			    levelConfiguration.levelScenario(this.enemyFactoryRegistry, this.enemyPaths.values().stream().toList());
+		LevelScenarioDefinition levelDefinition = levelConfiguration.levelScenario();
 
-			LevelScenario levelScenario =
-			    levelScenarioFactory.create(
-			        levelDefinition,
-			        enemyFactoryRegistry,
-			        enemyPaths
-			    );
+		LevelScenario levelScenario = levelScenarioFactory.create(levelDefinition, enemyFactoryRegistry, enemyPaths);
 		sequencerParam.setLevel(levelScenario);
 	}
 
