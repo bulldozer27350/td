@@ -17,14 +17,10 @@
 	</properties>
 
 	<modules>
-		<module>td-aop</module>
-		<module>td-back-tower</module>
+		<module>td-engine-core</module>
+		<module>td-engine-api</module>
 		<module>td-console-viewer</module>
-		<module>td-domain</module>
-		<module>td-gameplay</module>
 		<module>td-meta</module>
 		<module>td-runner</module>
-		<module>td-sequencer</module>
-		<module>td-config</module>
 	</modules>
 </project>

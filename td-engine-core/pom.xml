@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.moe</groupId>
+	<artifactId>td-engine-core</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<description>Parent du moteur du jeu</description>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<groupId>com.moe</groupId>
+		<artifactId>tower-defense</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>td-aop</module>
+		<module>td-back-tower</module>
+		<module>td-domain</module>
+		<module>td-gameplay</module>
+		<module>td-sequencer</module>
+		<module>td-config</module>
+	</modules>
+</project>

@@ -2,20 +2,33 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>td-back-tower</artifactId>
-	<description>Management of buisness rules for towers</description>
+	<artifactId>td-config</artifactId>
+	<description>Permet d'injecter des données de configuration au tower defense</description>
 
 	<parent>
 		<groupId>com.moe</groupId>
-		<artifactId>tower-defense</artifactId>
+		<artifactId>td-engine-core</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>com.moe</groupId>
 			<artifactId>td-domain</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.20.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>6.2.11</version>
 		</dependency>
 	</dependencies>
 </project>
