@@ -11,6 +11,15 @@ import com.towerdefense.domain.intentions.UpgradeTowerIntention;
  */
 public interface TowerServices {
 
+	/**
+	 * Vérifie et applique la construction d'une tour dans le jeu.
+	 * 
+	 * @param state  l'état du jeu à un instant donné.
+	 * @param intent intention de construction, composée d'un identifiant de joueur,
+	 *               d'un type de tour et d'une position.
+	 * @return true si la construction a bien pu être réalisée (la tour sera
+	 *         également ajoutée au GameState), false dans le cas contraire.
+	 */
 	boolean attemptBuildTower(GameState state, BuildTowerIntention intent);
 	
 	/**

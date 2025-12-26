@@ -7,49 +7,58 @@ import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.statik.enemy.EnemyFactory;
 
+/**
+ * Represents a wave of enemies in the tower defense game.
+ */
 public class EnemyWave {
 
-    private final int startTick;
-    private final int interval;
-    private final int count;
-    private final int waveId;
-    
-    private final EnemyFactory factory;
-    private final EnemyPath path;
-    
-    private int spawned = 0;
+	private final int startTick;
+	private final int interval;
+	private final int count;
+	private final int waveId;
 
-    public EnemyWave(int waveId, int startTick, int interval, int count, EnemyFactory factory, EnemyPath path) {
-    	this.waveId = waveId;
-    	this.startTick = startTick;
-        this.interval = interval;
-        this.count = count;
-        this.factory = factory;
-        this.path = path;
-    }
+	private final EnemyFactory factory;
+	private final EnemyPath path;
 
-    public List<Enemy> dueSpawns(int currentTick) {
-        List<Enemy> result = new ArrayList<>();
+	private int spawned = 0;
 
-        if (currentTick < startTick) return result;
-        if (spawned >= count) return result;
-        
-        int ticksSinceStart = currentTick - startTick;
+	/** Constructor to initialize the enemy wave with its parameters. */
+	public EnemyWave(int waveId, int startTick, int interval, int count, EnemyFactory factory, EnemyPath path) {
+		this.waveId = waveId;
+		this.startTick = startTick;
+		this.interval = interval;
+		this.count = count;
+		this.factory = factory;
+		this.path = path;
+	}
 
-        if (ticksSinceStart % interval == 0) {
-            Enemy enemy = factory.create(path);
-            result.add(enemy);
-            spawned++;
-        }
+	/** Determines which enemies are due to spawn at the given tick. */
+	public List<Enemy> dueSpawns(int currentTick) {
+		List<Enemy> result = new ArrayList<>();
 
-        return result;
-    }
+		if (currentTick < startTick)
+			return result;
+		if (spawned >= count)
+			return result;
 
-    public boolean isFinished() {
-        return spawned >= count;
-    }
-    
-    public int waveId() {
+		int ticksSinceStart = currentTick - startTick;
+
+		if (ticksSinceStart % interval == 0) {
+			Enemy enemy = factory.create(path);
+			result.add(enemy);
+			spawned++;
+		}
+
+		return result;
+	}
+
+	/** Checks if the wave has finished spawning all its enemies. */
+	public boolean isFinished() {
+		return spawned >= count;
+	}
+
+	/** Get the unique identifier of the wave. */
+	public int waveId() {
 		return waveId;
 	}
 }

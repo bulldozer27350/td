@@ -5,11 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+/**
+ * Configuration class for the sequencer component of the tower defense game.
+ */
 public class SequencerConfiguration {
 
-    @Bean
-    public LevelScenarioFactory levelScenarioFactory() {
-        return new LevelScenarioFactory();
-    }
+	@Bean
+	/**
+	 * Bean definition for LevelScenarioFactory.
+	 */
+	public LevelScenarioFactory levelScenarioFactory() {
+		return new LevelScenarioFactory();
+	}
 }
-

@@ -10,5 +10,6 @@ import com.towerdefense.domain.map.EnemyPath;
  * même chemin.
  */
 public interface EnemyFactory {
+	/** Crée un ennemi avec le chemin fourni. */
 	Enemy create(EnemyPath path);
 }

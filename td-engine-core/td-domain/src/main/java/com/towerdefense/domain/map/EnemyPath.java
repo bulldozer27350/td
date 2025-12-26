@@ -14,6 +14,11 @@ public class EnemyPath {
 	private final List<Position> waypoints;
 	private String identifier;
 
+	/**
+	 * Crée un chemin avec une liste de points de passage
+	 * 
+	 * @param waypoints la liste des points de passage du chemin
+	 */
 	public EnemyPath(String identifier, List<Position> waypoints) {
 		this.identifier = identifier;
 		if (waypoints == null || waypoints.isEmpty()) {
@@ -22,7 +27,11 @@ public class EnemyPath {
 		this.waypoints = List.copyOf(waypoints);
 	}
 
-	
+	/**
+	 * Récupère l'identifiant du chemin
+	 * 
+	 * @return l'identifiant du chemin
+	 */
 	public String getIdentifier() {
 		return identifier;
 	}

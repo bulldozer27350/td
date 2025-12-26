@@ -9,9 +9,17 @@ import com.towerdefense.config.mapper.LevelScenarioDefinitionMapper;
 import com.towerdefense.domain.dynamik.level.LevelScenarioDefinition;
 
 @Configuration
+/**
+ * Spring configuration class for loading level scenarios in the tower defense game.
+ */
 public class LevelConfiguration {
 
     @Bean
+    /** 
+	 * Loads the level scenario definition from a JSON configuration file.
+	 * 
+	 * @return LevelScenarioDefinition representing the level scenario.
+	 */
     public LevelScenarioDefinition levelScenario() {
         JsonConfigLoader loader = new JsonConfigLoader();
         LevelConfig config =

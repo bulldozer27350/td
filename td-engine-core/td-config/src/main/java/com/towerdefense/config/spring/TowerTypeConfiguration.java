@@ -13,21 +13,20 @@ import com.towerdefense.config.registry.TowerTypeRegistry;
 import com.towerdefense.domain.statik.tower.TowerType;
 
 @Configuration
+/**
+ * Spring configuration class for loading tower type configurations.
+ */
 public class TowerTypeConfiguration {
 
-    @Bean
-    public TowerTypeRegistry towerTypeRegistry() {
-        JsonConfigLoader loader = new JsonConfigLoader();
-        TowersConfig config =
-            loader.load("config/towers.json", TowersConfig.class);
+	@Bean
+	/** Loads tower type configurations and provides a TowerTypeRegistry bean. */
+	public TowerTypeRegistry towerTypeRegistry() {
+		JsonConfigLoader loader = new JsonConfigLoader();
+		TowersConfig config = loader.load("config/towers.json", TowersConfig.class);
 
-        Map<String, TowerType> types =
-            config.getTowers().stream()
-                .map(TowerTypeMapper::toDomain)
-                .collect(Collectors.toMap(TowerType::name, t -> t));
+		Map<String, TowerType> types = config.getTowers().stream().map(TowerTypeMapper::toDomain)
+				.collect(Collectors.toMap(TowerType::name, t -> t));
 
-        return new TowerTypeRegistry(types);
-    }
+		return new TowerTypeRegistry(types);
+	}
 }
-
-

@@ -7,17 +7,15 @@ import com.towerdefense.domain.Position;
 import com.towerdefense.domain.map.EnemyPath;
 
 /**
- * Un ennemi est un élément du jeu. C'est une entité qui se déplace sur un
- * chemin donné, qui possède un nombre de points de vie, une vitesse de
- * déplacement et bien sûr une position actuelle sur la carte via une
- * Position(x;y)
+ * An enemy is a game element. It is an entity that moves along a given path,
+ * has a number of health points, a movement speed, and of course a current
+ * position on the map via a Position(x;y).
  * 
- * Son déplacement est géré par un index sur son chemin pour qu'il sache quelle
- * est sa prochaine position à atteindre.
+ * Its movement is managed by an index on its path so that it knows what its
+ * next position to reach is.
  * 
- * La gestion du temps est donné par la méthode tick qui permet de savoir s'il
- * peut atteindre sa prochaine position, avec quelle vitesse de déplacement etc
- * ...
+ * The time management is given by the tick method which allows to know if it
+ * can reach its next position, with what movement speed, etc...
  */
 public class Enemy implements GameObject {
 	private final EntityId id;
@@ -28,6 +26,7 @@ public class Enemy implements GameObject {
 	private int waypointIndex;
 	private int bounty;
 
+	/** Constructs an Enemy with the specified parameters. */
 	public Enemy(EntityId id, EnemyPath path, int hp, double speed, int bounty) {
 		this.id = id;
 		this.path = path;
@@ -37,22 +36,26 @@ public class Enemy implements GameObject {
 		this.bounty = bounty;
 	}
 
+	/** Getters for the Enemy properties */
 	public EntityId id() {
 		return this.id;
 	}
-
+	/** Get the current position of the enemy. */
 	public Position position() {
 		return this.position;
 	}
 
+	/** Get the health of the enemy. */
 	public Health health() {
 		return this.health;
 	}
 
+	/** Get the speed of the enemy. */
 	public double speed() {
 		return this.speed;
 	}
 	
+	/** Get the bounty awarded for defeating the enemy. */
 	public int bounty() {
 		return bounty;
 	}
@@ -66,7 +69,7 @@ public class Enemy implements GameObject {
 	 * Sa capacité à atteindre next est reliée à sa vitesse de déplacement, au fait
 	 * qu'il soit encore en vie ou non, à la distance qui le sépare de next, etc ...
 	 * 
-	 * @param next
+	 * @param next La position cible à atteindre
 	 */
 	private void moveTowards(Position next) {
 		double dx = next.x() - this.position.x();
@@ -94,11 +97,13 @@ public class Enemy implements GameObject {
 		}
 	}
 
+	/** Vérifie si l'ennemi a atteint la fin de son chemin. */
 	public boolean isAtEnd() {
 		return this.waypointIndex >= this.path.size();
 	}
 
 	@Override
+	/** Provides a string representation of the Enemy object. */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(this.getClass().getName());

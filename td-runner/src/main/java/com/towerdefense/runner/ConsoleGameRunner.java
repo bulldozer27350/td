@@ -38,6 +38,9 @@ import com.towerdefense.viewer.renderers.ProjectileRenderer;
 import com.towerdefense.viewer.renderers.TowerRenderer;
 
 @Component
+/**
+ * Classe responsable de l'exécution d'une partie de Tower Defense en mode console.
+ */
 public class ConsoleGameRunner implements CommandLineRunner {
 
 	@Autowired
@@ -52,6 +55,14 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	private final EnemyFactoryRegistry enemyFactoryRegistry;
 	private final LevelScenarioFactory levelScenarioFactory;
 
+	/**
+	 * Constructeur de ConsoleGameRunner.
+	 * @param towerTypeRegistry le registre des types de tours
+	 * @param levelConfiguration la configuration du niveau
+	 * @param enemyFactoryRegistry le registre des usines d'ennemis
+	 * @param levelScenarioFactory la fabrique de scénarios de niveau
+	 * @param paths la configuration des chemins
+	 */
 	public ConsoleGameRunner(TowerTypeRegistry towerTypeRegistry, LevelConfiguration levelConfiguration,
 			EnemyFactoryRegistry enemyFactoryRegistry, LevelScenarioFactory levelScenarioFactory,
 			PathConfiguration paths) {
@@ -69,10 +80,15 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	private EntityId playerId = EntityId.random();
 
 	@Override
+	/**
+	 * Lance une partie de Tower Defense en mode console.
+	 */
 	public void run(String... args) throws Exception {
 		System.out.println("=== Tower Defense Console Runner (Spring) ===");
 
+		// Game State
 		GameState state = new GameState();
+
 		this.initializeGameState(state, this.sequencer);
 
 		// Viewer
@@ -120,10 +136,16 @@ public class ConsoleGameRunner implements CommandLineRunner {
 		System.out.println("\n=== FIN ===");
 	}
 
+	/**
+	 * Tente d'améliorer la tour mitrailleuse.
+	 */
 	private void upgradeTower(GameState state) {
 		this.towerServices.attemptUpgradeTower(state, new UpgradeTowerIntention(playerId, machineGunId));
 	}
 
+	/**
+	 * Initialise l'état du jeu avec le joueur et le niveau.
+	 */
 	private void initializeGameState(GameState state, Sequencer sequencerParam) {
 		state.setPlayer(new PlayerState(playerId, 400, 10));
 

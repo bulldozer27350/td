@@ -2,39 +2,60 @@ package com.towerdefense.domain.player;
 
 import com.towerdefense.domain.EntityId;
 
+/**
+ * Represents the state of a player in the tower defense game, including their
+ * gold and lives.
+ */
 public class PlayerState {
 
-    private final EntityId id;
-    private int gold;
-    private int lives;
+	private final EntityId id;
+	private int gold;
+	private int lives;
 
-    public PlayerState(EntityId id, int gold, int lives) {
-        this.id = id;
-        this.gold = gold;
-        this.lives = lives;
-    }
+	/** Constructor to initialize player state with given id, gold, and lives. */
+	public PlayerState(EntityId id, int gold, int lives) {
+		this.id = id;
+		this.gold = gold;
+		this.lives = lives;
+	}
 
-    public EntityId id() { return id; }
-    public int gold() { return gold; }
-    public int lives() { return lives; }
+	/** Getters for player state attributes */
+	public EntityId id() {
+		return id;
+	}
 
-    public boolean canAfford(int cost) {
-        return gold >= cost;
-    }
+	/** Getters for player state attributes */
+	public int gold() {
+		return gold;
+	}
 
-    public void spendGold(int amount) {
-        gold -= amount;
-    }
+	/** Getters for player state attributes */
+	public int lives() {
+		return lives;
+	}
 
-    public void earnGold(int amount) {
-        gold += amount;
-    }
+	/** Check if the player can afford a certain cost */
+	public boolean canAfford(int cost) {
+		return gold >= cost;
+	}
 
-    public void loseLife() {
-        lives--;
-    }
+	/** Spend a certain amount of gold */
+	public void spendGold(int amount) {
+		gold -= amount;
+	}
 
-    public boolean isAlive() {
-        return lives > 0;
-    }
+	/** Earn a certain amount of gold */
+	public void earnGold(int amount) {
+		gold += amount;
+	}
+
+	/** Lose a life */
+	public void loseLife() {
+		lives--;
+	}
+
+	/** Check if the player is still alive */
+	public boolean isAlive() {
+		return lives > 0;
+	}
 }

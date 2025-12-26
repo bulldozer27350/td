@@ -18,6 +18,9 @@ import com.towerdefense.orchestrator.listener.GameStateObserver;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
 
 @Component
+/**
+ * Manages the game loop, updating the game state on each tick.
+ */
 public class Sequencer {
 
 	private LevelScenario level;
@@ -34,6 +37,7 @@ public class Sequencer {
 		this.observers.add(obs);
 	}
 
+	/** Advances the game state by one tick. */
 	public void tick(GameState state, int tick) {
 
 		if (state.getState() != StateEnum.IN_PROGRESS)
@@ -108,6 +112,7 @@ public class Sequencer {
 		}
 	}
 
+	/** Checks if the game has ended based on level progress and player state. */
 	private boolean allTicksEnded(GameState state) {
 		boolean terminated = false;
 		// S'il ne reste plus d'ennemis à sortir, il ne reste qu'à vérifier si tous les
@@ -120,6 +125,7 @@ public class Sequencer {
 		return terminated;
 	}
 
+	/** Attempts to shoot a target based on the provided intention. */
 	public boolean attemptShoot(GameState state, ShootIntention intent) {
 		if (!this.towerBack.canShoot(state, intent))
 			return false;

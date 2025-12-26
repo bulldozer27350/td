@@ -15,6 +15,7 @@ public class BasicEnemyFactory implements EnemyFactory {
 	private final double speed;
 	private int bounty;
 
+	/** Constructeur de l'usine d'ennemis basiques. */
 	public BasicEnemyFactory(int hp, double speed, int bounty) {
 		this.hp = hp;
 		this.speed = speed;
@@ -22,6 +23,7 @@ public class BasicEnemyFactory implements EnemyFactory {
 	}
 
 	@Override
+	/** Crée un ennemi basique avec le chemin fourni. */
 	public Enemy create(EnemyPath path) {
 		return new Enemy(EntityId.random(), path, hp, speed, bounty);
 	}
