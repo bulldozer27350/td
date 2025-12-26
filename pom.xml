@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>td-engine-core</module>
+		<module>td-engine-api</module>
 		<module>td-console-viewer</module>
 		<module>td-meta</module>
 		<module>td-runner</module>
