@@ -1,0 +1,6 @@
+A chaque fois qu'une nouvelle planète est prise pour cible car elle regorge de [[Matière première]], c'est la même chose.
+On envoie des clones sur place. L'homme qui est cloné est une personne née au XXè siècle. Sa conscience a été intégrée à chaque clone. Pour des raisons de sens pratique, les clones "naissent" adulte et sont formés par la [[Commandante]] pour guider ces jeunes humains. C'est elle qui décide, même si dans les faits, c'est bien le clone qui a la capacité d'agir sur le terrain.
+
+Lorsque des traces de biologie possiblement hostile sont détectés, les clones sont accompagnés par une IA qui communique avec le clone pour lui annoncer les statistiques de la faune ou de la flore en présence. Il est important pour le clone de savoir ce qui l'attend, et c'est l'IA qui dresse les rapports en fin d'attaque.
+
+Un [[Scientifique]] est également chargé d'accompagner le clone afin de faire quelques prélèvements sur cette biologie régulièrement inconnue. Cette personne n'est pas un militaire et est davantage intéressée par le fonctionnement de la biologie, sa capacité à se déplacer, les stratégies qu'elle met en place pour se défendre et attaquer les complexes d'extraction. C'est cette personne qui apporte des précisions sur ce qui arrive vers le complexe que le clone doit défendre.

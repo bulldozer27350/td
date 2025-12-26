@@ -1,0 +1,8 @@
+Nous n'en sommes plus à la première planète extrasolaire visitée. 
+Par le passé, il est arrivé que des planètes ou satellites soient habités par une biologie souvent mal comprise. Parfois la biologie sur place n'était pas belliqueuse, et la ponction de [[Matière première]] a pu se passer sans heurts.
+Dans les autres cas, le système humain est particulièrement bien huilé et efficace : si on ne peut pas récupérer de [[Matière première]] **sans** violence, on récupère la [[Matière première]] **avec** violence.
+
+Pour ça, des inventions spectaculaires permettent aux humains de protéger les complexes de puisement de ressource : des avants postes permettant de réguler les flux ennemis qui sont particulièrement capable de s'adapter et qui "comprennent" (même si on ne sait pas toujours s'il s'agit d'intelligence, de réflexe ou d'adaptation à un environnement changeant) que nos complexes sont ce qui nous tiennent le plus à cœur … ou qui tous tiennent le plus le porte-monnaie.
+
+Nos organisations militaires n'ont pas tellement changé : c'est du "marche ou crève". Les chefs décident et les soldats agissent. Même si des libertés locales peuvent exister, ce n'est pas la norme au sein de l'organisation.
+Il y a quelques années, la [[Commandante]] a fait ses preuves, à une époque où ce n'était pas elle qui était responsable des opérations de la sécurité des extractions. Maintenant, c'est elle qui forme les recrues qui auront la charge de protéger les complexes de récupération des [[Matières premières]].
