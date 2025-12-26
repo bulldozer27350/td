@@ -21,5 +21,6 @@
 		<module>td-gameplay</module>
 		<module>td-sequencer</module>
 		<module>td-config</module>
+		<module>td-engine-starter</module>
 	</modules>
 </project>
