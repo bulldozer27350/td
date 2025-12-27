@@ -1,23 +1,30 @@
 package com.towerdefense.viewer.renderers;
 
-import com.towerdefense.domain.dynamik.tower.Tower;
+import com.towerdefense.engine.api.model.TowerDTO;
+import com.towerdefense.engine.api.model.TowerStateEnum;
 import com.towerdefense.viewer.Renderer;
 
-public class TowerRenderer implements Renderer<Tower> {
+public class TowerRenderer implements Renderer<TowerDTO> {
 
     @Override
-    public String[][] render(Tower t) {
-        if (t.isUnderBuilding()) {
+    public String[][] render(TowerDTO t) {
+        if (t.state() == TowerStateEnum.BUILDING || t.state() == TowerStateEnum.UPDATING) {
         	return new String[][]{
         		{ "  🏗️ " },
-        		{ "P " + pad(t.damage(), 3) },
-        		{ "R" + pad(t.isReady(), 3) }
+        		{ "..." },
+        		{ "..."  }
+        	};
+        } else if (t.state() == TowerStateEnum.RELOADING) {
+        	return new String[][]{
+        		{ "  🕑 " },
+        		{ "..." },
+        		{ "..."  }
         	};
         }
         return new String[][]{
             { "  🗼 " },
-            { "P " + pad(t.damage(), 3) },
-            { "R" + pad(t.isReady(), 3) }
+            { "..." },
+            { "..." }
         };
     }
 

@@ -1,16 +1,16 @@
 package com.towerdefense.viewer.renderers;
 
-import com.towerdefense.domain.projectile.Projectile;
+import com.towerdefense.engine.api.model.ProjectileDTO;
 import com.towerdefense.viewer.Renderer;
 
-public class ProjectileRenderer implements Renderer<Projectile> {
+public class ProjectileRenderer implements Renderer<ProjectileDTO> {
 
     @Override
-    public String[][] render(Projectile t) {
+    public String[][] render(ProjectileDTO t) {
         return new String[][]{
-            {" ▪️ " },
-            {"D" + pad(t.damage(), 3) },
-            {"..."}
+            { " ▪️ " },
+            { "..." },
+            { "..." }
         };
     }
 

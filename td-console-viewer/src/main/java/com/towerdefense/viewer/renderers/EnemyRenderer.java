@@ -1,13 +1,13 @@
 package com.towerdefense.viewer.renderers;
 
-import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.engine.api.model.EnemyDTO;
 import com.towerdefense.viewer.Renderer;
 
-public class EnemyRenderer implements Renderer<Enemy> {
+public class EnemyRenderer implements Renderer<EnemyDTO> {
 
     @Override
-    public String[][] render(Enemy t) {
-        if (t.health().isDead())
+    public String[][] render(EnemyDTO t) {
+        if (!t.isAlive())
         	return new String[][]{
                 { "..." },
                 { "..." },
@@ -15,8 +15,8 @@ public class EnemyRenderer implements Renderer<Enemy> {
             };
     	return new String[][]{
             { "  👾 " },
-            { "S" + pad(t.speed(), 4) },
-            { "H" + pad(t.health().current(), 4) }
+            { "M" + pad(t.maxHp(), 4) },
+            { "H" + pad(t.currentHp(), 4) }
         };
     }
 

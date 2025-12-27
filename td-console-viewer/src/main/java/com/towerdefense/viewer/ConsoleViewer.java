@@ -1,7 +1,8 @@
 package com.towerdefense.viewer;
 
-import com.towerdefense.domain.GameState;
-import com.towerdefense.orchestrator.listener.GameStateObserver;
+import com.towerdefense.engine.api.GameStateObserver;
+import com.towerdefense.engine.api.model.GameStateDTO;
+import com.towerdefense.engine.api.model.LevelMapDTO;
 
 public class ConsoleViewer implements GameStateObserver {
 
@@ -12,7 +13,23 @@ public class ConsoleViewer implements GameStateObserver {
     }
 
     @Override
-    public void onStateUpdated(GameState state, int tick) {
+    public void onStateUpdated(GameStateDTO state, int tick) {
         System.out.println(renderer.print(state));
     }
+
+	@Override
+	public void onGameCreated(LevelMapDTO levelMap) {
+		renderer.setMap(levelMap);
+	}
+
+	@Override
+	public void onGameWon(GameStateDTO state) {
+		System.out.println("Partie terminée avec succès");
+	}
+
+	@Override
+	public void onGameLoose() {
+		System.out.println("Partie écouhée");
+	}
+
 }
