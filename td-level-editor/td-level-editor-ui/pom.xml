@@ -3,20 +3,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.moe</groupId>
-	<artifactId>td-level-editor-api</artifactId>
+	<artifactId>td-level-editor-ui</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
-	<parent>
-		<groupId>com.moe</groupId>
-		<artifactId>tower-defense</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.moe</groupId>
-			<artifactId>td-engine-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+            <artifactId>td-level-editor-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.moe</groupId>
+            <artifactId>td-level-editor-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

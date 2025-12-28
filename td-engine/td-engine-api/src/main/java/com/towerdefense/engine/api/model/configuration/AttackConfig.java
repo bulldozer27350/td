@@ -7,11 +7,17 @@ import java.util.List;
  */
 public class AttackConfig {
 
-    private List<WaveConfig> waves;
+	private List<WaveConfig> waves;
 
-    /** Get the list of wave configurations. */
-    public List<WaveConfig> getWaves() {
-        return waves;
-    }
+	public AttackConfig() {
+	}
+	
+	public AttackConfig(List<WaveConfig> waves) {
+		this.waves = waves;
+	}
+
+	/** Get the list of wave configurations. */
+	public List<WaveConfig> getWaves() {
+		return waves;
+	}
 }
-

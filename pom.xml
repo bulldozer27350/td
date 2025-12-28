@@ -17,10 +17,10 @@
 	</properties>
 
 	<modules>
-	    <module>td-level-editor/td-level-editor-api</module>
-	    <module>td-level-editor/td-level-editor-core</module>
-		<module>td-engine/td-engine-core</module>
+		<module>td-level-editor/td-level-editor-api</module>
+		<module>td-level-editor/td-level-editor-core</module>
 		<module>td-engine/td-engine-api</module>
+		<module>td-engine/td-engine-core</module>
 		<module>td-console-viewer</module>
 		<module>td-meta</module>
 		<module>td-runner</module>

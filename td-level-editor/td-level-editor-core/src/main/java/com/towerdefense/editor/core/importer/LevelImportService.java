@@ -1,0 +1,65 @@
+package com.towerdefense.editor.core.importer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.towerdefense.editor.api.model.EditableAttack;
+import com.towerdefense.editor.api.model.EditableLevel;
+import com.towerdefense.editor.api.model.EditableMap;
+import com.towerdefense.editor.api.model.EditableTowerCapacity;
+import com.towerdefense.editor.api.model.EditableWave;
+import com.towerdefense.editor.api.model.LevelMetadata;
+import com.towerdefense.engine.api.model.configuration.AttackConfig;
+import com.towerdefense.engine.api.model.configuration.LevelConfig;
+import com.towerdefense.engine.api.model.configuration.WaveConfig;
+
+/**
+ * Rebuilds an EditableLevel from an engine LevelConfig.
+ * 
+ * This class performs no validation.
+ */
+public class LevelImportService {
+
+	public EditableLevel importLevel(LevelConfig config) {
+
+		// --- Metadata ---
+		LevelMetadata metadata = new LevelMetadata(config.getId(), "Imported level " + config.getId(),
+				"Imported from LevelConfig", 0, config.getStartingMoney(), config.getStartingLives());
+
+		// --- Map ---
+		// Dimensions are not part of LevelConfig yet → default placeholder
+		EditableMap map = new EditableMap(10, 10);
+
+		EditableLevel level = new EditableLevel(metadata, map, new ArrayList<EditableAttack>(),
+				new ArrayList<EditableTowerCapacity>());
+
+		// --- Paths ---
+		// LevelConfig does not expose paths yet
+		// They must be injected later or resolved externally
+
+		// --- Attacks & Waves ---
+		importAttacks(config.getAttacks(), level);
+
+		// --- Tower capacities ---
+		// Not present in LevelConfig yet
+
+		return level;
+	}
+
+	private void importAttacks(List<AttackConfig> attackConfigs, EditableLevel level) {
+
+		for (int attackIndex = 0; attackIndex < attackConfigs.size(); attackIndex++) {
+
+			AttackConfig attackConfig = attackConfigs.get(attackIndex);
+			EditableAttack attack = new EditableAttack();
+
+			for (WaveConfig waveConfig : attackConfig.getWaves()) {
+				EditableWave wave = new EditableWave(waveConfig.getStartTick(), waveConfig.getSpawnInterval(),
+						waveConfig.getCount(), waveConfig.getEnemyType(), waveConfig.getPathId());
+				attack.addWave(wave);
+			}
+
+			level.getAttacks().add(attack);
+		}
+	}
+}

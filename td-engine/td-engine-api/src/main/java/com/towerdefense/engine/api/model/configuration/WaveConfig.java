@@ -12,6 +12,18 @@ public class WaveConfig {
 	private String enemyType;
 	private String pathId;
 
+	public WaveConfig() {
+	}
+	
+	/** Constructor to initialize all fields of the wave configuration. */
+	public WaveConfig(int startTick, int spawnInterval, int count, String enemyType, String pathId) {
+		this.startTick = startTick;
+		this.spawnInterval = spawnInterval;
+		this.count = count;
+		this.enemyType = enemyType;
+		this.pathId = pathId;
+	}
+	
 	/** Get the tick at which the wave starts. */
 	public int getStartTick() {
 		return startTick;

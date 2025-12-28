@@ -5,14 +5,29 @@
 	<groupId>com.moe</groupId>
 	<artifactId>td-level-editor-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>Moteur d'édition de niveau</description>
-	<packaging>pom</packaging>
-	
+
 	<parent>
 		<groupId>com.moe</groupId>
 		<artifactId>tower-defense</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-	
+	<dependencies>
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-level-editor-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-engine-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- Third party -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.20.0</version>
+		</dependency>
+	</dependencies>
 </project>
