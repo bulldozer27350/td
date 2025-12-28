@@ -6,16 +6,22 @@
 	<artifactId>td-level-editor-ui</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<parent>
+		<groupId>com.moe</groupId>
+		<artifactId>td-level-editor</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.moe</groupId>
-            <artifactId>td-level-editor-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+			<artifactId>td-level-editor-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.moe</groupId>
-            <artifactId>td-level-editor-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+			<artifactId>td-level-editor-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
