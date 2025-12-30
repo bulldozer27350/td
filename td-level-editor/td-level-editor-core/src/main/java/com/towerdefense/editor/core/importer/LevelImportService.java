@@ -24,7 +24,7 @@ public class LevelImportService {
 
 		// --- Metadata ---
 		LevelMetadata metadata = new LevelMetadata(config.getId(), "Imported level " + config.getId(),
-				"Imported from LevelConfig", 0, config.getStartingMoney(), config.getStartingLives());
+				"Imported from LevelConfig", config.getStartingMoney(), config.getStartingLives());
 
 		// --- Map ---
 		// Dimensions are not part of LevelConfig yet → default placeholder

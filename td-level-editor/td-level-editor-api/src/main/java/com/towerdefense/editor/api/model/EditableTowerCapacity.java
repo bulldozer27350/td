@@ -5,9 +5,12 @@ import java.util.List;
 
 public class EditableTowerCapacity {
 
-    private final String towerType;
+    private String towerType;
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
+    public EditableTowerCapacity() {
+	}
+    
     public EditableTowerCapacity(String towerType) {
         this.towerType = towerType;
     }

@@ -11,6 +11,9 @@ public class EditableLevel {
 	private List<EditableAttack> attacks = new ArrayList<>();
 	private List<EditableTowerCapacity> towerCapacities = new ArrayList<>();
 
+	public EditableLevel() {
+	}
+	
 	public EditableLevel(LevelMetadata metadata, EditableMap editableMap, List<EditableAttack> attacks,
 			List<EditableTowerCapacity> towerCapacities) {
 		this.metadata = metadata;

@@ -2,20 +2,21 @@ package com.towerdefense.editor.api.model;
 
 public class LevelMetadata {
 
-	private final int levelId;
+	private int levelId;
 	private String name;
 	private String description;
-	private int recommendedDifficulty;
 	private int startingMoney;
 	private int startingLives;
 
-	public LevelMetadata(int levelId, String name, String description, int recommendedDifficulty, int startingMoney,
+	public LevelMetadata() {
+	}
+	
+	public LevelMetadata(int levelId, String name, String description, int startingMoney,
 			int startingLives) {
 		super();
 		this.levelId = levelId;
 		this.name = name;
 		this.description = description;
-		this.recommendedDifficulty = recommendedDifficulty;
 		this.startingMoney = startingMoney;
 		this.startingLives = startingLives;
 	}
@@ -40,14 +41,6 @@ public class LevelMetadata {
 	public LevelMetadata setDescription(String description) {
 		this.description = description;
 		return this;
-	}
-
-	public int getRecommendedDifficulty() {
-		return recommendedDifficulty;
-	}
-
-	public void setRecommendedDifficulty(int recommendedDifficulty) {
-		this.recommendedDifficulty = recommendedDifficulty;
 	}
 
 	public int getStartingMoney() {
