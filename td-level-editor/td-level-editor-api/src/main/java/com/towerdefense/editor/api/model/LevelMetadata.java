@@ -8,7 +8,9 @@ public class LevelMetadata {
 	private int startingMoney;
 	private int startingLives;
 
-	public LevelMetadata() {
+	@SuppressWarnings("unused")
+	// For serialization
+	private LevelMetadata() {
 	}
 	
 	public LevelMetadata(int levelId, String name, String description, int startingMoney,
