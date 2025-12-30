@@ -19,14 +19,15 @@ public class EditorCli {
 			System.out.println("You can either start a new level, load an existing one, or leave.");
 			System.out.println("1. New Level");
 			System.out.println("2. Load Level");
-			System.out.println("3. Exit application");
+			System.out.println("3. Load DRAFT Level");
+			System.out.println("4. Exit application");
 
 			System.out.println("Your choice ? (integer)");
 			String cmd = scanner.nextLine();
 			switch (cmd) {
 			case "1" -> {
 				System.out.println("Starting a new Level...");
-				LevelPrimaryData data = initialize();
+				LevelPrimaryData data = initialize(scanner);
 				controller.createNewLevel(data);
 				this.continueCreation(controller);
 			}
@@ -36,7 +37,13 @@ public class EditorCli {
 					System.out.println("Loading failed.");
 				}
 			}
-			case "3" -> System.exit(0);
+			case "3" -> {
+				System.out.println("Loading an existing DRAFT Level...");
+				if (!this.loadDraft(controller, scanner)) {
+					System.out.println("Loading failed.");
+				}
+			}
+			case "4" -> System.exit(0);
 			default -> System.out.println("Unknown command");
 			}
 		}
@@ -49,21 +56,35 @@ public class EditorCli {
 			System.out.println("Available commands:");
 			System.out.println("1. show");
 			System.out.println("2. add path");
-			System.out.println("3. save");
-			System.out.println("4. exit level editing session (all unsaved changes will be lost)");
+			System.out.println("3. save this draft");
+			System.out.println("4. save as exportable level");
+			System.out.println("5. exit level editing session (all unsaved changes will be lost)");
 			System.out.println("Your choice ? (integer)");
 			String cmd = scanner.nextLine();
 
 			switch (cmd) {
 			case "1" -> controller.printLevel();
 			case "2" -> addPath(controller, scanner);
-			case "3" -> save(controller, scanner);
-			case "4" -> {
+			case "3" -> saveDraft(controller, scanner);
+			case "4" -> save(controller, scanner);
+			case "5" -> {
 				System.out.println("Exiting this level editing session.");
 				running = false;
 			}
 			default -> System.out.println("Unknown command");
 			}
+		}
+	}
+
+	private boolean saveDraft(EditorController controller, Scanner scanner) {
+		System.out.print("DRAFT SAVE - File path to save (e.g. level1.json) ? ");
+		String filePath = scanner.nextLine();
+		try {
+			controller.saveDraftLevel(filePath);
+			return true;
+		} catch (IOException e) {
+			System.out.println("Impossible to access " + filePath);
+			return false;
 		}
 	}
 
@@ -88,8 +109,7 @@ public class EditorCli {
 		}
 	}
 
-	private LevelPrimaryData initialize() {
-		Scanner scanner = new Scanner(System.in);
+	private LevelPrimaryData initialize(Scanner scanner) {
 		LevelPrimaryData dimensions;
 		while (true) {
 			System.out.println("width (integer) ?");
@@ -107,16 +127,13 @@ public class EditorCli {
 			System.out.println("level description (string) ?");
 			cmd = scanner.nextLine();
 			String levelDescription = cmd;
-			System.out.println("recommanded difficulty (integer) ?");
-			cmd = scanner.nextLine();
-			int difficulty = Integer.parseInt(cmd);
 			System.out.println("player starting money (integer) ?");
 			cmd = scanner.nextLine();
 			int startingMoney = Integer.parseInt(cmd);
 			System.out.println("player starting lives (integer) ?");
 			cmd = scanner.nextLine();
 			int startingLives = Integer.parseInt(cmd);
-			dimensions = new LevelPrimaryData(width, height, levelId, levelName, levelDescription, difficulty,
+			dimensions = new LevelPrimaryData(width, height, levelId, levelName, levelDescription,
 					startingMoney, startingLives);
 			break;
 		}
@@ -140,9 +157,24 @@ public class EditorCli {
 		String filePath = scanner.nextLine();
 		try {
 			controller.loadLevel(filePath);
+			this.continueCreation(controller);
 			return true;
 		} catch (IOException e) {
 			System.out.println("Impossible to access " + filePath);
+			return false;
+		}
+	}
+	
+	private boolean loadDraft(EditorController controller, Scanner scanner) {
+		System.out.print("File path to load a draft level ? ");
+		String filePath = scanner.nextLine();
+		try {
+			controller.loadDraftLevel(filePath);
+			this.continueCreation(controller);
+			return true;
+		} catch (IOException e) {
+			System.out.println("Impossible to access " + filePath);
+			System.out.println(e);
 			return false;
 		}
 	}

@@ -5,20 +5,27 @@ import java.util.List;
 
 public class EditableMap {
 
-    private final int width;
-    private final int height;
-    private final List<EditablePath> paths = new ArrayList<>();
+	private int width;
+	private int height;
+	private List<EditablePath> paths = new ArrayList<>();
 
-    public EditableMap(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
+	@SuppressWarnings("unused")
+	// For serialization
+	private EditableMap() {
+	}
 
-    public void addPath(EditablePath path) {
-        paths.add(path);
-    }
+	public EditableMap(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
 
-    public List<EditablePath> paths() { return paths; }
+	public void addPath(EditablePath path) {
+		paths.add(path);
+	}
+
+	public List<EditablePath> paths() {
+		return paths;
+	}
 
 	public int getWidth() {
 		return width;
@@ -31,6 +38,5 @@ public class EditableMap {
 	public List<EditablePath> getPaths() {
 		return paths;
 	}
-    
-}
 
+}
