@@ -1,9 +1,9 @@
-package com.towerdefense.editor.core.validation;
+package com.towerdefense.editor.core.validation.editable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditableLevelValidationResult {
+public class EditableValidationResult {
 
     private final List<String> errors = new ArrayList<>();
 
