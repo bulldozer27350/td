@@ -3,8 +3,8 @@ package com.towerdefense.editor.core.exporter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.towerdefense.editor.api.model.EditableAttack;
-import com.towerdefense.editor.api.model.EditableLevel;
+import com.towerdefense.editor.api.model.draft.EditableAttack;
+import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.core.validation.LevelValidator;
 import com.towerdefense.editor.core.validation.ValidationResult;
 import com.towerdefense.engine.api.model.configuration.AttackConfig;
@@ -26,7 +26,7 @@ public class LevelExportService {
 		}
 		LevelConfig levelConfig = new LevelConfig();
 		List<AttackConfig> attacks = level.getAttacks().stream().map(this::mapAttack).collect(Collectors.toList());
-		levelConfig.setId(level.getMetadata().getLevelId());
+		levelConfig.setId(level.getMetadata().getId());
 		levelConfig.setAttacks(attacks);
 		levelConfig.setStartingLives(level.getMetadata().getStartingLives());
 		levelConfig.setStartingMoney(level.getMetadata().getStartingMoney());
@@ -34,8 +34,8 @@ public class LevelExportService {
 	}
 
 	private AttackConfig mapAttack(EditableAttack attack) {
-		AttackConfig attackConfig = new AttackConfig(
-				attack.getWaves().stream().map(wave -> new WaveConfig(wave.getStartTick(), wave.getSpawnInterval(),
+		AttackConfig attackConfig = new AttackConfig(attack.getId(),
+				attack.getWaves().stream().map(wave -> new WaveConfig(wave.getId(), wave.getStartTick(), wave.getSpawnInterval(),
 						wave.getCount(), wave.getEnemyType(), wave.getPathId())).collect(Collectors.toList()));
 		return attackConfig;
 	}

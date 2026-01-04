@@ -1,6 +1,6 @@
 package com.towerdefense.editor.core.validation;
 
-import com.towerdefense.editor.api.model.EditableLevel;
+import com.towerdefense.editor.api.model.draft.EditableLevel;
 
 public class DefaultLevelValidator implements LevelValidator {
 
@@ -16,7 +16,7 @@ public class DefaultLevelValidator implements LevelValidator {
             result.addError("Level must define at least one attack");
         }
 
-        if (level.getTowerCapacities().isEmpty()) {
+        if (level.getTowerCapacityIds().isEmpty()) {
             result.addError("Level must define at least one tower capacity");
         }
 

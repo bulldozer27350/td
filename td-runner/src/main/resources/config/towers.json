@@ -2,6 +2,7 @@
 [
 	{
 		"id": "machinegun",
+		"name": "machinegun",
 		"levels": 
 		[
 			{
@@ -35,6 +36,7 @@
 	},
 	{
 		"id": "shotgun",
+		"name": "shotgun",
 		"levels": [
 			{
 				"level": 0,

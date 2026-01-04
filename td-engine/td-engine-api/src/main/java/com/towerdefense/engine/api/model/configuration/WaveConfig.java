@@ -6,6 +6,7 @@ package com.towerdefense.engine.api.model.configuration;
  */
 public class WaveConfig {
 
+	private String id;
 	private int startTick;
 	private int spawnInterval;
 	private int count;
@@ -14,16 +15,21 @@ public class WaveConfig {
 
 	public WaveConfig() {
 	}
-	
+
 	/** Constructor to initialize all fields of the wave configuration. */
-	public WaveConfig(int startTick, int spawnInterval, int count, String enemyType, String pathId) {
+	public WaveConfig(String id, int startTick, int spawnInterval, int count, String enemyType, String pathId) {
 		this.startTick = startTick;
 		this.spawnInterval = spawnInterval;
 		this.count = count;
 		this.enemyType = enemyType;
 		this.pathId = pathId;
 	}
-	
+
+	/** Get the unique identifier of the wave. */
+	public String getId() {
+		return id;
+	}
+
 	/** Get the tick at which the wave starts. */
 	public int getStartTick() {
 		return startTick;
@@ -48,4 +54,5 @@ public class WaveConfig {
 	public String getPathId() {
 		return pathId;
 	}
+
 }

@@ -13,6 +13,21 @@ public class TowerLevelConfig {
 	private double reloadSeconds;
 	private int buildTimeTicks;
 
+	// For serialization
+	private TowerLevelConfig() {
+	}
+	
+	public TowerLevelConfig(int level, int upgradeCost, int sellValue, double range, int damage, double reloadSeconds,
+			int buildTimeTicks) {
+		this.level = level;
+		this.upgradeCost = upgradeCost;
+		this.sellValue = sellValue;
+		this.range = range;
+		this.damage = damage;
+		this.reloadSeconds = reloadSeconds;
+		this.buildTimeTicks = buildTimeTicks;
+	}
+
 	/** Get the level of the tower. */
 	public int getLevel() {
 		return level;
