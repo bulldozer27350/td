@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class LevelScenarioDefinition {
 
-	private final int id;
+	private final String id;
 	private final List<AttackDefinition> attacks;
 	private final int startingLives;
 	private final int startingMoney;
@@ -19,7 +19,7 @@ public class LevelScenarioDefinition {
 	 * @param id      the unique identifier for the level scenario
 	 * @param attacks the list of attack definitions for this level scenario
 	 */
-	public LevelScenarioDefinition(int id, List<AttackDefinition> attacks, int startingLives, int startingMoney) {
+	public LevelScenarioDefinition(String id, List<AttackDefinition> attacks, int startingLives, int startingMoney) {
 		this.id = id;
 		this.attacks = List.copyOf(attacks);
 		this.startingLives = startingLives;
@@ -31,7 +31,7 @@ public class LevelScenarioDefinition {
 	 * 
 	 * @return the level scenario id
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 

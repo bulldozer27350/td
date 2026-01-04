@@ -11,11 +11,11 @@ import com.towerdefense.domain.dynamik.level.LevelProgress;
 public class LevelScenario {
 
 	private final List<Attack> attacks;
-	private final int levelId;
+	private final String levelId;
 	private int currentAttack = 0;
 
 	/** Constructor to initialize level scenario with level ID and list of attacks. */
-	public LevelScenario(int levelId, List<Attack> attacks) {
+	public LevelScenario(String levelId, List<Attack> attacks) {
 		this.levelId = levelId;
 		this.attacks = attacks;
 	}
@@ -39,7 +39,7 @@ public class LevelScenario {
 	}
 
 	/** Get the unique identifier of the level. */
-	public int levelId() {
+	public String levelId() {
 		return levelId;
 	}
 	

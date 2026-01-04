@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class LevelConfig {
 
-	private int id;
+	private String id;
 	private List<AttackConfig> attacks;
 	private int startingLives;
 	private int startingMoney;
@@ -33,7 +33,7 @@ public class LevelConfig {
 	}
 
 	/** Get the unique identifier of the level. */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -43,7 +43,7 @@ public class LevelConfig {
 	}
 
 	/** Set the unique identifier of the level. */
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

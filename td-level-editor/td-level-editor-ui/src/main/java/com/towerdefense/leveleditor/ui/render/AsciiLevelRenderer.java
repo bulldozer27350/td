@@ -1,8 +1,8 @@
 package com.towerdefense.leveleditor.ui.render;
 
-import com.towerdefense.editor.api.model.EditableLevel;
-import com.towerdefense.editor.api.model.EditablePath;
-import com.towerdefense.editor.api.model.PositionDefinition;
+import com.towerdefense.editor.api.model.draft.EditableLevel;
+import com.towerdefense.editor.api.model.draft.EditablePath;
+import com.towerdefense.editor.api.model.exportable.PositionDefinition;
 
 public class AsciiLevelRenderer {
 
@@ -40,7 +40,7 @@ public class AsciiLevelRenderer {
 		}
 
 //        // 3. Capacités de tours
-//        for (EditableTowerCapacity capacity : level.getTowerCapacities()) {
+//        for (EditableTowerType capacity : level.getTowerCapacities()) {
 //            for (PositionDefinition p : capacity.allowedPositions()) {
 //                grid[p.y()][p.x()] = 'T';
 //            }
