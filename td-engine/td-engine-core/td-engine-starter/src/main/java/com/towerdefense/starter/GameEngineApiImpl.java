@@ -19,19 +19,17 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.StateEnum;
-import com.towerdefense.domain.dynamik.tower.Tower;
-import com.towerdefense.domain.intentions.BuildTowerIntention;
 import com.towerdefense.domain.intentions.UpgradeTowerIntention;
 import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.statik.level.LevelScenarioDefinition;
-import com.towerdefense.domain.statik.tower.TowerType;
 import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.engine.api.model.LevelMapDTO;
 import com.towerdefense.engine.api.model.MapDimensionsDTO;
 import com.towerdefense.engine.api.model.PositionDTO;
 import com.towerdefense.engine.api.model.WayDTO;
+import com.towerdefense.engine.api.model.command.GameCommand;
 import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
@@ -40,6 +38,7 @@ import com.towerdefense.engine.api.model.configuration.TowersConfig;
 import com.towerdefense.orchestrator.Sequencer;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
 import com.towerdefense.orchestrator.runtime.factory.LevelScenarioFactory;
+import com.towerdefense.services.GameCommandHandler;
 import com.towerdefense.services.TowerServices;
 
 /**
@@ -53,28 +52,26 @@ public class GameEngineApiImpl implements GameEngineApi {
 	private GameState state;
 	private EngineContext context;
 	private LevelScenarioFactory levelScenarioFactory;
-	private TowerServices towerServices;
-	private EntityId machineGunId;
 	private TowerTypeAssembler towerTypeAssembler;
 	private EnemyFactoryAssembler enemyFactoryAssembler;
 	private LevelAssembler levelAssembler;
 	private PathAssembler pathAssembler;
 	private List<GameStateObserver> observers;
 
-	public GameEngineApiImpl(LevelScenarioFactory levelScenarioFactory, 
-			EngineContext context, 
-			TowerServices towerServices, 
-			TowerTypeAssembler towerTypeAssembler,
-			EnemyFactoryAssembler enemyFactoryAssembler, 
-			LevelAssembler levelAssembler,
-			PathAssembler pathAssembler) {
+	private final Map<Class<?>, GameCommandHandler<?>> handlers;
+
+	private int tickNumber;
+
+	public GameEngineApiImpl(LevelScenarioFactory levelScenarioFactory, EngineContext context,
+			TowerTypeAssembler towerTypeAssembler, EnemyFactoryAssembler enemyFactoryAssembler,
+			LevelAssembler levelAssembler, PathAssembler pathAssembler, Map<Class<?>, GameCommandHandler<?>> handlers) {
+		this.handlers = handlers;
 		this.observers = new ArrayList<>();
 		this.playerId = new EntityId(UUID.randomUUID());
 		this.state = new GameState();
 
 		this.levelScenarioFactory = levelScenarioFactory;
 		this.context = context;
-		this.towerServices = towerServices;
 
 		this.towerTypeAssembler = towerTypeAssembler;
 		this.enemyFactoryAssembler = enemyFactoryAssembler;
@@ -83,71 +80,39 @@ public class GameEngineApiImpl implements GameEngineApi {
 
 	}
 
-	/**
-	 * Tente d'améliorer la tour mitrailleuse.
-	 */
-	private void upgradeTower(GameState state) {
-		this.towerServices.attemptUpgradeTower(state, new UpgradeTowerIntention(playerId, machineGunId));
+	public void dispatch(GameCommand command) {
+		GameCommandHandler handler = handlers.get(command.getClass());
+		handler.handle(command, this.state);
 	}
 
 	@Override
-	public void startLevel(GameConfig gameConfig) {
+	public void initialize(GameConfig gameConfig) {
 		this.configureLevel(gameConfig);
 		this.configureGameMap();
-		this.startLevel();
+		this.state.setState(StateEnum.IN_PROGRESS);
+		this.tickNumber = 0;
 	}
 
 	private void configureGameMap() {
-		MapDimensionsDTO dimensions = new MapDimensionsDTO(
-				this.state.gridWidth(),
-				this.state.gridHeight());
-		
+		MapDimensionsDTO dimensions = new MapDimensionsDTO(this.state.gridWidth(), this.state.gridHeight());
+
 		List<WayDTO> ways = new ArrayList<>();
 		this.context.enemyPaths().values().forEach(path -> {
 			List<Position> positions = path.getWay();
 			List<PositionDTO> positionDTOs = new ArrayList<>();
-			positions.forEach(pos -> positionDTOs.add(
-					new PositionDTO(pos.x(), pos.y())));
+			positions.forEach(pos -> positionDTOs.add(new PositionDTO(pos.x(), pos.y())));
 			ways.add(new WayDTO(positionDTOs));
 		});
-		
+
 		LevelMapDTO levelMapDTO = new LevelMapDTO(dimensions, ways);
-		
+
 		this.observers.forEach(observer -> observer.onGameCreated(levelMapDTO));
 	}
 
-	private void startLevel() {
-		int tickNumber = 0;
-		int upgradeTowerNumber = 0;
-		this.state.setState(StateEnum.IN_PROGRESS);
-		TowerType machinegunType = this.context.towerTypeRegistry().get("machinegun");
-		TowerType shotgunType = this.context.towerTypeRegistry().get("shotgun");
-
-		while (this.state.getState() == StateEnum.IN_PROGRESS) {
-			this.sequencer.tick(this.state, tickNumber);
-			if (tickNumber == 2) {
-				boolean built = this.towerServices.attemptBuildTower(state,
-						new BuildTowerIntention(this.playerId, new Position(2, 3), machinegunType));
-				if (built) {
-					this.machineGunId = ((Tower) this.state.objectAt(new Position(2, 3))).id();
-				}
-			}
-			if (tickNumber == 4) {
-				this.towerServices.attemptBuildTower(this.state,
-						new BuildTowerIntention(this.playerId, new Position(5, 10), shotgunType));
-			}
-			// à partir du tour 25, on essaie d'améliorer la première tour
-			if (upgradeTowerNumber == 0 && tickNumber > 25) {
-				upgradeTower(this.state);
-				upgradeTowerNumber++;
-			}
-			try {
-				Thread.sleep(300);// 83 ?
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			tickNumber++;
-		}
+	@Override
+	public void tick() {
+		this.sequencer.tick(this.state, this.tickNumber);
+		this.tickNumber++;
 	}
 
 	private void configureLevel(GameConfig gameConfig) {
@@ -155,19 +120,12 @@ public class GameEngineApiImpl implements GameEngineApi {
 		this.addTowersConfiguration(gameConfig.towersConfig());
 		this.addEnemiesConfiguration(gameConfig.enemiesConfig());
 		this.addLevelConfiguration(gameConfig.levelConfig());
-		
-		LevelScenario levelScenario = levelScenarioFactory.create(
-				this.context.levelScenarioDefinition(),
-				this.context.enemyFactoryRegistry(), 
-				this.context.enemyPaths());
-		
-		this.state.setPlayer(
-				new PlayerState(
-						this.playerId, 
-						gameConfig.levelConfig().getStartingMoney(),
-						gameConfig.levelConfig().getStartingLives()
-						)
-				);
+
+		LevelScenario levelScenario = levelScenarioFactory.create(this.context.levelScenarioDefinition(),
+				this.context.enemyFactoryRegistry(), this.context.enemyPaths());
+
+		this.state.setPlayer(new PlayerState(this.playerId, gameConfig.levelConfig().getStartingMoney(),
+				gameConfig.levelConfig().getStartingLives()));
 		this.sequencer.setLevel(levelScenario);
 	}
 
@@ -197,6 +155,11 @@ public class GameEngineApiImpl implements GameEngineApi {
 	public void addObserver(GameStateObserver observer) {
 		this.observers.add(observer);
 		this.sequencer.addObserver(observer);
+	}
+
+	@Override
+	public boolean isGameOver() {
+		return state.getState() == StateEnum.TERMINATED;
 	}
 
 }
