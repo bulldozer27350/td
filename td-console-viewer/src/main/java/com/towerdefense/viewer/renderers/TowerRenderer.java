@@ -22,7 +22,7 @@ public class TowerRenderer implements Renderer<TowerDTO> {
         	};
         }
         return new String[][]{
-            { "  🗼 " },
+            { "  🗼  " },
             { "..." },
             { "..." }
         };
