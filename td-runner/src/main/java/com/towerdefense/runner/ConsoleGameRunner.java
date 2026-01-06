@@ -12,12 +12,15 @@ import com.towerdefense.engine.api.model.ProjectileDTO;
 import com.towerdefense.engine.api.model.TowerDTO;
 import com.towerdefense.engine.api.model.command.GameCommand;
 import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
+import com.towerdefense.engine.api.model.command.SellTowerCommand;
+import com.towerdefense.engine.api.model.command.UpgradeTowerCommand;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.runner.config.reader.EnemiesConfigProvider;
 import com.towerdefense.runner.config.reader.LevelConfigProvider;
 import com.towerdefense.runner.config.reader.PathsConfigProvider;
 import com.towerdefense.runner.config.reader.TowersConfigProvider;
 import com.towerdefense.viewer.ConsoleViewer;
+import com.towerdefense.viewer.FileViewer;
 import com.towerdefense.viewer.GameStateAsciiRenderer;
 import com.towerdefense.viewer.RendererRegistry;
 import com.towerdefense.viewer.renderers.EnemyRenderer;
@@ -52,6 +55,8 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	    GameStateAsciiRenderer asciiRenderer = new GameStateAsciiRenderer(registry);
 
 	    ConsoleViewer viewer = new ConsoleViewer(asciiRenderer);
+	    FileViewer fileviewer = new FileViewer(asciiRenderer,
+				"D:\\Depots\\tower_defense\\td-console-viewer\\src\\test\\resources\\output.txt");
 
 	    GameConfig gameConfig = new GameConfig(
 	            new LevelConfigProvider().providesDTO(),
@@ -60,6 +65,7 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	            new EnemiesConfigProvider().providesDTO());
 
 	    gameEngine.addObserver(viewer);
+	    gameEngine.addObserver(fileviewer);
 	    gameEngine.initialize(gameConfig);
 
 	    Scanner scanner = new Scanner(System.in);
@@ -67,7 +73,7 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	    while (!gameEngine.isGameOver()) {
 
 	        System.out.println();
-	        System.out.println("ENTER = tick | command = action | quit = exit");
+	        System.out.println("ENTER = tick | command = action (buy, sell or upgrade) | quit = exit");
 	        System.out.print("> ");
 
 	        String input = scanner.nextLine().trim();
@@ -81,7 +87,7 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	                GameCommand command = parseCommand(input);
 	                gameEngine.dispatch(command);
 	            } catch (IllegalArgumentException e) {
-	                System.out.println("Commande invalide : " + e.getMessage());
+	                System.out.println("A problem occurs while executing command : " + e.getMessage());
 	            }
 	        }
 	    }
@@ -93,23 +99,67 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	    String[] tokens = input.split("\\s+");
 
 	    if (tokens.length == 0) {
-	        throw new IllegalArgumentException("Commande vide");
+	        throw new IllegalArgumentException("Empty command");
 	    }
 
 	    String commandName = tokens[0].toLowerCase();
 
 	    return switch (commandName) {
-	        case "place-tower" -> parsePlaceTower(tokens);
+	        case "buy" -> parsePlaceTower(tokens);
+	        case "upgrade" -> parseUpgradeTower(tokens);
+	        case "sell" -> parseSellTower(tokens);
 	        default -> throw new IllegalArgumentException(
-	                "Commande inconnue : " + commandName
+	                "Unknown command : " + commandName
 	        );
 	    };
+	}
+	
+	private GameCommand parseUpgradeTower(String[] tokens) {
+		if (tokens.length != 4) {
+			throw new IllegalArgumentException(
+					"Usage : upgrade <playerId> <x> <y>"
+					);
+		}
+		
+		try {
+			String playerId = tokens[1];
+			int x = Integer.parseInt(tokens[2]);
+			int y = Integer.parseInt(tokens[3]);
+			
+			return new UpgradeTowerCommand(x, y, UUID.fromString(playerId));
+			
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"x and y should be integer"
+					);
+		}
+	}
+	
+	private GameCommand parseSellTower(String[] tokens) {
+		if (tokens.length != 4) {
+			throw new IllegalArgumentException(
+					"Usage : sell <playerId> <x> <y>"
+					);
+		}
+		
+		try {
+			String playerId = tokens[1];
+			int x = Integer.parseInt(tokens[2]);
+			int y = Integer.parseInt(tokens[3]);
+			
+			return new SellTowerCommand(x, y, UUID.fromString(playerId));
+			
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(
+					"x and y should be integer"
+					);
+		}
 	}
 	
 	private GameCommand parsePlaceTower(String[] tokens) {
 	    if (tokens.length != 5) {
 	        throw new IllegalArgumentException(
-	            "Usage : place-tower <playerId> <towerType> <x> <y>"
+	            "Usage : place <playerId> <towerType> <x> <y>"
 	        );
 	    }
 
@@ -123,7 +173,7 @@ public class ConsoleGameRunner implements CommandLineRunner {
 
 	    } catch (NumberFormatException e) {
 	        throw new IllegalArgumentException(
-	            "x et y doivent être des entiers"
+	            "x and y should be integer"
 	        );
 	    }
 	}

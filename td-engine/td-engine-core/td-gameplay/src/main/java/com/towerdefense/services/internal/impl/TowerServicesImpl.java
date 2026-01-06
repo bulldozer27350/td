@@ -45,6 +45,7 @@ public class TowerServicesImpl implements TowerServices {
 		}
 
 		this.sellService.sell(tower, player);
+		state.removeTower(tower.id());
 		return true;
 	}
 

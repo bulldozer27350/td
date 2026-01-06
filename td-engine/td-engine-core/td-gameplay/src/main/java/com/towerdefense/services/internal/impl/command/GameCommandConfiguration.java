@@ -1,6 +1,5 @@
-package com.towerdefense.services.internal.impl;
+package com.towerdefense.services.internal.impl.command;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

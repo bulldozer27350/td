@@ -1,4 +1,4 @@
-package com.towerdefense.services.internal.impl;
+package com.towerdefense.services.internal.impl.command;
 
 import org.springframework.stereotype.Component;
 
