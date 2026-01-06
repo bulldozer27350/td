@@ -11,6 +11,7 @@ import com.towerdefense.config.assembler.LevelAssembler;
 import com.towerdefense.config.assembler.PathAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 import com.towerdefense.engine.api.GameEngineApi;
+import com.towerdefense.engine.api.GameRuntime;
 import com.towerdefense.orchestrator.runtime.factory.LevelScenarioFactory;
 import com.towerdefense.services.GameCommandHandler;
 import com.towerdefense.services.TowerServices;
@@ -28,6 +29,11 @@ public class GameEngineConfiguration {
 			PathAssembler pathAssembler, Map<Class<?>, GameCommandHandler<?>> gameCommandHandlers) {
 		return new GameEngineApiImpl(levelScenarioFactory, context,
 				towerTypeAssembler, enemyFactoryAssembler, levelAssembler, pathAssembler, gameCommandHandlers);
+	}
+	
+	@Bean
+	GameRuntime getGameRuntime(GameEngineApi gameEngineApi) {
+		return new GameRuntimeImpl(gameEngineApi);
 	}
 	
 }

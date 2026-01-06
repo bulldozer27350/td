@@ -19,12 +19,12 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.StateEnum;
-import com.towerdefense.domain.intentions.UpgradeTowerIntention;
 import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.statik.level.LevelScenarioDefinition;
 import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.GameStateObserver;
+import com.towerdefense.engine.api.model.GameStateDTO;
 import com.towerdefense.engine.api.model.LevelMapDTO;
 import com.towerdefense.engine.api.model.MapDimensionsDTO;
 import com.towerdefense.engine.api.model.PositionDTO;
@@ -35,11 +35,11 @@ import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.PathsConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
+import com.towerdefense.orchestrator.GameStateMapper;
 import com.towerdefense.orchestrator.Sequencer;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
 import com.towerdefense.orchestrator.runtime.factory.LevelScenarioFactory;
 import com.towerdefense.services.GameCommandHandler;
-import com.towerdefense.services.TowerServices;
 
 /**
  * Implémentation de l'API du moteur de jeu pour démarrer et gérer les niveaux.
@@ -160,6 +160,11 @@ public class GameEngineApiImpl implements GameEngineApi {
 	@Override
 	public boolean isGameOver() {
 		return state.getState() == StateEnum.TERMINATED;
+	}
+
+	@Override
+	public GameStateDTO getState() {
+		return GameStateMapper.toDTO(state);
 	}
 
 }
