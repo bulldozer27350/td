@@ -18,5 +18,6 @@
 	<modules>
 		<module>td-engine-api</module>
 		<module>td-engine-core</module>
+		<module>td-engine-http</module>
 	</modules>
 </project>
