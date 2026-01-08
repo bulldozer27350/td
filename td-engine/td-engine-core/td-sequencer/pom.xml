@@ -37,14 +37,14 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>6.1.3</version>
+			<version>6.1.5</version>
 		</dependency>
 
 		<!-- AOP Spring (nécessaire pour @Aspect + @EnableAspectJAutoProxy) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
-			<version>6.1.3</version>
+			<version>6.1.5</version>
 		</dependency>
 
 		<!-- AspectJ (annotation @Aspect + weaver utilisé par Spring AOP) -->
@@ -54,32 +54,17 @@
 			<version>1.9.21</version>
 		</dependency>
 
-		<!-- logback (pour LOG.info()) -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.5.6</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>2.0.13</version>
 		</dependency>
 
-		<!-- JUnit 5 -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>5.10.2</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- Extension Spring pour JUnit (@ExtendWith(SpringExtension.class)) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>6.1.3</version>
+			<version>6.1.5</version>
 			<scope>test</scope>
 		</dependency>
 
