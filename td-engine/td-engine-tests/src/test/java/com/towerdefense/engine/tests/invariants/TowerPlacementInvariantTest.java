@@ -1,13 +1,15 @@
 package com.towerdefense.engine.tests.invariants;
 
-import com.towerdefense.engine.api.GameEngineApi;
-import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
-import com.towerdefense.engine.tests.support.TestGameEngineFactory;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import com.towerdefense.engine.api.GameEngineApi;
+import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
+import com.towerdefense.engine.tests.support.TestGameEngineFactory;
 
 /**
  * Invariant métier : Les tours ne peuvent pas être placées au même endroit
@@ -49,13 +51,13 @@ class TowerPlacementInvariantTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
         // Épuise l'argent en achetant des tours
-        int initialTowerCount = engine.getState().towers().size();
+//        int initialTowerCount = engine.getState().towers().size();
         
         for (int x = 0; x < 15; x++) {
             for (int y = 0; y < 15; y++) {
                 if (engine.getState().player().currentGold() < 50) {
                     // Plus assez d'argent, tente quand même d'acheter
-                    int goldBefore = engine.getState().player().currentGold();
+//                    int goldBefore = engine.getState().player().currentGold();
                     int towersBefore = engine.getState().towers().size();
                     
                     engine.dispatch(new PlaceTowerCommand(x, y, "machinegun", playerId));

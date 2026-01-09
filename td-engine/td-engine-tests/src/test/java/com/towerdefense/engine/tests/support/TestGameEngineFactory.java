@@ -3,21 +3,21 @@ package com.towerdefense.engine.tests.support;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.towerdefense.engine.api.GameEngineApi;
+import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.PathsConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
-import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.runner.config.loader.JsonConfigLoader;
 
 /**
  * Fabrique de GameEngineApi pour les tests avec pattern Builder.
  *
  * Valeurs par défaut :
- * - levelPath: "levels/level-default.json"
- * - pathsPath: "paths/paths-default.json"
+ * - levelPath: "levels/level-1.json"
+ * - pathsPath: "paths/paths-1.json"
  * - towersPath: "towers/towers.json"
- * - enemiesPath: "enemies/enemies-default.json"
+ * - enemiesPath: "enemies/enemies.json"
  *
  * Exemple d'utilisation :
  * <pre>
@@ -28,6 +28,11 @@ import com.towerdefense.runner.config.loader.JsonConfigLoader;
  * GameEngineApi engine = TestGameEngineFactory.builder()
  *     .withLevel("configs/level1.json")
  *     .withPaths("configs/paths1.json")
+ *     .build();
+ *     
+ * // ✅ NOUVEAU : Utilise une LevelConfig générée aléatoirement
+ * GameEngineApi engine = TestGameEngineFactory.builder()
+ *     .withLevel(randomLevelConfig)
  *     .build();
  * </pre>
  */
@@ -40,6 +45,12 @@ public final class TestGameEngineFactory {
     private String pathsPath = "paths/paths-1.json";
     private String towersPath = "towers/towers.json";
     private String enemiesPath = "enemies/enemies.json";
+    
+    // ✅ NOUVEAU : Support des configs directes (pour property-based testing)
+    private LevelConfig directLevelConfig = null;
+    private PathsConfig directPathsConfig = null;
+    private TowersConfig directTowersConfig = null;
+    private EnemiesConfig directEnemiesConfig = null;
 
     /**
      * Constructeur public pour permettre l'instanciation directe.
@@ -56,11 +67,16 @@ public final class TestGameEngineFactory {
         return new TestGameEngineFactory();
     }
 
+    // ========================
+    // CONFIGURATION PAR CHEMIN (existant)
+    // ========================
+
     public TestGameEngineFactory withLevel(String levelPath) {
         if (levelPath == null || levelPath.trim().isEmpty()) {
             throw new IllegalArgumentException("Le chemin du level ne peut pas être null ou vide");
         }
         this.levelPath = levelPath;
+        this.directLevelConfig = null; // Reset le mode direct
         return this;
     }
 
@@ -69,6 +85,7 @@ public final class TestGameEngineFactory {
             throw new IllegalArgumentException("Le chemin des paths ne peut pas être null ou vide");
         }
         this.pathsPath = pathsPath;
+        this.directPathsConfig = null;
         return this;
     }
 
@@ -77,6 +94,7 @@ public final class TestGameEngineFactory {
             throw new IllegalArgumentException("Le chemin des towers ne peut pas être null ou vide");
         }
         this.towersPath = towersPath;
+        this.directTowersConfig = null;
         return this;
     }
 
@@ -85,6 +103,60 @@ public final class TestGameEngineFactory {
             throw new IllegalArgumentException("Le chemin des enemies ne peut pas être null ou vide");
         }
         this.enemiesPath = enemiesPath;
+        this.directEnemiesConfig = null;
+        return this;
+    }
+
+    // ========================
+    // ✅ NOUVEAU : CONFIGURATION DIRECTE (pour property-based testing)
+    // ========================
+
+    /**
+     * Utilise une LevelConfig directement (au lieu de charger depuis un fichier).
+     * Utile pour les tests property-based avec configs générées aléatoirement.
+     */
+    public TestGameEngineFactory withLevel(LevelConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("LevelConfig ne peut pas être null");
+        }
+        this.directLevelConfig = config;
+        this.levelPath = null;
+        return this;
+    }
+
+    /**
+     * Utilise une PathsConfig directement.
+     */
+    public TestGameEngineFactory withPaths(PathsConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("PathsConfig ne peut pas être null");
+        }
+        this.directPathsConfig = config;
+        this.pathsPath = null;
+        return this;
+    }
+
+    /**
+     * Utilise une TowersConfig directement.
+     */
+    public TestGameEngineFactory withTowers(TowersConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("TowersConfig ne peut pas être null");
+        }
+        this.directTowersConfig = config;
+        this.towersPath = null;
+        return this;
+    }
+
+    /**
+     * Utilise une EnemiesConfig directement.
+     */
+    public TestGameEngineFactory withEnemies(EnemiesConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("EnemiesConfig ne peut pas être null");
+        }
+        this.directEnemiesConfig = config;
+        this.enemiesPath = null;
         return this;
     }
 
@@ -101,10 +173,10 @@ public final class TestGameEngineFactory {
         GameEngineApi engine = context.getBean(GameEngineApi.class);
 
         // 2. Chargement de la configuration de jeu
-        LevelConfig level = loader.load(this.levelPath, LevelConfig.class);
-        PathsConfig paths = loader.load(this.pathsPath, PathsConfig.class);
-        TowersConfig towers = loader.load(this.towersPath, TowersConfig.class);
-        EnemiesConfig enemies = loader.load(this.enemiesPath, EnemiesConfig.class);
+        LevelConfig level = loadLevelConfig();
+        PathsConfig paths = loadPathsConfig();
+        TowersConfig towers = loadTowersConfig();
+        EnemiesConfig enemies = loadEnemiesConfig();
 
         GameConfig gameConfig = new GameConfig(level, paths, towers, enemies);
 
@@ -112,5 +184,37 @@ public final class TestGameEngineFactory {
         engine.initialize(gameConfig);
 
         return engine;
+    }
+
+    // ========================
+    // MÉTHODES PRIVÉES DE CHARGEMENT
+    // ========================
+
+    private LevelConfig loadLevelConfig() {
+        if (directLevelConfig != null) {
+            return directLevelConfig;
+        }
+        return loader.load(levelPath, LevelConfig.class);
+    }
+
+    private PathsConfig loadPathsConfig() {
+        if (directPathsConfig != null) {
+            return directPathsConfig;
+        }
+        return loader.load(pathsPath, PathsConfig.class);
+    }
+
+    private TowersConfig loadTowersConfig() {
+        if (directTowersConfig != null) {
+            return directTowersConfig;
+        }
+        return loader.load(towersPath, TowersConfig.class);
+    }
+
+    private EnemiesConfig loadEnemiesConfig() {
+        if (directEnemiesConfig != null) {
+            return directEnemiesConfig;
+        }
+        return loader.load(enemiesPath, EnemiesConfig.class);
     }
 }
