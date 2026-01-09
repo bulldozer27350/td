@@ -1,0 +1,22 @@
+{
+  "enemies": [
+    {
+      "id": "fast",
+      "hp": 40,
+      "speed": 1.0,
+      "bounty": 5
+    },
+    {
+      "id": "tank",
+      "hp": 80,
+      "speed": 0.1,
+      "bounty": 20
+    },
+    {
+      "id": "boss",
+      "hp": 200,
+      "speed": 0.05,
+      "bounty": 50
+    }
+  ]
+}

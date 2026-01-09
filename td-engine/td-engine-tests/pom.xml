@@ -2,31 +2,36 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>td-gameplay</artifactId>
-	<description>Offre des fonctionnalités pour interagir avec le tower defense</description>
+	<groupId>com.moe</groupId>
+	<artifactId>td-engine-tests</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<parent>
 		<groupId>com.moe</groupId>
-		<artifactId>td-engine-core</artifactId>
+		<artifactId>td-engine</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.moe</groupId>
-			<artifactId>td-domain</artifactId>
+			<artifactId>td-engine-starter</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.moe</groupId>
-			<artifactId>td-config</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>6.1.5</version>
+			<groupId>com.moe</groupId>
+			<artifactId>td-runner</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring.boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>

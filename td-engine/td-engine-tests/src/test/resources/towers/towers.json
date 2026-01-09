@@ -1,0 +1,70 @@
+{"towers": 
+[
+	{
+		"id": "machinegun",
+		"name": "machinegun",
+		"levels": 
+		[
+			{
+				"level": 0,
+				"upgradeCost": 100,
+				"sellValue": 75,
+				"range": 3.5,
+				"damage": 25,
+				"reloadSeconds": 0.5,
+				"buildTimeTicks": 2
+			},
+			{
+				"level": 1,
+				"upgradeCost": 100,
+				"sellValue": 150,
+				"range": 5.5,
+				"damage": 35,
+				"reloadSeconds": 0.4,
+				"buildTimeTicks": 3
+			},
+			{
+				"level": 2,
+				"upgradeCost": 100,
+				"sellValue": 225,
+				"range": 7.5,
+				"damage": 55,
+				"reloadSeconds": 0.3,
+				"buildTimeTicks": 5
+			}
+		]
+	},
+	{
+		"id": "shotgun",
+		"name": "shotgun",
+		"levels": [
+			{
+				"level": 0,
+				"upgradeCost": 200,
+				"sellValue": 150,
+				"range": 2,
+				"damage": 40,
+				"reloadSeconds": 2.5,
+				"buildTimeTicks": 2
+			},
+			{
+				"level": 1,
+				"upgradeCost": 200,
+				"sellValue": 300,
+				"range": 3.0,
+				"damage": 50,
+				"reloadSeconds": 2.4,
+				"buildTimeTicks": 2
+			},
+			{
+				"level": 2,
+				"upgradeCost": 200,
+				"sellValue": 450,
+				"range": 4,
+				"damage": 60,
+				"reloadSeconds": 2.3,
+				"buildTimeTicks": 2
+			}
+		]
+	}
+]}
