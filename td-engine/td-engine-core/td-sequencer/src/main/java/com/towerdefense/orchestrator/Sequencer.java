@@ -28,7 +28,7 @@ public class Sequencer {
 	private final TowerManagement towerBack = new TowerBack();
 
 	private final List<GameStateObserver> observers = new ArrayList<>();
-	
+
 	public void setLevel(LevelScenario level) {
 		this.level = level;
 	}
@@ -69,7 +69,8 @@ public class Sequencer {
 			// Déclenche le tir
 			tower.triggerShot();
 
-			Projectile p = new Projectile(EntityId.random(), tower.position(), 8.0, // speed
+			double projectileSpeedCasesPerSecond = 8.0;
+			Projectile p = new Projectile(EntityId.random(), tower.position(), projectileSpeedCasesPerSecond,
 					tower.damage(), target.id());
 
 			state.addProjectile(p);
@@ -121,7 +122,8 @@ public class Sequencer {
 	private boolean allTicksEnded(GameState state) {
 		boolean terminated = false;
 		// S'il ne reste plus d'ennemis à sortir, il ne reste qu'à vérifier si tous les
-		// ennemis sont morts ou s'il ne reste plus de vie au joueur. Dans ces deux cas, la partie est terminée.
+		// ennemis sont morts ou s'il ne reste plus de vie au joueur. Dans ces deux cas,
+		// la partie est terminée.
 		if (this.level.isFinished()) {
 			if (state.enemies().isEmpty() || state.player().lives() < 1) {
 				terminated = true;
@@ -141,11 +143,13 @@ public class Sequencer {
 
 		tower.triggerShot();
 
-		Projectile p = new Projectile(EntityId.random(), tower.position(), 8.0, tower.damage(), enemy.id());
+		double projectileSpeedCasesPerSecond = 8.0;
+		Projectile p = new Projectile(EntityId.random(), tower.position(), projectileSpeedCasesPerSecond,
+				tower.damage(), enemy.id());
 
 		state.addProjectile(p);
 
 		return true;
 	}
-	
+
 }

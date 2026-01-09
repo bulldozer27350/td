@@ -2,6 +2,7 @@ package com.towerdefense.domain.dynamik.tower;
 
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
+import com.towerdefense.domain.GameTime;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
 import com.towerdefense.domain.statik.tower.TowerType;
@@ -22,9 +23,9 @@ public class Tower implements GameObject {
 
 	/** Position actuelle de la tour */
 	private Position position;
-
-	/** Cooldown restant avant que la tour puisse tirer à nouveau */
-	private double cooldownRemaining = 0.0;
+	
+	/** Cooldown restant en ticks avant que la tour puisse tirer à nouveau */
+    private int cooldownRemainingTicks = 0;
 
 	private final TowerType type;
 	private int level = 1;
@@ -86,13 +87,6 @@ public class Tower implements GameObject {
 	}
 
 	/**
-	 * Renvoie le temps de rechargement actuel de la tour.
-	 */
-	public double reloadSeconds() {
-		return currentStats().reloadSeconds();
-	}
-
-	/**
 	 * Indique si la tour peut être améliorée.
 	 */
 	public boolean canUpgrade() {
@@ -114,35 +108,10 @@ public class Tower implements GameObject {
 	}
 
 	/**
-	 * Indique si la tour est prête à tirer. Une tour est prête lorsque son cooldown
-	 * est écoulé.
-	 */
-	public boolean isReady() {
-		return cooldownRemaining <= 0;
-	}
-
-	/**
 	 * Indique si la tour est en cours d'amélioration.
 	 */
 	public boolean isUnderBuilding() {
 		return this.upgradeRemainingTicks > 0;
-	}
-
-	/**
-	 * Appelé à chaque tick : réduit le cooldown si nécessaire. Lorsqu'il atteint
-	 * zéro, la tour peut tirer.
-	 */
-	public void tick() {
-		if (upgradeRemainingTicks > 0) {
-			upgradeRemainingTicks--;
-			if (upgradeRemainingTicks == 0) {
-				upgrade();
-			}
-			return;
-		}
-		if (cooldownRemaining > 0) {
-			cooldownRemaining -= 1;
-		}
 	}
 
 	/**
@@ -160,30 +129,74 @@ public class Tower implements GameObject {
 	}
 
 	/**
-	 * Déclenche un tir : remet le cooldown au temps de rechargement.
-	 */
-	public void triggerShot() {
-		cooldownRemaining = currentStats().reloadSeconds();
-	}
+     * ✅ MODIFIÉ : Retourne le temps de rechargement en secondes (pour affichage)
+     */
+    public double reloadSeconds() {
+        return currentStats().reloadSeconds();
+    }
 
-	@Override
-	/**
-	 * Renvoie une représentation textuelle de la tour
-	 */
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(this.getClass().getName());
-		builder.append(": {id:");
-		builder.append(id);
-		builder.append(", position:");
-		builder.append(position);
-		builder.append(", range:");
-		builder.append(currentStats().range());
-		builder.append(", reloadSeconds:");
-		builder.append(currentStats().reloadSeconds());
-		builder.append(", ready:");
-		builder.append(isReady());
-		builder.append("}");
-		return builder.toString();
-	}
+    /**
+     * ✅ NOUVEAU : Retourne le temps de rechargement en ticks (pour la logique)
+     */
+    public int reloadTicks() {
+        return GameTime.secondsToTicks(currentStats().reloadSeconds());
+    }
+
+    /**
+     * ✅ MODIFIÉ : Indique si la tour est prête à tirer
+     */
+    public boolean isReady() {
+        return cooldownRemainingTicks <= 0;
+    }
+
+    /**
+     * ✅ MODIFIÉ : Appelé à chaque tick
+     */
+    public void tick() {
+        if (upgradeRemainingTicks > 0) {
+            upgradeRemainingTicks--;
+            if (upgradeRemainingTicks == 0) {
+                upgrade();
+            }
+            return;
+        }
+        
+        // ❌ ANCIEN : if (cooldownRemaining > 0) { cooldownRemaining -= 1; }
+        // ✅ NOUVEAU :
+        if (cooldownRemainingTicks > 0) {
+            cooldownRemainingTicks--;
+        }
+    }
+
+    /**
+     * ✅ MODIFIÉ : Déclenche un tir et active le cooldown
+     */
+    public void triggerShot() {
+        // ❌ ANCIEN : cooldownRemaining = currentStats().reloadSeconds();
+        // ✅ NOUVEAU :
+        cooldownRemainingTicks = reloadTicks();
+    }
+
+    // ... reste du code inchangé ...
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.getClass().getName());
+        builder.append(": {id:");
+        builder.append(id);
+        builder.append(", position:");
+        builder.append(position);
+        builder.append(", range:");
+        builder.append(currentStats().range());
+        builder.append(", reloadSeconds:");
+        builder.append(currentStats().reloadSeconds());
+        builder.append(", ready:");
+        builder.append(isReady());
+        // ✅ AJOUT pour debug :
+        builder.append(", cooldownTicks:");
+        builder.append(cooldownRemainingTicks);
+        builder.append("}");
+        return builder.toString();
+    }
 }

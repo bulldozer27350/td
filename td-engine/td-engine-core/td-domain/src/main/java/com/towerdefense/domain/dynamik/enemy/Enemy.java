@@ -2,6 +2,7 @@ package com.towerdefense.domain.dynamik.enemy;
 
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
+import com.towerdefense.domain.GameTime;
 import com.towerdefense.domain.Health;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.map.EnemyPath;
@@ -21,18 +22,19 @@ public class Enemy implements GameObject {
 	private final EntityId id;
 	private Position position;
 	private final Health health;
-	private final double speed; // cases per second
+	/** Vitesse de déplacement en cases par tick */
+	private final double speedPerTick;
 	private final EnemyPath path;
 	private int waypointIndex;
 	private int bounty;
 
 	/** Constructs an Enemy with the specified parameters. */
-	public Enemy(EntityId id, EnemyPath path, int hp, double speed, int bounty) {
+	public Enemy(EntityId id, EnemyPath path, int hp, double speedCasesPerSecond, int bounty) {
 		this.id = id;
 		this.path = path;
 		this.position = path.startPosition();
 		this.health = new Health(hp);
-		this.speed = speed;
+        this.speedPerTick = GameTime.casesPerSecondToCasesPerTick(speedCasesPerSecond);
 		this.bounty = bounty;
 	}
 
@@ -50,10 +52,19 @@ public class Enemy implements GameObject {
 		return this.health;
 	}
 
-	/** Get the speed of the enemy. */
-	public double speed() {
-		return this.speed;
-	}
+	/**
+     * ✅ NOUVEAU : Retourne la vitesse en cases/seconde (pour affichage)
+     */
+    public double speedCasesPerSecond() {
+        return speedPerTick * GameTime.getTicksPerSecond();
+    }
+    
+    /**
+     * ✅ NOUVEAU : Retourne la vitesse en cases/tick (pour la logique)
+     */
+    public double speedPerTick() {
+        return speedPerTick;
+    }
 	
 	/** Get the bounty awarded for defeating the enemy. */
 	public int bounty() {
@@ -72,15 +83,20 @@ public class Enemy implements GameObject {
 	 * @param next La position cible à atteindre
 	 */
 	private void moveTowards(Position next) {
-		double dx = next.x() - this.position.x();
-		double dy = next.y() - this.position.y();
-		double dist = Math.sqrt(dx * dx + dy * dy);
-		if (dist == 0)
-			return;
+        double dx = next.x() - this.position.x();
+        double dy = next.y() - this.position.y();
+        double dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist == 0) return;
 
-		double move = Math.min(this.speed, dist);
-		this.position = new Position(this.position.x() + dx / dist * move, this.position.y() + dy / dist * move);
-	}
+        // ❌ ANCIEN : double move = Math.min(this.speed, dist);
+        // ✅ NOUVEAU : Utilise la vitesse par tick
+        double move = Math.min(this.speedPerTick, dist);
+        
+        this.position = new Position(
+            this.position.x() + dx / dist * move,
+            this.position.y() + dy / dist * move
+        );
+    }
 
 	/**
 	 * Gère l'action suivante. Ici, il ne s'agit pour un ennemi que d'avancer vers
@@ -103,19 +119,22 @@ public class Enemy implements GameObject {
 	}
 
 	@Override
-	/** Provides a string representation of the Enemy object. */
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(this.getClass().getName());
-		builder.append(": {id:");
-		builder.append(id);
-		builder.append(", position:");
-		builder.append(position);
-		builder.append(", health:");
-		builder.append(health);
-		builder.append(", speed:");
-		builder.append(speed);
-		builder.append("}");
-		return builder.toString();
-	}
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.getClass().getName());
+        builder.append(": {id:");
+        builder.append(id);
+        builder.append(", position:");
+        builder.append(position);
+        builder.append(", health:");
+        builder.append(health);
+        // ❌ ANCIEN : builder.append(", speed:"); builder.append(speed);
+        // ✅ NOUVEAU :
+        builder.append(", speedPerTick:");
+        builder.append(speedPerTick);
+        builder.append(", speedCasesPerSec:");
+        builder.append(speedCasesPerSecond());
+        builder.append("}");
+        return builder.toString();
+    }
 }

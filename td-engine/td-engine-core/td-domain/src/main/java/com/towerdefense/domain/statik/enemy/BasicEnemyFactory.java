@@ -12,20 +12,22 @@ import com.towerdefense.domain.map.EnemyPath;
 public class BasicEnemyFactory implements EnemyFactory {
 
 	private final int hp;
-	private final double speed;
+	/** Vitesse de déplacement en cases par seconde */
+	private final double speedCasesPerSecond;
 	private int bounty;
 
 	/** Constructeur de l'usine d'ennemis basiques. */
-	public BasicEnemyFactory(int hp, double speed, int bounty) {
+	public BasicEnemyFactory(int hp, double speedCasesPerSecond, int bounty) {
 		this.hp = hp;
-		this.speed = speed;
+		this.speedCasesPerSecond = speedCasesPerSecond;
 		this.bounty = bounty;
 	}
 
 	@Override
 	/** Crée un ennemi basique avec le chemin fourni. */
 	public Enemy create(EnemyPath path) {
-		return new Enemy(EntityId.random(), path, hp, speed, bounty);
+		// La conversion en cases/tick est gérée dans le constructeur d'Enemy
+		return new Enemy(EntityId.random(), path, hp, speedCasesPerSecond, bounty);
 	}
 
 }
