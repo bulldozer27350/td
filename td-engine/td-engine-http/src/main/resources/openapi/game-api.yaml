@@ -1,0 +1,258 @@
+openapi: 3.0.3
+
+info:
+  title: Tower Defense Game Engine API
+  description: Public HTTP API to interact with the Tower Defense game engine.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+
+  /game/state:
+    get:
+      summary: Get current game state
+      operationId: getGameState
+      responses:
+        '200':
+          description: Current game state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameState'
+
+  /game/tick:
+    post:
+      summary: Advance the game by one tick
+      operationId: tick
+      responses:
+        '204':
+          description: Tick executed
+
+  /game/commands/place-tower:
+    post:
+      summary: Place a tower
+      operationId: placeTower
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceTowerRequest'
+      responses:
+        '202':
+          description: Command accepted
+        '400':
+          description: Invalid command
+
+  /game/commands/upgrade-tower:
+    post:
+      summary: Upgrade a tower
+      operationId: upgradeTower
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpgradeTowerRequest'
+      responses:
+        '202':
+          description: Command accepted
+        '400':
+          description: Invalid command
+
+  /game/commands/sell-tower:
+    post:
+      summary: Sell a tower
+      operationId: sellTower
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SellTowerRequest'
+      responses:
+        '202':
+          description: Command accepted
+        '400':
+          description: Invalid command
+
+  /game/status:
+    get:
+      summary: Check if game is over
+      operationId: getGameStatus
+      responses:
+        '200':
+          description: Game status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameStatus'
+
+components:
+
+  schemas:
+
+    GameStatus:
+      type: object
+      properties:
+        gameOver:
+          type: boolean
+      required:
+        - gameOver
+
+    GameState:
+      type: object
+      description: Snapshot of the current game state
+      properties:
+        player:
+          $ref: '#/components/schemas/LevelPlayer'
+        towers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tower'
+        enemies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enemy'
+        projectiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Projectile'
+      required:
+        - player
+        - towers
+        - enemies
+        - projectiles
+
+    LevelPlayer:
+      type: object
+      properties:
+        id:
+          type: string
+        currentGold:
+          type: integer
+        currentLives:
+          type: integer
+        progress:
+          $ref: '#/components/schemas/LevelProgress'
+      required:
+        - id
+        - currentGold
+        - currentLives
+        - progress
+
+    LevelProgress:
+      type: object
+      properties:
+        levelIndex:
+          type: string
+        attackIndex:
+          type: integer
+      required:
+        - levelIndex
+        - attackIndex
+
+    Position:
+      type: object
+      properties:
+        x:
+          type: number
+          format: double
+        y:
+          type: number
+          format: double
+      required:
+        - x
+        - y
+
+    Tower:
+      type: object
+      properties:
+        id:
+          type: string
+        position:
+          $ref: '#/components/schemas/Position'
+        towerType:
+          type: string
+          enum: [MACHINE_GUN, SHOTGUN]
+        state:
+          type: string
+          enum: [BUILDING, UPDATING, RELOADING, READY]
+      required:
+        - id
+        - position
+        - towerType
+        - state
+
+    Enemy:
+      type: object
+      properties:
+        id:
+          type: string
+        position:
+          $ref: '#/components/schemas/Position'
+        maxHp:
+          type: integer
+        currentHp:
+          type: integer
+        isAlive:
+          type: boolean
+      required:
+        - id
+        - position
+        - maxHp
+        - currentHp
+        - isAlive
+
+    Projectile:
+      type: object
+      properties:
+        id:
+          type: string
+        position:
+          $ref: '#/components/schemas/Position'
+      required:
+        - id
+        - position
+
+    PlaceTowerRequest:
+      type: object
+      properties:
+        playerId:
+          type: string
+          format: uuid
+        towerType:
+          type: string
+          enum: [MACHINE_GUN, SHOTGUN]
+        x:
+          type: integer
+        y:
+          type: integer
+      required: [playerId, towerType, x, y]
+
+    UpgradeTowerRequest:
+      type: object
+      properties:
+        playerId:
+          type: string
+          format: uuid
+        towerXPosition:
+          type: integer
+        towerYPosition:
+          type: integer
+      required: [playerId, towerXPosition, towerYPosition]
+
+    SellTowerRequest:
+      type: object
+      properties:
+        playerId:
+          type: string
+          format: uuid
+        towerXPosition:
+          type: integer
+        towerYPosition:
+          type: integer
+      required: [playerId, towerXPosition, towerYPosition]

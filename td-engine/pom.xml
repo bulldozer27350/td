@@ -18,6 +18,7 @@
 	<modules>
 		<module>td-engine-api</module>
 		<module>td-engine-core</module>
+		<module>td-engine-http</module>
 		<!--Ce module exécute des tests mais certains sont encore en échec. Il
 		faudra attendre de les corriger avant de pousser ce code -->
 		<!--		<module>td-engine-tests</module>-->

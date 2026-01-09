@@ -10,7 +10,7 @@ import com.towerdefense.config.assembler.PathAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 
 @Configuration
-class EngineInternalConfiguration {
+public class EngineInternalConfiguration {
 
 	@Bean
 	EngineContext engineContext() {

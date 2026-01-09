@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.towerdefense.engine.api.GameEngineApi;
+import com.towerdefense.engine.api.GameRuntime;
 import com.towerdefense.engine.api.model.EnemyDTO;
 import com.towerdefense.engine.api.model.ProjectileDTO;
 import com.towerdefense.engine.api.model.TowerDTO;
@@ -34,11 +34,11 @@ import com.towerdefense.viewer.renderers.TowerRenderer;
  */
 public class ConsoleGameRunner implements CommandLineRunner {
 
-	private GameEngineApi gameEngine;
+	private final GameRuntime runtime;
 
-	public ConsoleGameRunner(GameEngineApi gameEngineApi) {
-		this.gameEngine = gameEngineApi;
-	}
+    public ConsoleGameRunner(GameRuntime runtime) {
+        this.runtime = runtime;
+    }
 
 	@Override
 	/**
@@ -47,53 +47,62 @@ public class ConsoleGameRunner implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		System.out.println("=== Tower Defense Console Runner (Interactive) ===");
 
-	    // Viewer
-	    RendererRegistry registry = new RendererRegistry();
-	    registry.register(EnemyDTO.class, new EnemyRenderer());
-	    registry.register(TowerDTO.class, new TowerRenderer());
-	    registry.register(ProjectileDTO.class, new ProjectileRenderer());
-	    GameStateAsciiRenderer asciiRenderer = new GameStateAsciiRenderer(registry);
+        // Viewer
+        RendererRegistry registry = new RendererRegistry();
+        registry.register(EnemyDTO.class, new EnemyRenderer());
+        registry.register(TowerDTO.class, new TowerRenderer());
+        registry.register(ProjectileDTO.class, new ProjectileRenderer());
 
-	    ConsoleViewer viewer = new ConsoleViewer(asciiRenderer);
-	    FileViewer fileviewer = new FileViewer(asciiRenderer,
-				"D:\\Depots\\tower_defense\\td-console-viewer\\src\\test\\resources\\output.txt");
+        GameStateAsciiRenderer asciiRenderer = new GameStateAsciiRenderer(registry);
 
-	    GameConfig gameConfig = new GameConfig(
-	            new LevelConfigProvider().providesDTO(),
-	            new PathsConfigProvider().providesDTO(),
-	            new TowersConfigProvider().providesDTO(),
-	            new EnemiesConfigProvider().providesDTO());
+        ConsoleViewer viewer = new ConsoleViewer(asciiRenderer);
+        FileViewer fileViewer = new FileViewer(
+                asciiRenderer,
+                "D:\\Depots\\tower_defense\\td-console-viewer\\src\\test\\resources\\output.txt"
+        );
 
-	    gameEngine.addObserver(viewer);
-	    gameEngine.addObserver(fileviewer);
-	    gameEngine.initialize(gameConfig);
+        // Observers
+        runtime.addObserver(viewer);
+        runtime.addObserver(fileViewer);
 
-	    Scanner scanner = new Scanner(System.in);
+        // Game configuration
+        GameConfig gameConfig = new GameConfig(
+                new LevelConfigProvider().providesDTO(),
+                new PathsConfigProvider().providesDTO(),
+                new TowersConfigProvider().providesDTO(),
+                new EnemiesConfigProvider().providesDTO()
+        );
 
-	    while (!gameEngine.isGameOver()) {
+        runtime.initialize(gameConfig);
 
-	        System.out.println();
-	        System.out.println("ENTER = tick | command = action (buy, sell or upgrade) | quit = exit");
-	        System.out.print("> ");
+        Scanner scanner = new Scanner(System.in);
 
-	        String input = scanner.nextLine().trim();
+        while (!runtime.isGameOver()) {
 
-	        if (input.isEmpty()) {
-	            gameEngine.tick();
-	        } else if ("quit".equalsIgnoreCase(input)) {
-	            break;
-	        } else {
-	            try {
-	                GameCommand command = parseCommand(input);
-	                gameEngine.dispatch(command);
-	            } catch (IllegalArgumentException e) {
-	                System.out.println("A problem occurs while executing command : " + e.getMessage());
-	            }
-	        }
-	    }
+            System.out.println();
+            System.out.println("ENTER = tick | command = action | quit = exit");
+            System.out.print("> ");
 
-		System.out.println("\n=== FIN ===");
-	}
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                runtime.tick();
+            } else if ("quit".equalsIgnoreCase(input)) {
+                break;
+            } else {
+                try {
+                    GameCommand command = parseCommand(input);
+                    runtime.submit(command);
+                } catch (IllegalArgumentException e) {
+                    System.out.println(
+                        "A problem occurs while executing command : " + e.getMessage()
+                    );
+                }
+            }
+        }
+
+        System.out.println("\n=== FIN ===");
+    }
 	
 	private GameCommand parseCommand(String input) {
 	    String[] tokens = input.split("\\s+");
