@@ -13,4 +13,8 @@ public class PathsConfig {
     public List<PathConfig> getPaths() {
         return paths;
     }
+    
+    public void setPaths(List<PathConfig> paths) {
+		this.paths = paths;
+	}
 }

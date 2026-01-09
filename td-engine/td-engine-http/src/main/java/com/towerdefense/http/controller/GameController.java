@@ -11,21 +11,26 @@ import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
 import com.towerdefense.engine.api.model.command.SellTowerCommand;
 import com.towerdefense.engine.api.model.command.UpgradeTowerCommand;
 import com.towerdefense.http.api.DefaultApi;
+import com.towerdefense.http.model.GameConfig;
 import com.towerdefense.http.model.GameState;
 import com.towerdefense.http.model.GameStatus;
 import com.towerdefense.http.model.PlaceTowerRequest;
 import com.towerdefense.http.model.SellTowerRequest;
 import com.towerdefense.http.model.UpgradeTowerRequest;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class GameController implements DefaultApi {
 
     private final GameRuntime gameRuntime;
     private final GameStateMapper mapper;
+    private final GameConfigMapper configMapper;
 
-    public GameController(GameRuntime gameRuntime, GameStateMapper mapper) {
+    public GameController(GameRuntime gameRuntime, GameStateMapper mapper, GameConfigMapper configMapper) {
         this.gameRuntime = gameRuntime;
         this.mapper = mapper;
+        this.configMapper = configMapper;
     }
 
     @Override
@@ -44,13 +49,13 @@ public class GameController implements DefaultApi {
     @Override
     public ResponseEntity<Void> placeTower(PlaceTowerRequest request) {
         // Convertir le UUID String en UUID
-        UUID playerId = request.getPlayerId();
+        UUID playerId = UUID.fromString(request.getPlayerId());
         
         // Créer la commande avec les bons paramètres dans le bon ordre
         PlaceTowerCommand command = new PlaceTowerCommand(
             request.getX(),
             request.getY(),
-            request.getTowerType().name(),
+            request.getTowerType(),
             playerId
         );
         
@@ -60,7 +65,7 @@ public class GameController implements DefaultApi {
 
     @Override
     public ResponseEntity<Void> upgradeTower(UpgradeTowerRequest request) {
-        UUID playerId = request.getPlayerId();
+        UUID playerId = UUID.fromString(request.getPlayerId());
         
         UpgradeTowerCommand command = new UpgradeTowerCommand(
             request.getTowerXPosition(),
@@ -74,7 +79,7 @@ public class GameController implements DefaultApi {
 
     @Override
     public ResponseEntity<Void> sellTower(SellTowerRequest request) {
-        UUID playerId = request.getPlayerId();
+        UUID playerId = UUID.fromString(request.getPlayerId());
         
         SellTowerCommand command = new SellTowerCommand(
             request.getTowerXPosition(),
@@ -92,4 +97,11 @@ public class GameController implements DefaultApi {
         status.setGameOver(gameRuntime.isGameOver());
         return ResponseEntity.ok(status);
     }
+
+	@Override
+	public ResponseEntity<Void> initializeGame(@Valid GameConfig gameConfig) {
+		com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
+	    gameRuntime.initialize(config);
+	    return ResponseEntity.noContent().build();
+	}
 }

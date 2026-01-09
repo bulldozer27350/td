@@ -13,4 +13,10 @@ public class TowersConfig {
     public List<TowerTypeConfig> getTowers() {
         return towers;
     }
+
+	public void setTowers(List<TowerTypeConfig> towers) {
+		this.towers = towers;
+	}
+    
+    
 }

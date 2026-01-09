@@ -13,4 +13,9 @@ public class EnemiesConfig {
     public List<EnemyTypeConfig> getEnemies() {
         return enemies;
     }
+
+	public void setEnemies(List<EnemyTypeConfig> enemies) {
+		this.enemies = enemies;
+	}
+    
 }

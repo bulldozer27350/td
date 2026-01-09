@@ -19,4 +19,14 @@ public class PathConfig {
 	public List<PointConfig> getPoints() {
 		return points;
 	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setPoints(List<PointConfig> points) {
+		this.points = points;
+	}
+	
+	
 }

@@ -46,32 +46,8 @@ public class GameStateMapper {
         Tower tower = new Tower();
         tower.setId(dto.id());
         tower.setPosition(toHttpPosition(dto.position()));
-        switch (dto.towerType()) {
-		case MACHINE_GUN:
-			tower.setTowerType(com.towerdefense.http.model.Tower.TowerTypeEnum.MACHINE_GUN);
-			break;
-		case SHOTGUN:
-			tower.setTowerType(com.towerdefense.http.model.Tower.TowerTypeEnum.SHOTGUN);
-			break;
-		default:
-			break;
-        }
-        switch (dto.state()) {
-		case BUILDING:
-			tower.setState(com.towerdefense.http.model.Tower.StateEnum.BUILDING);
-			break;
-		case READY:
-			tower.setState(com.towerdefense.http.model.Tower.StateEnum.READY);
-			break;
-		case RELOADING:
-			tower.setState(com.towerdefense.http.model.Tower.StateEnum.RELOADING);
-			break;
-		case UPDATING:
-			tower.setState(com.towerdefense.http.model.Tower.StateEnum.UPDATING);
-			break;
-		default:
-			break;
-		}
+        tower.setTowerType(dto.towerType().name());
+        tower.setState(dto.state().name());
         return tower;
     }
 

@@ -11,6 +11,22 @@ servers:
 
 paths:
 
+  /game/initialize:
+    post:
+      summary: Initialize a new game with a full configuration
+      operationId: initializeGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameConfig'
+      responses:
+        '204':
+          description: Game initialized
+        '400':
+          description: Invalid game configuration
+
   /game/state:
     get:
       summary: Get current game state
@@ -95,17 +111,175 @@ components:
 
   schemas:
 
+    GameConfig:
+      type: object
+      properties:
+        levelConfig:
+          $ref: '#/components/schemas/LevelConfig'
+        pathsConfig:
+          $ref: '#/components/schemas/PathsConfig'
+        towersConfig:
+          $ref: '#/components/schemas/TowersConfig'
+        enemiesConfig:
+          $ref: '#/components/schemas/EnemiesConfig'
+      required: [levelConfig, pathsConfig, towersConfig, enemiesConfig]
+
+    LevelConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        startingLives:
+          type: integer
+        startingMoney:
+          type: integer
+        attacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttackConfig'
+      required: [id, startingLives, startingMoney, attacks]
+
+    AttackConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        waves:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaveConfig'
+      required: [id, waves]
+
+    WaveConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        startTick:
+          type: integer
+        spawnInterval:
+          type: integer
+        count:
+          type: integer
+        enemyType:
+          type: string
+        pathId:
+          type: string
+      required: [id, startTick, spawnInterval, count, enemyType, pathId]
+
+    PathsConfig:
+      type: object
+      properties:
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PathConfig'
+      required: [paths]
+
+    PathConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointConfig'
+      required: [id, points]
+
+    PointConfig:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+      required: [x, y]
+
+    EnemiesConfig:
+      type: object
+      properties:
+        enemies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnemyTypeConfig'
+      required: [enemies]
+
+    EnemyTypeConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        hp:
+          type: integer
+        speed:
+          type: number
+          format: double
+        bounty:
+          type: integer
+      required: [id, hp, speed, bounty]
+
+    TowersConfig:
+      type: object
+      properties:
+        towers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerTypeConfig'
+      required: [towers]
+
+    TowerTypeConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerLevelConfig'
+      required: [id, name, levels]
+
+    TowerLevelConfig:
+      type: object
+      properties:
+        level:
+          type: integer
+        upgradeCost:
+          type: integer
+        sellValue:
+          type: integer
+        range:
+          type: number
+          format: double
+        damage:
+          type: integer
+        reloadSeconds:
+          type: number
+          format: double
+        buildTimeTicks:
+          type: integer
+      required:
+        - level
+        - upgradeCost
+        - sellValue
+        - range
+        - damage
+        - reloadSeconds
+        - buildTimeTicks
+
     GameStatus:
       type: object
       properties:
         gameOver:
           type: boolean
-      required:
-        - gameOver
+      required: [gameOver]
+
+    # ---- Existing runtime view objects (unchanged) ----
 
     GameState:
       type: object
-      description: Snapshot of the current game state
       properties:
         player:
           $ref: '#/components/schemas/LevelPlayer'
@@ -121,11 +295,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Projectile'
-      required:
-        - player
-        - towers
-        - enemies
-        - projectiles
+      required: [player, towers, enemies, projectiles]
 
     LevelPlayer:
       type: object
@@ -138,11 +308,7 @@ components:
           type: integer
         progress:
           $ref: '#/components/schemas/LevelProgress'
-      required:
-        - id
-        - currentGold
-        - currentLives
-        - progress
+      required: [id, currentGold, currentLives, progress]
 
     LevelProgress:
       type: object
@@ -151,9 +317,7 @@ components:
           type: string
         attackIndex:
           type: integer
-      required:
-        - levelIndex
-        - attackIndex
+      required: [levelIndex, attackIndex]
 
     Position:
       type: object
@@ -164,9 +328,7 @@ components:
         y:
           type: number
           format: double
-      required:
-        - x
-        - y
+      required: [x, y]
 
     Tower:
       type: object
@@ -177,15 +339,9 @@ components:
           $ref: '#/components/schemas/Position'
         towerType:
           type: string
-          enum: [MACHINE_GUN, SHOTGUN]
         state:
           type: string
-          enum: [BUILDING, UPDATING, RELOADING, READY]
-      required:
-        - id
-        - position
-        - towerType
-        - state
+      required: [id, position, towerType, state]
 
     Enemy:
       type: object
@@ -200,12 +356,7 @@ components:
           type: integer
         isAlive:
           type: boolean
-      required:
-        - id
-        - position
-        - maxHp
-        - currentHp
-        - isAlive
+      required: [id, position, maxHp, currentHp, isAlive]
 
     Projectile:
       type: object
@@ -214,19 +365,15 @@ components:
           type: string
         position:
           $ref: '#/components/schemas/Position'
-      required:
-        - id
-        - position
+      required: [id, position]
 
     PlaceTowerRequest:
       type: object
       properties:
         playerId:
           type: string
-          format: uuid
         towerType:
           type: string
-          enum: [MACHINE_GUN, SHOTGUN]
         x:
           type: integer
         y:
@@ -238,7 +385,6 @@ components:
       properties:
         playerId:
           type: string
-          format: uuid
         towerXPosition:
           type: integer
         towerYPosition:
@@ -250,7 +396,6 @@ components:
       properties:
         playerId:
           type: string
-          format: uuid
         towerXPosition:
           type: integer
         towerYPosition:

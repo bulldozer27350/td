@@ -28,5 +28,11 @@ public class TowerTypeConfig {
 
 	/** Get the list of tower level configurations. */
     public List<TowerLevelConfig> getLevels() { return levels; }
+
+	public void setLevels(List<TowerLevelConfig> levels) {
+		this.levels = levels;
+	}
+    
+    
 }
 
