@@ -41,23 +41,38 @@ public class GameStateMapper {
 	}
 
 	private static ProjectileDTO toDTO(Projectile projectile) {
-		return new ProjectileDTO(projectile.id().toString(),
+		return new ProjectileDTO(projectile.id().value().toString(),
 				new PositionDTO(projectile.position().x(), projectile.position().y()));
 	}
 
 	private static EnemyDTO toDTO(Enemy enemy) {
-		return new EnemyDTO(enemy.id().toString(), new PositionDTO(enemy.position().x(), enemy.position().y()),
+		return new EnemyDTO(enemy.id().value().toString(), new PositionDTO(enemy.position().x(), enemy.position().y()),
 				enemy.health().max(), enemy.health().current(), !(enemy.isAtEnd() && enemy.health().current() > 0));
 	}
 
 	private static TowerDTO toDTO(Tower tower) {
-		return new TowerDTO(tower.id().toString(), new PositionDTO(tower.position().x(), tower.position().y()), null,
+		return new TowerDTO(tower.id().value().toString(), new PositionDTO(tower.position().x(), tower.position().y()), null,
 				null);
 	}
 
 	private static LevelPlayerDTO toDTO(PlayerState player, LevelProgress levelProgress) {
-		return new LevelPlayerDTO(player.id().toString(), player.gold(), player.lives(),
-				new LevelProgressDTO(levelProgress.levelIndex(), levelProgress.attackIndex()));
+		LevelProgressDTO progressDTO;
+		
+		if (levelProgress == null) {
+			// Par défaut, on crée un progress avec des valeurs initiales
+			progressDTO = new LevelProgressDTO("unknown", 0);
+		} else {
+			progressDTO = new LevelProgressDTO(
+				levelProgress.levelIndex(), 
+				levelProgress.attackIndex()
+			);
+		}
+		
+		return new LevelPlayerDTO(
+			player.id().value().toString(), 
+			player.gold(), 
+			player.lives(),
+			progressDTO
+		);
 	}
-
 }

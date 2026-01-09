@@ -26,7 +26,7 @@ class WaveWithTowerScenarioTest {
         int initialLives = engine.getState().player().currentLives();
 
         // Place une tour sur le chemin
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         
         // Fait tourner le jeu un certain temps
         for (int i = 0; i < 300; i++) {
@@ -70,8 +70,8 @@ class WaveWithTowerScenarioTest {
         UUID playerId = UUID.fromString(engineWithTowers.getState().player().id());
         
         // Place plusieurs tours
-        engineWithTowers.dispatch(new PlaceTowerCommand(3, 3, "MACHINE_GUN", playerId));
-        engineWithTowers.dispatch(new PlaceTowerCommand(7, 7, "MACHINE_GUN", playerId));
+        engineWithTowers.dispatch(new PlaceTowerCommand(3, 3, "machinegun", playerId));
+        engineWithTowers.dispatch(new PlaceTowerCommand(7, 7, "machinegun", playerId));
         
         for (int i = 0; i < 200; i++) {
             engineWithTowers.tick();
@@ -96,7 +96,7 @@ class WaveWithTowerScenarioTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
         // Place une tour
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         
         boolean projectilesSeen = false;
         

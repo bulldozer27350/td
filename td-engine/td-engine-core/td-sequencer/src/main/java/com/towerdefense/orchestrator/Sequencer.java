@@ -106,6 +106,10 @@ public class Sequencer {
 			}
 			return false;
 		});
+		
+		if (state.player().lives() <= 0) {
+			state.setState(StateEnum.TERMINATED);
+		}
 
 		this.observers.forEach(o -> o.onStateUpdated(GameStateMapper.toDTO(state), tick));
 		if (allTicksEnded(state)) {

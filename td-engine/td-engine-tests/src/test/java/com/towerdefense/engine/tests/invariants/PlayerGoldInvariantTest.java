@@ -28,7 +28,7 @@ class PlayerGoldInvariantTest {
 
         // Tentative d'achat de plusieurs tours pour épuiser l'argent
         for (int i = 0; i < 20; i++) {
-            engine.dispatch(new PlaceTowerCommand(i, 0, "MACHINE_GUN", playerId));
+            engine.dispatch(new PlaceTowerCommand(i, 0, "machinegun", playerId));
         }
 
         // L'argent ne doit jamais être négatif
@@ -46,7 +46,7 @@ class PlayerGoldInvariantTest {
         int initialGold = engine.getState().player().currentGold();
         UUID playerId = UUID.fromString(engine.getState().player().id());
 
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         engine.tick();
 
         int finalGold = engine.getState().player().currentGold();
@@ -65,7 +65,7 @@ class PlayerGoldInvariantTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
         // Place une tour pour tuer les ennemis
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         
         int goldBeforeKills = engine.getState().player().currentGold();
         

@@ -19,6 +19,7 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.StateEnum;
+import com.towerdefense.domain.dynamik.level.LevelProgress;
 import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.statik.level.LevelScenarioDefinition;
@@ -89,6 +90,9 @@ public class GameEngineApiImpl implements GameEngineApi {
 	public void initialize(GameConfig gameConfig) {
 		this.configureLevel(gameConfig);
 		this.configureGameMap();
+		this.state.setLevelProgress(
+		        new LevelProgress(gameConfig.levelConfig().getId(), 0)
+		    );
 		this.state.setState(StateEnum.IN_PROGRESS);
 		this.tickNumber = 0;
 	}

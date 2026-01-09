@@ -82,10 +82,19 @@ public class GameState {
 
 	/** Getter and Setter for Level Progress */
 	public LevelProgress levelProgress() {
+		if (levelProgress == null) {
+			throw new IllegalStateException(
+				"LevelProgress has not been initialized. " +
+				"Call setLevelProgress() before accessing the game state."
+			);
+		}
 		return levelProgress;
 	}
 
 	public void setLevelProgress(LevelProgress progress) {
+		if (progress == null) {
+			throw new IllegalArgumentException("LevelProgress cannot be null");
+		}
 		this.levelProgress = progress;
 	}
 

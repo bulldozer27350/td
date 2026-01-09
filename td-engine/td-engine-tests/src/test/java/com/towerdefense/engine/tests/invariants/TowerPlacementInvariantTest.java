@@ -23,13 +23,13 @@ class TowerPlacementInvariantTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
 
         // Place une première tour
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         engine.tick();
         
         int towerCountAfterFirst = engine.getState().towers().size();
         
         // Tente de placer une deuxième tour au même endroit
-        engine.dispatch(new PlaceTowerCommand(5, 5, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
         engine.tick();
         
         int towerCountAfterSecond = engine.getState().towers().size();
@@ -58,7 +58,7 @@ class TowerPlacementInvariantTest {
                     int goldBefore = engine.getState().player().currentGold();
                     int towersBefore = engine.getState().towers().size();
                     
-                    engine.dispatch(new PlaceTowerCommand(x, y, "MACHINE_GUN", playerId));
+                    engine.dispatch(new PlaceTowerCommand(x, y, "machinegun", playerId));
                     engine.tick();
                     
                     // Vérifie qu'aucune tour n'a été ajoutée
@@ -70,7 +70,7 @@ class TowerPlacementInvariantTest {
                     return;
                 }
                 
-                engine.dispatch(new PlaceTowerCommand(x, y, "MACHINE_GUN", playerId));
+                engine.dispatch(new PlaceTowerCommand(x, y, "machinegun", playerId));
                 engine.tick();
             }
         }
@@ -80,13 +80,12 @@ class TowerPlacementInvariantTest {
     void tower_appears_in_game_state_after_build_time() {
         GameEngineApi engine = TestGameEngineFactory.builder()
                 .build();
-
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
         int initialCount = engine.getState().towers().size();
         
         // Place une tour
-        engine.dispatch(new PlaceTowerCommand(7, 7, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(7, 7, "machinegun", playerId));
         
         // Attend que la construction se termine (buildTimeTicks)
         for (int i = 0; i < 20; i++) {
@@ -106,7 +105,7 @@ class TowerPlacementInvariantTest {
 
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
-        engine.dispatch(new PlaceTowerCommand(3, 3, "MACHINE_GUN", playerId));
+        engine.dispatch(new PlaceTowerCommand(3, 3, "machinegun", playerId));
         engine.tick();
         
         int towerCount = engine.getState().towers().size();

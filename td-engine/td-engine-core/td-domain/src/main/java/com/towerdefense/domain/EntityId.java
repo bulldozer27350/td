@@ -6,4 +6,6 @@ public record EntityId(UUID value) {
 	public static EntityId random() {
 		return new EntityId(UUID.randomUUID());
 	}
+	
+	UUID getValue(){return value;}
 }
