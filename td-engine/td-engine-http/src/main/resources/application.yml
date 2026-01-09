@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  
+spring:
+  application:
+    name: tower-defense-http
+    
+  # Configuration Jackson pour JSON
+  jackson:
+    serialization:
+      indent-output: true
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# Configuration Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# Logs
+logging:
+  level:
+    root: INFO
+    com.towerdefense: DEBUG
+    org.springframework.web: DEBUG

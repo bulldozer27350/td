@@ -1,6 +1,5 @@
 package com.towerdefense.config;
 
-import java.util.List;
 import java.util.Map;
 
 import com.towerdefense.config.registry.EnemyFactoryRegistry;

@@ -11,6 +11,7 @@ import com.towerdefense.config.assembler.LevelAssembler;
 import com.towerdefense.config.assembler.PathAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 import com.towerdefense.engine.api.GameEngineApi;
+import com.towerdefense.engine.api.GameRuntime;
 import com.towerdefense.orchestrator.runtime.factory.LevelScenarioFactory;
 import com.towerdefense.services.GameCommandHandler;
 import com.towerdefense.services.TowerServices;
@@ -19,15 +20,22 @@ import com.towerdefense.services.TowerServices;
 public class GameEngineConfiguration {
 
 	@Bean
-	GameEngineApi getGameEngineApi(LevelScenarioFactory levelScenarioFactory, 
-			EngineContext context, 
-			TowerServices towerServices, 
-			TowerTypeAssembler towerTypeAssembler,
-			EnemyFactoryAssembler enemyFactoryAssembler, 
-			LevelAssembler levelAssembler,
-			PathAssembler pathAssembler, Map<Class<?>, GameCommandHandler<?>> gameCommandHandlers) {
-		return new GameEngineApiImpl(levelScenarioFactory, context,
-				towerTypeAssembler, enemyFactoryAssembler, levelAssembler, pathAssembler, gameCommandHandlers);
+	public LevelScenarioFactory levelScenarioFactory() {
+		return new LevelScenarioFactory();
 	}
-	
+
+	@Bean
+	GameEngineApi getGameEngineApi(LevelScenarioFactory levelScenarioFactory, EngineContext context,
+			TowerServices towerServices, TowerTypeAssembler towerTypeAssembler,
+			EnemyFactoryAssembler enemyFactoryAssembler, LevelAssembler levelAssembler, PathAssembler pathAssembler,
+			Map<Class<?>, GameCommandHandler<?>> gameCommandHandlers) {
+		return new GameEngineApiImpl(levelScenarioFactory, context, towerTypeAssembler, enemyFactoryAssembler,
+				levelAssembler, pathAssembler, gameCommandHandlers);
+	}
+
+	@Bean
+	GameRuntime getGameRuntime(GameEngineApi gameEngineApi) {
+		return new GameRuntimeImpl(gameEngineApi);
+	}
+
 }
