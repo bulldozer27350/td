@@ -128,30 +128,18 @@ public class Tower implements GameObject {
 		return currentStats().damage();
 	}
 
-	/**
-     * ✅ MODIFIÉ : Retourne le temps de rechargement en secondes (pour affichage)
-     */
     public double reloadSeconds() {
         return currentStats().reloadSeconds();
     }
 
-    /**
-     * ✅ NOUVEAU : Retourne le temps de rechargement en ticks (pour la logique)
-     */
     public int reloadTicks() {
         return GameTime.secondsToTicks(currentStats().reloadSeconds());
     }
 
-    /**
-     * ✅ MODIFIÉ : Indique si la tour est prête à tirer
-     */
     public boolean isReady() {
         return cooldownRemainingTicks <= 0;
     }
 
-    /**
-     * ✅ MODIFIÉ : Appelé à chaque tick
-     */
     public void tick() {
         if (upgradeRemainingTicks > 0) {
             upgradeRemainingTicks--;
@@ -161,39 +149,35 @@ public class Tower implements GameObject {
             return;
         }
         
-        // ❌ ANCIEN : if (cooldownRemaining > 0) { cooldownRemaining -= 1; }
-        // ✅ NOUVEAU :
         if (cooldownRemainingTicks > 0) {
             cooldownRemainingTicks--;
         }
     }
 
-    /**
-     * ✅ MODIFIÉ : Déclenche un tir et active le cooldown
-     */
+    public TowerType type() {
+        return type;
+    }
+    
     public void triggerShot() {
-        // ❌ ANCIEN : cooldownRemaining = currentStats().reloadSeconds();
-        // ✅ NOUVEAU :
         cooldownRemainingTicks = reloadTicks();
     }
 
-    // ... reste du code inchangé ...
-    
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+    	StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getName());
         builder.append(": {id:");
         builder.append(id);
         builder.append(", position:");
         builder.append(position);
+        builder.append(", type:");
+        builder.append(type.name());
         builder.append(", range:");
         builder.append(currentStats().range());
         builder.append(", reloadSeconds:");
         builder.append(currentStats().reloadSeconds());
         builder.append(", ready:");
         builder.append(isReady());
-        // ✅ AJOUT pour debug :
         builder.append(", cooldownTicks:");
         builder.append(cooldownRemainingTicks);
         builder.append("}");

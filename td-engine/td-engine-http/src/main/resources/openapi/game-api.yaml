@@ -23,9 +23,34 @@ paths:
               $ref: '#/components/schemas/GameConfig'
       responses:
         '204':
-          description: Game initialized
+          description: Game initialized successfully
         '400':
           description: Invalid game configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unknownTowerType:
+                  summary: Unknown tower type
+                  value:
+                    errorCode: "INVALID_CONFIG"
+                    message: "Invalid tower type configuration: Unknown tower type: laser"
+                    status: 400
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      configType: "tower type"
+                      towerTypeId: "laser"
+                unknownEnemyType:
+                  summary: Unknown enemy type
+                  value:
+                    errorCode: "INVALID_CONFIG"
+                    message: "Invalid enemy type configuration: Unknown enemy type: dragon"
+                    status: 400
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      configType: "enemy type"
+                      enemyTypeId: "dragon"
 
   /game/state:
     get:
@@ -38,6 +63,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GameState'
+        '412':
+          description: Game not initialized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "GAME_NOT_INITIALIZED"
+                message: "Game has not been initialized"
+                status: 412
+                timestamp: "2026-01-10T14:30:00"
+                details: {}
 
   /game/tick:
     post:
@@ -45,7 +82,19 @@ paths:
       operationId: tick
       responses:
         '204':
-          description: Tick executed
+          description: Tick executed successfully
+        '409':
+          description: Cannot tick (game over)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "GAME_OVER"
+                message: "Cannot perform action: game is over"
+                status: 409
+                timestamp: "2026-01-10T14:30:00"
+                details: {}
 
   /game/commands/place-tower:
     post:
@@ -59,9 +108,59 @@ paths:
               $ref: '#/components/schemas/PlaceTowerRequest'
       responses:
         '202':
-          description: Command accepted
+          description: Command accepted and queued
         '400':
-          description: Invalid command
+          description: Invalid command or unknown tower type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                insufficientGold:
+                  summary: Not enough gold
+                  value:
+                    errorCode: "INSUFFICIENT_GOLD"
+                    message: "Insufficient gold: required 100, available 50"
+                    status: 400
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      required: 100
+                      available: 50
+                unknownTowerType:
+                  summary: Unknown tower type
+                  value:
+                    errorCode: "INVALID_CONFIG"
+                    message: "Unknown tower type: laser"
+                    status: 400
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      towerTypeId: "laser"
+        '409':
+          description: Position occupied or game state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                positionOccupied:
+                  summary: Position already occupied
+                  value:
+                    errorCode: "POSITION_OCCUPIED"
+                    message: "Position (5, 5) is already occupied by tower abc-123"
+                    status: 409
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      x: 5
+                      y: 5
+                      existingTowerId: "abc-123"
+                gameOver:
+                  summary: Game is over
+                  value:
+                    errorCode: "GAME_OVER"
+                    message: "Cannot perform action: game is over"
+                    status: 409
+                    timestamp: "2026-01-10T14:30:00"
+                    details: {}
 
   /game/commands/upgrade-tower:
     post:
@@ -75,9 +174,62 @@ paths:
               $ref: '#/components/schemas/UpgradeTowerRequest'
       responses:
         '202':
-          description: Command accepted
+          description: Command accepted and queued
         '400':
-          description: Invalid command
+          description: Insufficient gold
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "INSUFFICIENT_GOLD"
+                message: "Insufficient gold: required 200, available 150"
+                status: 400
+                timestamp: "2026-01-10T14:30:00"
+                details:
+                  required: 200
+                  available: 150
+        '404':
+          description: Tower not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "ENTITY_NOT_FOUND"
+                message: "Tower with id abc-123 not found"
+                status: 404
+                timestamp: "2026-01-10T14:30:00"
+                details:
+                  entityType: "Tower"
+                  entityId: "abc-123"
+        '409':
+          description: Tower cannot be upgraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                maxLevel:
+                  summary: Max level reached
+                  value:
+                    errorCode: "TOWER_MAX_LEVEL"
+                    message: "Tower abc-123 has reached max level 3"
+                    status: 409
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      towerId: "abc-123"
+                      currentLevel: 3
+                underConstruction:
+                  summary: Tower under construction
+                  value:
+                    errorCode: "TOWER_CANNOT_UPGRADE"
+                    message: "Tower abc-123 cannot be upgraded: tower is currently under construction"
+                    status: 409
+                    timestamp: "2026-01-10T14:30:00"
+                    details:
+                      towerId: "abc-123"
+                      reason: "tower is currently under construction"
 
   /game/commands/sell-tower:
     post:
@@ -91,9 +243,35 @@ paths:
               $ref: '#/components/schemas/SellTowerRequest'
       responses:
         '202':
-          description: Command accepted
-        '400':
-          description: Invalid command
+          description: Command accepted and queued
+        '404':
+          description: Tower not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "ENTITY_NOT_FOUND"
+                message: "Tower with id abc-123 not found"
+                status: 404
+                timestamp: "2026-01-10T14:30:00"
+                details:
+                  entityType: "Tower"
+                  entityId: "abc-123"
+        '409':
+          description: Tower cannot be sold
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errorCode: "TOWER_CANNOT_SELL"
+                message: "Tower abc-123 cannot be sold: tower is currently under construction"
+                status: 409
+                timestamp: "2026-01-10T14:30:00"
+                details:
+                  towerId: "abc-123"
+                  reason: "tower is currently under construction"
 
   /game/status:
     get:
@@ -110,6 +288,67 @@ paths:
 components:
 
   schemas:
+
+    # ========================================================================
+    # ERROR RESPONSE SCHEMA
+    # ========================================================================
+    
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+        - status
+        - timestamp
+        - details
+      properties:
+        errorCode:
+          type: string
+          description: Machine-readable error code for client handling
+          enum:
+            - INSUFFICIENT_GOLD
+            - POSITION_OCCUPIED
+            - TOWER_NOT_FOUND
+            - ENTITY_NOT_FOUND
+            - TOWER_CANNOT_UPGRADE
+            - TOWER_CANNOT_SELL
+            - TOWER_MAX_LEVEL
+            - GAME_OVER
+            - GAME_NOT_INITIALIZED
+            - LEVEL_PROGRESS_NOT_INITIALIZED
+            - INVALID_CONFIG
+            - UNKNOWN_ENEMY_TYPE
+            - UNKNOWN_TOWER_TYPE
+            - UNKNOWN_PATH
+            - UNAUTHORIZED_ACTION
+            - INVALID_ARGUMENT
+            - INVALID_STATE
+            - INTERNAL_ERROR
+          example: "INSUFFICIENT_GOLD"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Insufficient gold: required 100, available 50"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+          example: "2026-01-10T14:30:00"
+        details:
+          type: object
+          description: Additional context-specific information
+          additionalProperties: true
+          example:
+            required: 100
+            available: 50
+
+    # ========================================================================
+    # CONFIGURATION SCHEMAS (unchanged)
+    # ========================================================================
 
     GameConfig:
       type: object
@@ -276,7 +515,9 @@ components:
           type: boolean
       required: [gameOver]
 
-    # ---- Existing runtime view objects (unchanged) ----
+    # ========================================================================
+    # RUNTIME STATE SCHEMAS
+    # ========================================================================
 
     GameState:
       type: object
@@ -339,6 +580,7 @@ components:
           $ref: '#/components/schemas/Position'
         towerType:
           type: string
+          description: ID of the tower type (e.g., "machinegun", "shotgun")
         state:
           type: string
       required: [id, position, towerType, state]
@@ -367,6 +609,10 @@ components:
           $ref: '#/components/schemas/Position'
       required: [id, position]
 
+    # ========================================================================
+    # COMMAND SCHEMAS
+    # ========================================================================
+
     PlaceTowerRequest:
       type: object
       properties:
@@ -374,6 +620,7 @@ components:
           type: string
         towerType:
           type: string
+          description: ID of the tower type (e.g., "machinegun", "shotgun")
         x:
           type: integer
         y:

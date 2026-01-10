@@ -16,6 +16,7 @@ import com.towerdefense.engine.api.model.LevelProgressDTO;
 import com.towerdefense.engine.api.model.PositionDTO;
 import com.towerdefense.engine.api.model.ProjectileDTO;
 import com.towerdefense.engine.api.model.TowerDTO;
+import com.towerdefense.engine.api.model.TowerStateEnum;
 
 public class GameStateMapper {
 
@@ -51,28 +52,31 @@ public class GameStateMapper {
 	}
 
 	private static TowerDTO toDTO(Tower tower) {
-		return new TowerDTO(tower.id().value().toString(), new PositionDTO(tower.position().x(), tower.position().y()), null,
-				null);
+		// Détermine l'état de la tour
+		String state;
+		if (tower.isUnderBuilding()) {
+			state = "BUILDING";
+		} else if (!tower.isReady()) {
+			state = "RELOADING";
+		} else {
+			state = "READY";
+		}
+
+		return new TowerDTO(tower.id().value().toString(), new PositionDTO(tower.position().x(), tower.position().y()),
+				tower.type().name(), // ✅ Retourne directement l'ID du type (String)
+				TowerStateEnum.valueOf(state));
 	}
 
 	private static LevelPlayerDTO toDTO(PlayerState player, LevelProgress levelProgress) {
 		LevelProgressDTO progressDTO;
-		
+
 		if (levelProgress == null) {
 			// Par défaut, on crée un progress avec des valeurs initiales
 			progressDTO = new LevelProgressDTO("unknown", 0);
 		} else {
-			progressDTO = new LevelProgressDTO(
-				levelProgress.levelIndex(), 
-				levelProgress.attackIndex()
-			);
+			progressDTO = new LevelProgressDTO(levelProgress.levelIndex(), levelProgress.attackIndex());
 		}
-		
-		return new LevelPlayerDTO(
-			player.id().value().toString(), 
-			player.gold(), 
-			player.lives(),
-			progressDTO
-		);
+
+		return new LevelPlayerDTO(player.id().value().toString(), player.gold(), player.lives(), progressDTO);
 	}
 }

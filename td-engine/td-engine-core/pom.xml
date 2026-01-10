@@ -18,6 +18,7 @@
 		<module>td-aop</module>
 		<module>td-back-tower</module>
 		<module>td-domain</module>
+		<module>td-exceptions</module>
 		<module>td-gameplay</module>
 		<module>td-sequencer</module>
 		<module>td-config</module>

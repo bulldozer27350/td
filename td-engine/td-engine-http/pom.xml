@@ -58,6 +58,12 @@
 			<artifactId>td-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.moe</groupId>
+			<artifactId>td-exceptions</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- ===== Spring Boot Web ===== -->
 		<dependency>

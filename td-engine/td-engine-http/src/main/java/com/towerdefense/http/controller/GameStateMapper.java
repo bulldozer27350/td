@@ -1,10 +1,23 @@
 package com.towerdefense.http.controller;
 
-import com.towerdefense.engine.api.model.*;
-import com.towerdefense.http.model.*;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
+import com.towerdefense.engine.api.model.EnemyDTO;
+import com.towerdefense.engine.api.model.GameStateDTO;
+import com.towerdefense.engine.api.model.LevelPlayerDTO;
+import com.towerdefense.engine.api.model.LevelProgressDTO;
+import com.towerdefense.engine.api.model.PositionDTO;
+import com.towerdefense.engine.api.model.ProjectileDTO;
+import com.towerdefense.engine.api.model.TowerDTO;
+import com.towerdefense.http.model.Enemy;
+import com.towerdefense.http.model.GameState;
+import com.towerdefense.http.model.LevelPlayer;
+import com.towerdefense.http.model.LevelProgress;
+import com.towerdefense.http.model.Position;
+import com.towerdefense.http.model.Projectile;
+import com.towerdefense.http.model.Tower;
 
 @Component
 public class GameStateMapper {
@@ -46,7 +59,7 @@ public class GameStateMapper {
         Tower tower = new Tower();
         tower.setId(dto.id());
         tower.setPosition(toHttpPosition(dto.position()));
-        tower.setTowerType(dto.towerType().name());
+        tower.setTowerType(dto.towerType());  
         tower.setState(dto.state().name());
         return tower;
     }

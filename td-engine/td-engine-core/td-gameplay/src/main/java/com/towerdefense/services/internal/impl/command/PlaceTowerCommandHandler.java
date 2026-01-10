@@ -9,6 +9,7 @@ import com.towerdefense.domain.Position;
 import com.towerdefense.domain.intentions.BuildTowerIntention;
 import com.towerdefense.domain.statik.tower.TowerType;
 import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
+import com.towerdefense.exception.UnknownTowerTypeException;
 import com.towerdefense.services.GameCommandHandler;
 import com.towerdefense.services.TowerServices;
 
@@ -26,7 +27,13 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
 	
 	@Override
 	public void handle(PlaceTowerCommand cmd, GameState state) {
-		TowerType towerType = this.context.towerTypeRegistry().get(cmd.towerType());
+		TowerType towerType;
+	    try {
+	        towerType = this.context.towerTypeRegistry().get(cmd.towerType());
+	    } catch (UnknownTowerTypeException e) {
+	        // L'exception sera gérée par GlobalExceptionHandler
+	        throw e;
+	    }
 		BuildTowerIntention intention = new BuildTowerIntention(new EntityId(cmd.playerId()), new Position(cmd.x(), cmd.y()), towerType);
 		towerServices.attemptBuildTower(
 	            state,
