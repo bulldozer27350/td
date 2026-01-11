@@ -1,36 +1,81 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  title: Tower Defense Editor API
-  description: API pour l'éditeur de niveaux de Tower Defense
-  version: 1.0.0
+  title: Tower Defense Level Studio API
+  description: |
+    API complète pour l'éditeur de niveaux Tower Defense.
+    
+    Cette API permet de :
+    - Créer et éditer des niveaux
+    - Gérer les types d'ennemis
+    - Gérer les types de tours
+    - Importer/exporter en format draft (éditable) ou exportable (pour le moteur)
+  version: 2.0.0
+  contact:
+    name: Tower Defense Studio Team
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
     description: Serveur de développement local
 
+tags:
+  - name: Levels
+    description: Gestion des niveaux
+  - name: Level Editing
+    description: Édition d'un niveau spécifique
+  - name: Enemies
+    description: Gestion des types d'ennemis
+  - name: Towers
+    description: Gestion des types de tours
+  - name: Tower Editing
+    description: Édition d'un type de tour spécifique
+
 paths:
+  # ========================================================================
+  # LEVELS COLLECTION
+  # ========================================================================
+  
   /api/levels:
+    get:
+      summary: Liste tous les niveaux en cours d'édition
+      tags: [Levels]
+      operationId: getAllLevels
+      responses:
+        '200':
+          description: Liste des niveaux
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EditableLevel'
+    
     post:
-      summary: Crée un nouveau niveau
+      summary: Crée un nouveau niveau vide
+      tags: [Levels]
+      operationId: createLevel
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LevelConfig'
+              $ref: '#/components/schemas/CreateLevelRequest'
       responses:
         '201':
           description: Niveau créé avec succès
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LevelScenarioDefinition'
+                $ref: '#/components/schemas/EditableLevel'
+        '400':
+          description: Paramètres invalides
 
-  /api/levels/{id}:
+  /api/levels/{levelId}:
     get:
-      summary: Récupère un niveau par son identifiant
+      summary: Récupère un niveau par son ID
+      tags: [Levels]
+      operationId: getLevel
       parameters:
-        - name: id
+        - name: levelId
           in: path
           required: true
           schema:
@@ -41,68 +86,383 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LevelScenarioDefinition'
+                $ref: '#/components/schemas/EditableLevel'
         '404':
           description: Niveau non trouvé
+    
+    delete:
+      summary: Supprime un niveau
+      tags: [Levels]
+      operationId: deleteLevel
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Niveau supprimé avec succès
 
-  /api/towers:
+  /api/levels/import/draft:
     post:
-      summary: Crée un nouveau type de tour
+      summary: Importe un niveau depuis un fichier draft (JSON éditable)
+      tags: [Levels]
+      operationId: importDraftLevel
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TowersConfig'
+              $ref: '#/components/schemas/ImportRequest'
       responses:
         '201':
-          description: Type de tour créé avec succès
+          description: Niveau importé avec succès
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TowerTypeRegistry'
+                $ref: '#/components/schemas/EditableLevel'
 
-  /api/towers/{id}:
-    get:
-      summary: Récupère un type de tour par son identifiant
+  /api/levels/import/exportable:
+    post:
+      summary: Importe un niveau depuis un fichier exportable (format moteur)
+      tags: [Levels]
+      operationId: importExportableLevel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+      responses:
+        '201':
+          description: Niveau importé avec succès
+
+  /api/levels/{levelId}/export/draft:
+    post:
+      summary: Exporte un niveau en format draft
+      tags: [Levels]
+      operationId: exportDraftLevel
       parameters:
-        - name: id
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Niveau exporté avec succès
+
+  /api/levels/{levelId}/export/exportable:
+    post:
+      summary: Exporte un niveau en format exportable (pour le moteur)
+      tags: [Levels]
+      operationId: exportExportableLevel
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Niveau exporté avec succès
+
+  # ========================================================================
+  # LEVEL EDITING
+  # ========================================================================
+
+  /api/levels/{levelId}/metadata:
+    patch:
+      summary: Met à jour les métadonnées d'un niveau
+      tags: [Level Editing]
+      operationId: updateLevelMetadata
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LevelMetadataUpdate'
+      responses:
+        '200':
+          description: Métadonnées mises à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditableLevel'
+
+  /api/levels/{levelId}/paths:
+    get:
+      summary: Liste tous les chemins d'un niveau
+      tags: [Level Editing]
+      operationId: getLevelPaths
+      parameters:
+        - name: levelId
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Détails du type de tour
+          description: Liste des chemins
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TowerType'
-        '404':
-          description: Type de tour non trouvé
-
-  /api/enemies:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EditablePath'
+    
     post:
-      summary: Crée un nouveau type d'ennemi
+      summary: Ajoute un nouveau chemin au niveau
+      tags: [Level Editing]
+      operationId: addPath
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnemiesConfig'
+              $ref: '#/components/schemas/EditablePath'
       responses:
         '201':
-          description: Type d'ennemi créé avec succès
+          description: Chemin ajouté
+
+  /api/levels/{levelId}/paths/{pathId}:
+    delete:
+      summary: Supprime un chemin du niveau
+      tags: [Level Editing]
+      operationId: removePath
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pathId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Chemin supprimé
+
+  /api/levels/{levelId}/attacks:
+    get:
+      summary: Liste toutes les attaques d'un niveau
+      tags: [Level Editing]
+      operationId: getLevelAttacks
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des attaques
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnemyFactoryRegistry'
-
-  /api/enemies/{id}:
-    get:
-      summary: Récupère un type d'ennemi par son identifiant
+                type: array
+                items:
+                  $ref: '#/components/schemas/EditableAttack'
+    
+    post:
+      summary: Ajoute une nouvelle attaque au niveau
+      tags: [Level Editing]
+      operationId: addAttack
       parameters:
-        - name: id
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttackRequest'
+      responses:
+        '201':
+          description: Attaque ajoutée
+
+  /api/levels/{levelId}/attacks/{attackId}:
+    delete:
+      summary: Supprime une attaque du niveau
+      tags: [Level Editing]
+      operationId: removeAttack
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: attackId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Attaque supprimée
+
+  /api/levels/{levelId}/attacks/{attackId}/waves:
+    post:
+      summary: Ajoute une vague à une attaque
+      tags: [Level Editing]
+      operationId: addWave
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: attackId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditableWave'
+      responses:
+        '201':
+          description: Vague ajoutée
+
+  /api/levels/{levelId}/attacks/{attackId}/waves/{waveId}:
+    delete:
+      summary: Supprime une vague d'une attaque
+      tags: [Level Editing]
+      operationId: removeWave
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: attackId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: waveId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Vague supprimée
+
+  /api/levels/{levelId}/tower-types:
+    post:
+      summary: Ajoute un type de tour disponible au niveau
+      tags: [Level Editing]
+      operationId: addTowerTypeToLevel
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTowerTypeRequest'
+      responses:
+        '204':
+          description: Type de tour ajouté
+
+  /api/levels/{levelId}/tower-types/{towerTypeId}:
+    delete:
+      summary: Retire un type de tour du niveau
+      tags: [Level Editing]
+      operationId: removeTowerTypeFromLevel
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Type de tour retiré
+
+  # ========================================================================
+  # ENEMIES COLLECTION
+  # ========================================================================
+
+  /api/enemies:
+    get:
+      summary: Liste tous les types d'ennemis
+      tags: [Enemies]
+      operationId: getAllEnemyTypes
+      responses:
+        '200':
+          description: Liste des types d'ennemis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EditableEnemyType'
+    
+    post:
+      summary: Crée un nouveau type d'ennemi
+      tags: [Enemies]
+      operationId: createEnemyType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEnemyTypeRequest'
+      responses:
+        '201':
+          description: Type d'ennemi créé
+
+  /api/enemies/{enemyTypeId}:
+    get:
+      summary: Récupère un type d'ennemi par son ID
+      tags: [Enemies]
+      operationId: getEnemyType
+      parameters:
+        - name: enemyTypeId
           in: path
           required: true
           schema:
@@ -113,240 +473,568 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnemyFactory'
-        '404':
-          description: Type d'ennemi non trouvé
+                $ref: '#/components/schemas/EditableEnemyType'
+    
+    delete:
+      summary: Supprime un type d'ennemi
+      tags: [Enemies]
+      operationId: deleteEnemyType
+      parameters:
+        - name: enemyTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Type d'ennemi supprimé
 
-  /api/paths:
+  /api/enemies/import/draft:
     post:
-      summary: Crée un nouveau chemin
+      summary: Importe un type d'ennemi depuis un fichier draft
+      tags: [Enemies]
+      operationId: importDraftEnemyType
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PathsConfig'
+              $ref: '#/components/schemas/ImportRequest'
       responses:
         '201':
-          description: Chemin créé avec succès
+          description: Type d'ennemi importé
+
+  /api/enemies/import/exportable:
+    post:
+      summary: Importe un type d'ennemi depuis un fichier exportable
+      tags: [Enemies]
+      operationId: importExportableEnemyType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+      responses:
+        '201':
+          description: Type d'ennemi importé
+
+  /api/enemies/{enemyTypeId}/export/draft:
+    post:
+      summary: Exporte un type d'ennemi en format draft
+      tags: [Enemies]
+      operationId: exportDraftEnemyType
+      parameters:
+        - name: enemyTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Type d'ennemi exporté
+
+  /api/enemies/{enemyTypeId}/export/exportable:
+    post:
+      summary: Exporte un type d'ennemi en format exportable
+      tags: [Enemies]
+      operationId: exportExportableEnemyType
+      parameters:
+        - name: enemyTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Type d'ennemi exporté
+
+  # ========================================================================
+  # TOWERS COLLECTION
+  # ========================================================================
+
+  /api/towers:
+    get:
+      summary: Liste tous les types de tours
+      tags: [Towers]
+      operationId: getAllTowerTypes
+      responses:
+        '200':
+          description: Liste des types de tours
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/EnemyPath'
+                  $ref: '#/components/schemas/EditableTowerType'
+    
+    post:
+      summary: Crée un nouveau type de tour
+      tags: [Towers]
+      operationId: createTowerType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTowerTypeRequest'
+      responses:
+        '201':
+          description: Type de tour créé
 
-  /api/paths/{id}:
+  /api/towers/{towerTypeId}:
     get:
-      summary: Récupère un chemin par son identifiant
+      summary: Récupère un type de tour par son ID
+      tags: [Towers]
+      operationId: getTowerType
       parameters:
-        - name: id
+        - name: towerTypeId
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Détails du chemin
+          description: Détails du type de tour
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnemyPath'
-        '404':
-          description: Chemin non trouvé
+                $ref: '#/components/schemas/EditableTowerType'
+    
+    delete:
+      summary: Supprime un type de tour
+      tags: [Towers]
+      operationId: deleteTowerType
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Type de tour supprimé
+
+  /api/towers/import/draft:
+    post:
+      summary: Importe un type de tour depuis un fichier draft
+      tags: [Towers]
+      operationId: importDraftTowerType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+      responses:
+        '201':
+          description: Type de tour importé
+
+  /api/towers/import/exportable:
+    post:
+      summary: Importe un type de tour depuis un fichier exportable
+      tags: [Towers]
+      operationId: importExportableTowerType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+      responses:
+        '201':
+          description: Type de tour importé
+
+  /api/towers/{towerTypeId}/export/draft:
+    post:
+      summary: Exporte un type de tour en format draft
+      tags: [Towers]
+      operationId: exportDraftTowerType
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Type de tour exporté
+
+  /api/towers/{towerTypeId}/export/exportable:
+    post:
+      summary: Exporte un type de tour en format exportable
+      tags: [Towers]
+      operationId: exportExportableTowerType
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Type de tour exporté
+
+  # ========================================================================
+  # TOWER EDITING
+  # ========================================================================
+
+  /api/towers/{towerTypeId}/levels:
+    post:
+      summary: Ajoute un nouveau niveau à un type de tour
+      tags: [Tower Editing]
+      operationId: addTowerLevel
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditableTowerLevel'
+      responses:
+        '201':
+          description: Niveau de tour ajouté
+
+  /api/towers/{towerTypeId}/levels/{level}:
+    delete:
+      summary: Supprime un niveau d'un type de tour
+      tags: [Tower Editing]
+      operationId: removeTowerLevel
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: level
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Niveau de tour supprimé
+
+# ============================================================================
+# SCHEMAS
+# ============================================================================
 
 components:
   schemas:
-    LevelConfig:
+    # ========================================================================
+    # REQUESTS
+    # ========================================================================
+    
+    CreateLevelRequest:
       type: object
+      required:
+        - id
+        - width
+        - height
       properties:
         id:
           type: string
-        attacks:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttackConfig'
-        startingLives:
+        width:
           type: integer
+          minimum: 5
+          maximum: 50
+        height:
+          type: integer
+          minimum: 5
+          maximum: 50
+
+    ImportRequest:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: string
+          description: Chemin du fichier à importer
+
+    ExportRequest:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: string
+          description: Chemin où sauvegarder le fichier
+
+    LevelMetadataUpdate:
+      type: object
+      properties:
         startingMoney:
           type: integer
-
-    LevelScenarioDefinition:
-      type: object
-      properties:
-        id:
-          type: string
-        attacks:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttackConfig'
+          minimum: 0
         startingLives:
           type: integer
-        startingMoney:
-          type: integer
+          minimum: 1
 
-    AttackConfig:
+    CreateAttackRequest:
       type: object
+      required:
+        - id
       properties:
         id:
           type: string
-        waves:
-          type: array
-          items:
-            $ref: '#/components/schemas/WaveConfig'
 
-    WaveConfig:
+    AddTowerTypeRequest:
       type: object
+      required:
+        - towerTypeId
+      properties:
+        towerTypeId:
+          type: string
+
+    CreateEnemyTypeRequest:
+      type: object
+      required:
+        - id
+        - health
+        - speed
+        - reward
       properties:
         id:
           type: string
-        startTick:
+        health:
           type: integer
-        interval:
-          type: integer
-        count:
-          type: integer
-        enemyType:
-          type: string
-        pathId:
-          type: string
-
-    TowersConfig:
-      type: object
-      properties:
-        towers:
-          type: array
-          items:
-            $ref: '#/components/schemas/TowerTypeConfig'
-
-    TowerTypeConfig:
-      type: object
-      properties:
-        id:
-          type: string
-        levels:
-          type: array
-          items:
-            $ref: '#/components/schemas/TowerLevelConfig'
-
-    TowerLevelConfig:
-      type: object
-      properties:
-        level:
-          type: integer
-        upgradeCost:
-          type: integer
-        sellValue:
-          type: integer
-        range:
-          type: number
-        damage:
-          type: integer
-        reloadSeconds:
-          type: integer
-        buildTimeTicks:
-          type: integer
-
-    TowerType:
-      type: object
-      properties:
-        id:
-          type: string
-        levels:
-          type: array
-          items:
-            $ref: '#/components/schemas/TowerLevelDefinition'
-
-    TowerLevelDefinition:
-      type: object
-      properties:
-        level:
-          type: integer
-        upgradeCost:
-          type: integer
-        sellValue:
-          type: integer
-        range:
-          type: number
-        damage:
-          type: integer
-        reloadSeconds:
-          type: integer
-        buildTimeTicks:
-          type: integer
-
-    TowerTypeRegistry:
-      type: object
-      additionalProperties:
-        $ref: '#/components/schemas/TowerType'
-
-    EnemiesConfig:
-      type: object
-      properties:
-        enemies:
-          type: array
-          items:
-            $ref: '#/components/schemas/EnemyTypeConfig'
-
-    EnemyTypeConfig:
-      type: object
-      properties:
-        id:
-          type: string
-        hp:
-          type: integer
+          minimum: 1
         speed:
           type: number
-        bounty:
+          format: double
+          minimum: 0.01
+        reward:
           type: integer
+          minimum: 0
 
-    EnemyFactoryRegistry:
+    CreateTowerTypeRequest:
       type: object
-      additionalProperties:
-        $ref: '#/components/schemas/EnemyFactory'
-
-    EnemyFactory:
-      type: object
+      required:
+        - id
+        - name
       properties:
-        hp:
-          type: integer
-        speed:
-          type: number
-        bounty:
-          type: integer
+        id:
+          type: string
+        name:
+          type: string
 
-    PathsConfig:
+    # ========================================================================
+    # DOMAIN MODELS
+    # ========================================================================
+    
+    EditableLevel:
       type: object
+      required:
+        - metadata
+        - map
+        - paths
+        - attacks
+        - towerCapacityIds
       properties:
+        metadata:
+          $ref: '#/components/schemas/LevelMetadata'
+        map:
+          $ref: '#/components/schemas/EditableMap'
         paths:
           type: array
           items:
-            $ref: '#/components/schemas/PathConfig'
+            $ref: '#/components/schemas/EditablePath'
+        attacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditableAttack'
+        towerCapacityIds:
+          type: array
+          items:
+            type: string
 
-    PathConfig:
+    LevelMetadata:
       type: object
+      required:
+        - id
+        - startingMoney
+        - startingLives
+      properties:
+        id:
+          type: string
+        startingMoney:
+          type: integer
+          minimum: 0
+        startingLives:
+          type: integer
+          minimum: 1
+
+    EditableMap:
+      type: object
+      required:
+        - width
+        - height
+        - paths
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditablePath'
+
+    EditablePath:
+      type: object
+      required:
+        - id
+        - points
       properties:
         id:
           type: string
         points:
           type: array
           items:
-            $ref: '#/components/schemas/PointConfig'
+            $ref: '#/components/schemas/PositionDefinition'
+          minItems: 2
 
-    PointConfig:
+    PositionDefinition:
       type: object
+      required:
+        - x
+        - y
       properties:
         x:
           type: integer
         y:
           type: integer
 
-    EnemyPath:
+    EditableAttack:
       type: object
+      required:
+        - id
+        - waves
       properties:
         id:
           type: string
-        points:
+        waves:
           type: array
           items:
-            $ref: '#/components/schemas/PointConfig'
+            $ref: '#/components/schemas/EditableWave'
+
+    EditableWave:
+      type: object
+      required:
+        - id
+        - startTick
+        - spawnInterval
+        - count
+        - enemyType
+        - pathId
+      properties:
+        id:
+          type: string
+        startTick:
+          type: integer
+          minimum: 0
+        spawnInterval:
+          type: integer
+          minimum: 1
+        count:
+          type: integer
+          minimum: 1
+        enemyType:
+          type: string
+        pathId:
+          type: string
+
+    EditableEnemyType:
+      type: object
+      required:
+        - id
+        - health
+        - speed
+        - reward
+      properties:
+        id:
+          type: string
+        health:
+          type: integer
+          minimum: 1
+        speed:
+          type: number
+          format: double
+          minimum: 0.01
+        reward:
+          type: integer
+          minimum: 0
+
+    EditableTowerType:
+      type: object
+      required:
+        - id
+        - towerType
+        - upgrades
+      properties:
+        id:
+          type: string
+        towerType:
+          type: string
+        upgrades:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditableTowerLevel'
+
+    EditableTowerLevel:
+      type: object
+      required:
+        - level
+        - cost
+        - range
+        - damage
+        - reloadTime
+        - sellReward
+        - buildTimeTicks
+      properties:
+        level:
+          type: integer
+        cost:
+          type: integer
+        range:
+          type: number
+          format: double
+        damage:
+          type: integer
+        reloadTime:
+          type: number
+          format: double
+        sellReward:
+          type: integer
+        buildTimeTicks:
+          type: integer

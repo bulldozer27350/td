@@ -132,17 +132,23 @@ public class TowerDefenseEditorApiImpl implements TowerDefenseEditorApi {
 
 	@Override
 	public boolean saveExportableTowerType(String id, String path) {
-		return this.towerTypesCollectionEditorApi.saveDraftTowerType(id, path);
+		return this.towerTypesCollectionEditorApi.saveExportableTowerType(id, path);
 	}
 
 	@Override
-	public TowerTypeEditorApi getEditableTowerType(String id) {
-		return this.towerTypesCollectionEditorApi.getEditableTowerType(id);
+	public TowerTypeEditorApi getTowerTypeEditor(String id) {
+		return this.towerTypesCollectionEditorApi.getTowerTypeEditor(id);
 	}
 
 	@Override
 	public List<EditableTowerType> getAllEditableTowerTypes() {
 		return this.towerTypesCollectionEditorApi.getAllEditableTowerTypes();
+	}
+
+
+	@Override
+	public EditableTowerType getEditableTowerType(String id) {
+		return this.towerTypesCollectionEditorApi.getEditableTowerType(id);
 	}
 
 }

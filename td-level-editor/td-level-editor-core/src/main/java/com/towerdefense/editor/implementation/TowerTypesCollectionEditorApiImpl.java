@@ -109,7 +109,7 @@ public class TowerTypesCollectionEditorApiImpl implements TowerTypesCollectionEd
 	}
 
 	@Override
-	public TowerTypeEditorApi getEditableTowerType(String id) {
+	public TowerTypeEditorApi getTowerTypeEditor(String id) {
 		return new TowerTypeEditorApiImpl(
 				this.editableTowerTypes.stream().filter(e -> e.id().equalsIgnoreCase(id)).findFirst().orElse(null));
 	}
@@ -117,6 +117,11 @@ public class TowerTypesCollectionEditorApiImpl implements TowerTypesCollectionEd
 	@Override
 	public List<EditableTowerType> getAllEditableTowerTypes() {
 		return new ArrayList<EditableTowerType>(this.editableTowerTypes);
+	}
+
+	@Override
+	public EditableTowerType getEditableTowerType(String id) {
+		return this.editableTowerTypes.stream().filter(e -> e.id().equalsIgnoreCase(id)).findFirst().orElse(null);
 	}
 
 }

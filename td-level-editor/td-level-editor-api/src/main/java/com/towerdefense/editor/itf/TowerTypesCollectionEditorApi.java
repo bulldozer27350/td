@@ -18,7 +18,9 @@ public interface TowerTypesCollectionEditorApi {
 	
 	boolean saveExportableTowerType(String id, String path);
 	
-	TowerTypeEditorApi getEditableTowerType(String id);
+	TowerTypeEditorApi getTowerTypeEditor(String id);
+	
+	EditableTowerType getEditableTowerType(String id);
 	
 	List<EditableTowerType> getAllEditableTowerTypes();
 }
