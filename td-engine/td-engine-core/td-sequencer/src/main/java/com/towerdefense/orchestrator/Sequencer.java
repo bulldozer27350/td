@@ -1,6 +1,7 @@
 package com.towerdefense.orchestrator;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -16,144 +17,154 @@ import com.towerdefense.domain.intentions.ShootIntention;
 import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
+import com.towerdefense.orchestrator.systems.cleanup.DeadEntityCleanupSystem;
+import com.towerdefense.orchestrator.systems.cleanup.OutOfBoundsCleanupSystem;
+import com.towerdefense.orchestrator.systems.combat.CollisionSystem;
+import com.towerdefense.orchestrator.systems.combat.ProjectileSystem;
+import com.towerdefense.orchestrator.systems.combat.ShootingSystem;
+import com.towerdefense.orchestrator.systems.combat.TargetingSystem;
+import com.towerdefense.orchestrator.systems.core.GameSystem;
+import com.towerdefense.orchestrator.systems.economy.LifeManagementSystem;
+import com.towerdefense.orchestrator.systems.economy.RewardSystem;
+import com.towerdefense.orchestrator.systems.lifecycle.EntityMovementSystem;
+import com.towerdefense.orchestrator.systems.lifecycle.GameOverSystem;
+import com.towerdefense.orchestrator.systems.lifecycle.LevelProgressionSystem;
+import com.towerdefense.orchestrator.systems.lifecycle.TimeManagementSystem;
+import com.towerdefense.orchestrator.systems.notification.ObserverNotificationSystem;
 
-@Component
 /**
- * Manages the game loop, updating the game state on each tick.
+ * Orchestrateur principal du moteur de jeu.
+ * 
+ * Responsabilité unique : Exécuter les systems dans le bon ordre.
+ * 
+ * Architecture : - Chaque system gère un aspect spécifique du jeu - Les systems
+ * s'exécutent selon leur priorité - Le Sequencer reste simple et maintenable
+ * 
+ * Ordre d'exécution : 1. Time Management (HIGHEST) 2. Level Progression
+ * (HIGHEST) 3. Entity Movement (HIGH) 4. Targeting (HIGH) 5. Shooting (NORMAL)
+ * 6. Projectile Movement (NORMAL) 7. Collision Detection (LOW) 8. Reward
+ * Distribution (LOW) 9. Life Management (LOW) 10. Game Over Check (LOW) 11.
+ * Dead Entity Cleanup (LOWEST) 12. Out of Bounds Cleanup (LOWEST) 13. Observer
+ * Notifications (LOWEST)
  */
+@Component
 public class Sequencer {
 
-	private LevelScenario level;
+	// ========================
+	// SYSTEMS (injectés par Spring)
+	// ========================
 
-	private final TowerManagement towerBack = new TowerBack();
+	private final List<GameSystem> systems;
 
-	private final List<GameStateObserver> observers = new ArrayList<>();
+	// Systems avec état ou nécessitant un accès direct
+	private final LevelProgressionSystem levelProgressionSystem;
+	private final TargetingSystem targetingSystem;
+	private final ObserverNotificationSystem observerNotificationSystem;
 
-	public void setLevel(LevelScenario level) {
-		this.level = level;
+	/**
+	 * Construit le Sequencer avec tous les systems nécessaires.
+	 * 
+	 * Spring injecte automatiquement tous les beans GameSystem.
+	 */
+	public Sequencer(TimeManagementSystem timeManagementSystem, LevelProgressionSystem levelProgressionSystem,
+			EntityMovementSystem entityMovementSystem, TargetingSystem targetingSystem, ShootingSystem shootingSystem,
+			ProjectileSystem projectileSystem, CollisionSystem collisionSystem, RewardSystem rewardSystem,
+			LifeManagementSystem lifeManagementSystem, GameOverSystem gameOverSystem,
+			DeadEntityCleanupSystem deadEntityCleanupSystem, OutOfBoundsCleanupSystem outOfBoundsCleanupSystem,
+			ObserverNotificationSystem observerNotificationSystem) {
+		this.levelProgressionSystem = levelProgressionSystem;
+		this.targetingSystem = targetingSystem;
+		this.observerNotificationSystem = observerNotificationSystem;
+		// Initialise la liste des systems dans l'ordre de priorité
+		this.systems = new ArrayList<>(List.of(timeManagementSystem, levelProgressionSystem, entityMovementSystem,
+				targetingSystem, shootingSystem, projectileSystem, collisionSystem, rewardSystem, lifeManagementSystem,
+				gameOverSystem, deadEntityCleanupSystem, outOfBoundsCleanupSystem, observerNotificationSystem));
+
+		// Trie les systems par priorité
+		this.systems.sort(Comparator.comparing(system -> system.priority().getValue()));
 	}
 
-	public void addObserver(GameStateObserver obs) {
-		this.observers.add(obs);
-	}
+	// ========================
+	// MÉTHODE PRINCIPALE
+	// ========================
 
-	/** Advances the game state by one tick. */
+	/**
+	 * Exécute un tick du moteur de jeu.
+	 * 
+	 * Cette méthode ne contient plus AUCUNE logique métier. Elle se contente
+	 * d'orchestrer l'exécution des systems.
+	 * 
+	 * @param state l'état actuel du jeu (sera modifié)
+	 * @param tick  le numéro du tick courant
+	 */
 	public void tick(GameState state, int tick) {
-
-		if (state.getState() != StateEnum.IN_PROGRESS)
+		// Vérifie si le jeu est en cours
+		if (state.getState() != StateEnum.IN_PROGRESS) {
 			return;
-		if (level != null) {
-			level.tick(state, tick);
-
-			state.setLevelProgress(level.snapshot());
 		}
 
-		// 1. Tick cooldowns
-		state.towers().forEach(t -> t.tick());
-
-		// 2. Move enemies
-		state.enemies().forEach(e -> e.tick());
-
-		// 3. Towers automatically shoot enemies in range
-		for (Tower tower : state.towers()) {
-			if (!tower.isReady())
-				continue;
-
-			// Cherche un ennemi à portée
-			Enemy target = state.enemies().stream().filter(e -> tower.canShootTarget(e.position())).findFirst()
-					.orElse(null);
-
-			if (target == null)
-				continue;
-
-			// Déclenche le tir
-			tower.triggerShot();
-
-			double projectileSpeedCasesPerSecond = 8.0;
-			Projectile p = new Projectile(EntityId.random(), tower.position(), projectileSpeedCasesPerSecond,
-					tower.damage(), target.id());
-
-			state.addProjectile(p);
-		}
-
-		// 4. Move projectiles
-		List<EntityId> hitProjectiles = new ArrayList<>();
-
-		for (Projectile projectile : state.projectiles()) {
-			Enemy target = state.enemies().stream().filter(enemy -> enemy.id().equals(projectile.targetId()))
-					.findFirst().orElse(null);
-			// if no target, launch a new loop cycle
-			if (target == null)
-				continue;
-
-			projectile.updateTowards(target.position());
-
-			if (projectile.position().equals(target.position())) {
-				target.health().applyDamage(projectile.damage());
-				hitProjectiles.add(projectile.id());
+		// Exécute chaque system dans l'ordre de priorité
+		for (GameSystem system : systems) {
+			if (system.shouldProcess(state, tick)) {
+				system.process(state, tick);
 			}
 		}
 
-		hitProjectiles.forEach(state::removeProjectile);
-		state.enemies().removeIf(enemy -> {
-			if (enemy.health().isDead()) {
-				state.player().earnGold(enemy.bounty());
-				return true;
-			}
-			if (enemy.isAtEnd()) {
-				state.player().loseLife();
-				return true;
-			}
-			return false;
-		});
-		
-		if (state.player().lives() <= 0) {
-			state.setState(StateEnum.TERMINATED);
-		}
+		// Nettoie les caches après le tick
+		targetingSystem.clearCache();
+	}
+	
+	// ========================
+	// MÉTHODES DE CONFIGURATION
+	// ========================
 
-		this.observers.forEach(o -> o.onStateUpdated(GameStateMapper.toDTO(state), tick));
-		if (allTicksEnded(state)) {
-			state.setState(StateEnum.TERMINATED);
-			if (state.enemies().isEmpty() && state.player().isAlive()) {
-				this.observers.forEach(o -> o.onGameWon(GameStateMapper.toDTO(state)));
-			} else {
-				this.observers.forEach(o -> o.onGameLoose());
-			}
-		}
+	/**
+	 * Définit le niveau à gérer.
+	 * 
+	 * @param level le scénario du niveau
+	 */
+	public void setLevel(LevelScenario level) {
+		levelProgressionSystem.setLevel(level);
 	}
 
-	/** Checks if the game has ended based on level progress and player state. */
-	private boolean allTicksEnded(GameState state) {
-		boolean terminated = false;
-		// S'il ne reste plus d'ennemis à sortir, il ne reste qu'à vérifier si tous les
-		// ennemis sont morts ou s'il ne reste plus de vie au joueur. Dans ces deux cas,
-		// la partie est terminée.
-		if (this.level.isFinished()) {
-			if (state.enemies().isEmpty() || state.player().lives() < 1) {
-				terminated = true;
-			}
-		}
-		return terminated;
+	/**
+	 * Ajoute un observateur des événements du jeu.
+	 * 
+	 * @param observer l'observateur à ajouter
+	 */
+	public void addObserver(GameStateObserver observer) {
+		observerNotificationSystem.addObserver(observer);
 	}
 
-	/** Attempts to shoot a target based on the provided intention. */
-	public boolean attemptShoot(GameState state, ShootIntention intent) {
-		if (!this.towerBack.canShoot(state, intent))
-			return false;
+	/**
+	 * Retire un observateur des événements du jeu.
+	 * 
+	 * @param observer l'observateur à retirer
+	 */
+	public void removeObserver(GameStateObserver observer) {
+		observerNotificationSystem.removeObserver(observer);
+	}
 
-		Tower tower = state.towers().stream().filter(t -> t.id().equals(intent.towerId())).findFirst().orElseThrow();
+	// ========================
+	// MÉTHODES UTILITAIRES
+	// ========================
 
-		Enemy enemy = state.enemies().stream().filter(e -> e.id().equals(intent.targetId())).findFirst().orElseThrow();
+	/**
+	 * Retourne la liste des systems actifs (pour debugging).
+	 * 
+	 * @return liste des systems dans l'ordre d'exécution
+	 */
+	public List<String> getSystemNames() {
+		return systems.stream().map(GameSystem::name).toList();
+	}
 
-		tower.triggerShot();
-
-		double projectileSpeedCasesPerSecond = 8.0;
-		Projectile p = new Projectile(EntityId.random(), tower.position(), projectileSpeedCasesPerSecond,
-				tower.damage(), enemy.id());
-
-		state.addProjectile(p);
-
-		return true;
+	/**
+	 * Vérifie si le niveau est terminé.
+	 * 
+	 * @return true si toutes les vagues sont finies
+	 */
+	public boolean isLevelFinished() {
+		return levelProgressionSystem.isLevelFinished();
 	}
 
 }

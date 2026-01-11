@@ -19,5 +19,6 @@
 		<module>td-level-editor-api</module>
 		<module>td-level-editor-core</module>
 		<module>td-level-editor-ui</module>
+		<module>td-level-editor-http</module>
 	</modules>
 </project>

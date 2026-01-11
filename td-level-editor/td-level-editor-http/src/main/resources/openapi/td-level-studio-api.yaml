@@ -1,0 +1,352 @@
+openapi: 3.0.1
+info:
+  title: Tower Defense Editor API
+  description: API pour l'éditeur de niveaux de Tower Defense
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Serveur de développement local
+
+paths:
+  /api/levels:
+    post:
+      summary: Crée un nouveau niveau
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LevelConfig'
+      responses:
+        '201':
+          description: Niveau créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LevelScenarioDefinition'
+
+  /api/levels/{id}:
+    get:
+      summary: Récupère un niveau par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails du niveau
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LevelScenarioDefinition'
+        '404':
+          description: Niveau non trouvé
+
+  /api/towers:
+    post:
+      summary: Crée un nouveau type de tour
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TowersConfig'
+      responses:
+        '201':
+          description: Type de tour créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TowerTypeRegistry'
+
+  /api/towers/{id}:
+    get:
+      summary: Récupère un type de tour par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails du type de tour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TowerType'
+        '404':
+          description: Type de tour non trouvé
+
+  /api/enemies:
+    post:
+      summary: Crée un nouveau type d'ennemi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnemiesConfig'
+      responses:
+        '201':
+          description: Type d'ennemi créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyFactoryRegistry'
+
+  /api/enemies/{id}:
+    get:
+      summary: Récupère un type d'ennemi par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails du type d'ennemi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyFactory'
+        '404':
+          description: Type d'ennemi non trouvé
+
+  /api/paths:
+    post:
+      summary: Crée un nouveau chemin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathsConfig'
+      responses:
+        '201':
+          description: Chemin créé avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnemyPath'
+
+  /api/paths/{id}:
+    get:
+      summary: Récupère un chemin par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails du chemin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnemyPath'
+        '404':
+          description: Chemin non trouvé
+
+components:
+  schemas:
+    LevelConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        attacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttackConfig'
+        startingLives:
+          type: integer
+        startingMoney:
+          type: integer
+
+    LevelScenarioDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+        attacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttackConfig'
+        startingLives:
+          type: integer
+        startingMoney:
+          type: integer
+
+    AttackConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        waves:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaveConfig'
+
+    WaveConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        startTick:
+          type: integer
+        interval:
+          type: integer
+        count:
+          type: integer
+        enemyType:
+          type: string
+        pathId:
+          type: string
+
+    TowersConfig:
+      type: object
+      properties:
+        towers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerTypeConfig'
+
+    TowerTypeConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerLevelConfig'
+
+    TowerLevelConfig:
+      type: object
+      properties:
+        level:
+          type: integer
+        upgradeCost:
+          type: integer
+        sellValue:
+          type: integer
+        range:
+          type: number
+        damage:
+          type: integer
+        reloadSeconds:
+          type: integer
+        buildTimeTicks:
+          type: integer
+
+    TowerType:
+      type: object
+      properties:
+        id:
+          type: string
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerLevelDefinition'
+
+    TowerLevelDefinition:
+      type: object
+      properties:
+        level:
+          type: integer
+        upgradeCost:
+          type: integer
+        sellValue:
+          type: integer
+        range:
+          type: number
+        damage:
+          type: integer
+        reloadSeconds:
+          type: integer
+        buildTimeTicks:
+          type: integer
+
+    TowerTypeRegistry:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/TowerType'
+
+    EnemiesConfig:
+      type: object
+      properties:
+        enemies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnemyTypeConfig'
+
+    EnemyTypeConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        hp:
+          type: integer
+        speed:
+          type: number
+        bounty:
+          type: integer
+
+    EnemyFactoryRegistry:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/EnemyFactory'
+
+    EnemyFactory:
+      type: object
+      properties:
+        hp:
+          type: integer
+        speed:
+          type: number
+        bounty:
+          type: integer
+
+    PathsConfig:
+      type: object
+      properties:
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PathConfig'
+
+    PathConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointConfig'
+
+    PointConfig:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+
+    EnemyPath:
+      type: object
+      properties:
+        id:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointConfig'

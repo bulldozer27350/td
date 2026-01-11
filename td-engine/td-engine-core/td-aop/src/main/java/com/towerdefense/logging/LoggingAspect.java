@@ -21,7 +21,7 @@ public class LoggingAspect {
 	private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
 
 	// Pointcut : toutes les classes de service du domaine
-	@Pointcut("within(com.towerdefense..*)")
+	@Pointcut("within(com.towerdefense.engine.api..*)")
 	/**
 	 * Defines a pointcut for all methods within the com.towerdefense package and
 	 * its sub-packages
