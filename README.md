@@ -152,6 +152,11 @@ Victoire ☑ ou Défaite ✖
 
 ---
 
+## 🧩 Séquence d’exécution (vue haut niveau)
+
+![Séquence d’exécution du moteur](docs/sequence-runner.png)
+
+---
 ## 🛠️ Build & exécution
 
 ### Prérequis

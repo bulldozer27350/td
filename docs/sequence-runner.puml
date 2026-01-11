@@ -1,0 +1,50 @@
+@startuml
+title Tower Defense – Séquence haut niveau (Console Runner)
+
+actor Player as P
+participant "Console Runner\n(td-runner)" as R
+participant "GameEngineApi\n(td-engine-api)" as API
+participant "Game Runtime\n(td-engine-core)" as CORE
+participant "Config Assemblers\n(td-config)" as CFG
+participant "Console Viewer\n(td-console-viewer)" as VIEW
+
+== Initialisation ==
+
+R -> CFG : Charger GameConfig\n(level, paths, towers, enemies)
+CFG --> R : GameConfig
+
+R -> API : initialize(GameConfig)
+API -> CORE : initialize(GameConfig)
+CORE -> CFG : Assembler configurations
+CFG --> CORE : Objets domaine prêts
+
+R -> API : addObserver(ConsoleViewer)
+API -> CORE : register observer
+
+CORE -> VIEW : onGameCreated(LevelMapDTO)
+
+== Boucle de jeu ==
+
+loop Tant que la partie n'est pas terminée
+    P -> R : Action joueur\n(place / upgrade / sell)
+    R -> API : dispatch(GameCommand)
+    API -> CORE : submit(command)
+
+    R -> API : tick()
+    API -> CORE : tick()
+
+    CORE -> CORE : \n- spawn ennemis\n- déplacement\n- tirs tours\n- projectiles\n- dégâts\n- règles métier
+
+    CORE -> VIEW : onStateUpdated(GameStateDTO, tick)
+    VIEW -> VIEW : Rendu ASCII\n(console ou fichier)
+end
+
+== Fin de partie ==
+
+alt Victoire
+    CORE -> VIEW : onGameWon(GameStateDTO)
+else Défaite
+    CORE -> VIEW : onGameLoose()
+end
+
+@enduml
