@@ -32,7 +32,7 @@ public class GameStateAsciiRenderer {
 		out.append(" | Attack ").append(state.player().progress().attackIndex() + 1);
 		out.append("\n");
 		out.append("Player ").append(state.player().id());
-		out.append(" $$$: ").append(state.player().currentGold());
+		out.append(" 💰: ").append(state.player().currentGold());
 		out.append(" ❤️: ").append(state.player().currentLives());
 		out.append("\n\n");
 

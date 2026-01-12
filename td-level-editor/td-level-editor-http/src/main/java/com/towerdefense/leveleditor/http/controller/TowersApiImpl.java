@@ -66,11 +66,12 @@ public class TowersApiImpl extends AbstractEditorController implements TowersApi
 
     @Override
     public ResponseEntity<List<EditableTowerType>> getAllTowerTypes() {
-        return ResponseEntity.ok(
-            editorApi().getAllEditableTowerTypes()
-                .stream()
-                .map(mapper::toHttp)
-                .toList()
+        List<EditableTowerType> list = editorApi().getAllEditableTowerTypes()
+		    .stream()
+		    .map(mapper::toHttp)
+		    .toList();
+		return ResponseEntity.ok(
+            list
         );
     }
 

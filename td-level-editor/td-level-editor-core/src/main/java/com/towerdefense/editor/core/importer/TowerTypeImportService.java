@@ -13,7 +13,7 @@ import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
 public class TowerTypeImportService {
 
 	public EditableTowerType importLevel(TowerTypeConfig config) {
-		EditableTowerType editableTowerType = new EditableTowerType(config.getId(), config.getName());
+		EditableTowerType editableTowerType = new EditableTowerType(config.getId(), config.getId());
 		for (TowerLevelConfig towerLevelConfig : config.getLevels()) {
 			editableTowerType.upgrades().add(importTowerLevel(towerLevelConfig));
 		}

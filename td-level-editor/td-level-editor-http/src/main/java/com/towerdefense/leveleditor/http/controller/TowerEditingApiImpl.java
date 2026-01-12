@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.editor.api.tower.TowerTypeEditorApi;
 import com.towerdefense.leveleditor.http.api.TowerEditingApi;
-import com.towerdefense.leveleditor.http.mapper.tower.EditableTowerLevelMapper;
+import com.towerdefense.leveleditor.http.mapper.tower.EditableTowerTypeMapper;
 import com.towerdefense.leveleditor.http.model.EditableTowerLevel;
 
 import jakarta.validation.Valid;
@@ -14,9 +14,9 @@ import jakarta.validation.Valid;
 @RestController
 public class TowerEditingApiImpl extends AbstractEditorController implements TowerEditingApi {
 
-    private final EditableTowerLevelMapper mapper;
-
-    public TowerEditingApiImpl(EditableTowerLevelMapper mapper) {
+	private final EditableTowerTypeMapper mapper;
+	
+    public TowerEditingApiImpl(EditableTowerTypeMapper mapper) {
         this.mapper = mapper;
     }
 
@@ -29,7 +29,7 @@ public class TowerEditingApiImpl extends AbstractEditorController implements Tow
         }
 
         com.towerdefense.editor.api.model.draft.EditableTowerLevel domainLevel = 
-            mapper.toDomain(editableTowerLevel);
+            mapper.towerLevelToDomain(editableTowerLevel);
         
         boolean success = towerEditor.addTowerLevel(
             domainLevel.level(),

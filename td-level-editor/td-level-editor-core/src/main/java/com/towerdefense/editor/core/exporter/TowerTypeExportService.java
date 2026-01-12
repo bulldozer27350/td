@@ -16,16 +16,17 @@ public class TowerTypeExportService {
 	}
 
 	public TowerTypeConfig export(EditableTowerType editableTower) {
-		ValidationResult validation = validator.validate(editableTower);
-		if (!validation.isValid()) {
-			throw new IllegalStateException("Invalid tower type: " + validation.getErrors());
-		}
-		TowerTypeConfig towerTypeConfig = new TowerTypeConfig();
-		towerTypeConfig.setId(editableTower.id());
-		for (EditableTowerLevel editableTowerLevel : editableTower.upgrades()) {
-			towerTypeConfig.getLevels().add(exportTowerType(editableTowerLevel));
-		}
-		return towerTypeConfig;
+	    ValidationResult validation = validator.validate(editableTower);
+	    if (!validation.isValid()) {
+	        throw new IllegalStateException("Invalid tower type: " + validation.getErrors());
+	    }
+	    TowerTypeConfig towerTypeConfig = new TowerTypeConfig();
+	    towerTypeConfig.setId(editableTower.id());
+	    towerTypeConfig.setName(editableTower.towerType()); // ✅ AJOUT DE CETTE LIGNE
+	    for (EditableTowerLevel editableTowerLevel : editableTower.upgrades()) {
+	        towerTypeConfig.getLevels().add(exportTowerType(editableTowerLevel));
+	    }
+	    return towerTypeConfig;
 	}
 
 	private TowerLevelConfig exportTowerType(EditableTowerLevel editableTowerLevel) {
