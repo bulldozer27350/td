@@ -26,11 +26,11 @@
                 <form id="createForm" class="grid md:grid-cols-5 gap-3">
                     <input type="text" id="enemyId" placeholder="ID (ex: goblin)" 
                            class="border rounded px-4 py-2 focus:ring-2 focus:ring-red-500 outline-none" required>
-                    <input type="number" id="health" placeholder="❤️" min="1" value=""
+                    <input type="number" id="health" placeholder="❤️ PV" min="1" value=""
                            class="border rounded px-4 py-2 focus:ring-2 focus:ring-red-500 outline-none" required>
-                    <input type="number" id="speed" placeholder="⚡" min="0.1" step="0.1" value=""
+                    <input type="number" id="speed" placeholder="⚡ Vitesse" min="0.1" step="0.1" value=""
                            class="border rounded px-4 py-2 focus:ring-2 focus:ring-red-500 outline-none" required>
-                    <input type="number" id="reward" placeholder="💰" min="0" value=""
+                    <input type="number" id="reward" placeholder="💰 Récompense" min="0" value=""
                            class="border rounded px-4 py-2 focus:ring-2 focus:ring-red-500 outline-none" required>
                     <button type="submit" 
                             class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors font-semibold shadow">
@@ -43,6 +43,10 @@
             <div class="mb-4 flex gap-3">
                 <input type="text" id="searchInput" placeholder="🔍 Rechercher un ennemi..." 
                        class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-red-500 outline-none">
+                <button onclick="showImportModal()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                    📥 Importer
+                </button>
                 <button onclick="loadEnemies()" 
                         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
                     🔄 Actualiser
@@ -96,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Modal d'édition -->
+    <!-- Modal d'édition (existant) -->
     <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 class="text-xl font-bold mb-4">✏️ Modifier un ennemi</h3>
@@ -128,9 +132,197 @@
         </div>
     </div>
 
+    <!-- Modal d'import/export (nouveau) -->
+    <div id="importExportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4" id="importExportModalTitle">Import/Export</h3>
+            <div id="modalContent"></div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button onclick="closeImportExportModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                    Annuler
+                </button>
+                <button id="modalConfirmBtn" onclick="confirmModalAction()" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = 'http://localhost:8080/api';
         let allEnemies = [];
+        let currentModalAction = null;
+        let currentEnemyId = null;
+        const IMPORT_BASE_PATHS = {
+            draft: 'D:\\\\Depots\\\\tower_defense\\\\drafts\\\\enemies\\\\',
+            exportable: 'D:\\\\Depots\\\\tower_defense\\\\exportables\\\\enemies\\\\'
+        };
+
+        // ========================================
+        // FONCTIONS D'IMPORT/EXPORT
+        // ========================================
+
+        function showImportModal() {
+            document.getElementById('importExportModalTitle').textContent = '📥 Importer un type d\'ennemi';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'import</label>
+                        <select id="importType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin du fichier</label>
+                        <input
+                            type="text"
+                            id="importPath"
+                            class="w-full border rounded px-3 py-2"
+                        >
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'import';
+            document.getElementById('importExportModal').classList.remove('hidden');
+
+            // --- LOGIQUE DYNAMIQUE ---
+            const importTypeSelect = document.getElementById('importType');
+            const importPathInput = document.getElementById('importPath');
+
+            function updateImportPath() {
+                const type = importTypeSelect.value;
+                importPathInput.value = IMPORT_BASE_PATHS[type];
+            }
+
+            importTypeSelect.addEventListener('change', updateImportPath);
+
+            // Initialisation
+            updateImportPath();
+        }
+
+        function showExportModal(enemyId) {
+            currentEnemyId = enemyId;
+            document.getElementById('importExportModalTitle').textContent = '📤 Exporter le type d\'ennemi';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'export</label>
+                        <select id="exportType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin de destination</label>
+                        <input
+                            type="text"
+                            id="exportPath"
+                            class="w-full border rounded px-3 py-2"
+                        >
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'export';
+            document.getElementById('importExportModal').classList.remove('hidden');
+
+            const exportTypeSelect = document.getElementById('exportType');
+            const exportPathInput = document.getElementById('exportPath');
+
+            function updateExportPath() {
+                const type = exportTypeSelect.value;
+                exportPathInput.value =
+                    IMPORT_BASE_PATHS[type] + `${enemyId}.json`;
+            }
+
+            exportTypeSelect.addEventListener('change', updateExportPath);
+
+            updateExportPath();
+        }
+
+        async function confirmModalAction() {
+            if (currentModalAction === 'import') {
+                await handleImport();
+            } else if (currentModalAction === 'export') {
+                await handleExport();
+            }
+        }
+
+        async function handleImport() {
+            const type = document.getElementById('importType').value;
+            const path = document.getElementById('importPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft' 
+                    ? `${API_URL}/enemies/import/draft`
+                    : `${API_URL}/enemies/import/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Ennemi importé avec succès', 'success');
+                    closeImportExportModal();
+                    await loadEnemies();
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur d\'import: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        async function handleExport() {
+            const type = document.getElementById('exportType').value;
+            const path = document.getElementById('exportPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft'
+                    ? `${API_URL}/enemies/${currentEnemyId}/export/draft`
+                    : `${API_URL}/enemies/${currentEnemyId}/export/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Ennemi exporté avec succès', 'success');
+                    closeImportExportModal();
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur d\'export: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        function closeImportExportModal() {
+            document.getElementById('importExportModal').classList.add('hidden');
+        }
+
+        // ========================================
+        // FONCTIONS DE GESTION DES ENNEMIS
+        // ========================================
 
         // Charger les ennemis
         async function loadEnemies() {
@@ -193,6 +385,10 @@
                                     class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
                                 ✏️ Éditer
                             </button>
+                            <button onclick="showExportModal('${enemy.id}')" 
+                                    class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 text-sm">
+                                📤
+                            </button>
                             <button onclick="deleteEnemy('${enemy.id}')" 
                                     class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
                                 🗑️
@@ -252,9 +448,6 @@
 
                 if (response.ok) {
                     e.target.reset();
-                    document.getElementById('health').value = 100;
-                    document.getElementById('speed').value = 1.0;
-                    document.getElementById('reward').value = 10;
                     await loadEnemies();
                     showNotification('✅ Ennemi créé avec succès !', 'success');
                 } else {

@@ -50,9 +50,13 @@
                 <div class="bg-white rounded-lg shadow-lg p-4">
                     <h3 class="font-bold mb-3 text-gray-800">🚀 Actions</h3>
                     <div class="space-y-2">
+                        <button id="togglePathCreationBtn" onclick="togglePathCreation()" 
+                                class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors text-sm font-medium">
+                            🖱️ Créer un chemin (clic)
+                        </button>
                         <button onclick="showAddPathModal()" 
                                 class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition-colors text-sm font-medium">
-                            ➕ Ajouter un chemin
+                            ⌨️ Ajouter un chemin (texte)
                         </button>
                         <button onclick="showAddAttackModal()" 
                                 class="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition-colors text-sm font-medium">
@@ -62,6 +66,28 @@
                                 class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition-colors text-sm font-medium">
                             🗼 Ajouter une tour
                         </button>
+                    </div>
+                    
+                    <!-- Zone de création de chemin (cachée par défaut) -->
+                    <div id="pathCreationPanel" class="hidden mt-4 p-3 bg-yellow-50 rounded-lg border-2 border-yellow-400">
+                        <h4 class="font-semibold text-sm mb-2 text-yellow-800">🖱️ Mode création de chemin</h4>
+                        <div class="space-y-2">
+                            <input type="text" id="newPathId" placeholder="ID du chemin (ex: path-1)" 
+                                class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <div class="text-xs text-gray-600 mb-2">
+                                Points: <span id="pathPointsCount" class="font-bold">0</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="validatePath()" 
+                                        class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 text-sm font-medium">
+                                    ✅ Valider
+                                </button>
+                                <button onclick="cancelPathCreation()" 
+                                        class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 text-sm font-medium">
+                                    ❌ Annuler
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,7 +101,7 @@
                     </div>
                 </div>
                 <div class="border-2 border-gray-300 rounded-lg overflow-auto bg-gray-50" style="max-height: 600px;">
-                    <div id="gridContainer" class="p-4">
+                    <div id="gridContainer" class="p-4" style="cursor: default;">
                         <!-- Grille générée dynamiquement -->
                     </div>
                 </div>
@@ -140,6 +166,137 @@
         const params = new URLSearchParams(window.location.search);
         const levelId = params.get('id');
         let currentLevel = null;
+        
+        // Variables pour la création de chemins
+        let isCreatingPath = false;
+        let currentPathPoints = [];
+
+        // ========================================
+        // GESTION DE LA CRÉATION DE CHEMIN PAR CLIC
+        // ========================================
+
+        function togglePathCreation() {
+            isCreatingPath = !isCreatingPath;
+            const btn = document.getElementById('togglePathCreationBtn');
+            const panel = document.getElementById('pathCreationPanel');
+            
+            if (isCreatingPath) {
+                // Activer le mode création
+                btn.textContent = '🛑 Arrêter la création';
+                btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                btn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+                panel.classList.remove('hidden');
+                currentPathPoints = [];
+                updatePathPointsCount();
+                showNotification('🖱️ Cliquez sur la grille pour créer un chemin', 'info');
+            } else {
+                // Désactiver le mode création
+                resetPathCreation();
+            }
+            
+            renderGrid();
+        }
+
+        function handleCellClick(x, y) {
+            if (!isCreatingPath) {
+                return; // Ne rien faire si on n'est pas en mode création
+            }
+            
+            const newPoint = { x, y };
+            
+            // Vérifier si le point n'est pas déjà dans le chemin
+            const isDuplicate = currentPathPoints.some(p => p.x === x && p.y === y);
+            if (isDuplicate) {
+                showNotification('⚠️ Ce point est déjà dans le chemin', 'error');
+                return;
+            }
+            
+            // Vérifier que le nouveau point est adjacent au dernier (sauf pour le premier point)
+            if (currentPathPoints.length > 0) {
+                const lastPoint = currentPathPoints[currentPathPoints.length - 1];
+                const isAdjacent = 
+                    (Math.abs(x - lastPoint.x) === 1 && y === lastPoint.y) || // Horizontal
+                    (Math.abs(y - lastPoint.y) === 1 && x === lastPoint.x);   // Vertical
+                
+                if (!isAdjacent) {
+                    showNotification('⚠️ Le point doit être adjacent au précédent', 'error');
+                    return;
+                }
+            }
+            
+            // Ajouter le point
+            currentPathPoints.push(newPoint);
+            updatePathPointsCount();
+            renderGrid();
+            
+            showNotification(`✅ Point ajouté: (${x}, ${y})`, 'success');
+        }
+
+        function updatePathPointsCount() {
+            document.getElementById('pathPointsCount').textContent = currentPathPoints.length;
+        }
+
+        async function validatePath() {
+            const pathId = document.getElementById('newPathId').value.trim();
+            
+            if (!pathId) {
+                showNotification('❌ Veuillez saisir un ID pour le chemin', 'error');
+                return;
+            }
+            
+            if (currentPathPoints.length < 2) {
+                showNotification('❌ Un chemin doit contenir au moins 2 points', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/levels/${levelId}/paths`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: pathId,
+                        points: currentPathPoints
+                    })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Chemin créé avec succès !', 'success');
+                    resetPathCreation();
+                    await loadLevel();
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        function cancelPathCreation() {
+            if (currentPathPoints.length > 0) {
+                if (!confirm('❌ Annuler la création du chemin en cours ?')) {
+                    return;
+                }
+            }
+            resetPathCreation();
+        }
+
+        function resetPathCreation() {
+            isCreatingPath = false;
+            currentPathPoints = [];
+            
+            const btn = document.getElementById('togglePathCreationBtn');
+            btn.textContent = '🖱️ Créer un chemin (clic)';
+            btn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            
+            document.getElementById('pathCreationPanel').classList.add('hidden');
+            document.getElementById('newPathId').value = '';
+            updatePathPointsCount();
+            
+            renderGrid();
+        }
 
         // Charger le niveau
         async function loadLevel() {
@@ -195,6 +352,23 @@
             // Initialiser la grille
             const cells = Array(height).fill().map(() => Array(width).fill('.'));
             
+            // Dessiner des lignes entre les points du chemin en cours
+            if (isCreatingPath && currentPathPoints.length > 1) {
+                for (let i = 0; i < currentPathPoints.length - 1; i++) {
+                    const from = currentPathPoints[i];
+                    const to = currentPathPoints[i + 1];
+                    
+                    // Déterminer la direction
+                    let arrow = '';
+                    if (to.x > from.x) arrow = '→';
+                    else if (to.x < from.x) arrow = '←';
+                    else if (to.y > from.y) arrow = '↓';
+                    else if (to.y < from.y) arrow = '↑';
+                    
+                    // Marquer visuellement (déjà fait avec 'C')
+                }
+            }
+
             // Marquer les chemins
             currentLevel.paths.forEach((path) => {
                 for (let i = 0; i < path.points.length - 1; i++) {
@@ -212,32 +386,50 @@
                 }
             });
 
+            // Marquer les points du chemin en cours de création
+            if (isCreatingPath && currentPathPoints.length > 0) {
+                currentPathPoints.forEach((point, index) => {
+                    if (index === 0) {
+                        cells[point.y][point.x] = 'S'; // Start (temporaire)
+                    } else {
+                        cells[point.y][point.x] = 'C'; // Current path (temporaire)
+                    }
+                });
+            }
+
             // Générer HTML
             let grid = `<div style="display: grid; 
                 grid-template-columns: repeat(${width}, ${cellSize}px);
                 gap: 1px; background: #ddd; width: fit-content;">`;
-            
+
             for (let y = 0; y < height; y++) {
                 for (let x = 0; x < width; x++) {
                     const cell = cells[y][x];
                     let color = '#fff';
                     let text = '';
                     let textColor = '#666';
+                    let cursorStyle = isCreatingPath ? 'crosshair' : 'pointer';
                     
                     if (cell === 'I') { color = '#4ade80'; text = 'I'; textColor = '#000'; }
                     else if (cell === 'O') { color = '#f87171'; text = 'O'; textColor = '#000'; }
                     else if (cell === 'P') { color = '#fbbf24'; text = '→'; textColor = '#000'; }
+                    else if (cell === 'S') { color = '#10b981'; text = '●'; textColor = '#fff'; } // Point de départ en cours
+                    else if (cell === 'C') { color = '#fbbf24'; text = '●'; textColor = '#fff'; } // Chemin en cours
                     
-                    grid += `<div style="width: ${cellSize}px; height: ${cellSize}px; 
+                    grid += `<div 
+                        data-x="${x}" 
+                        data-y="${y}"
+                        onclick="handleCellClick(${x}, ${y})"
+                        style="width: ${cellSize}px; height: ${cellSize}px; 
                         background: ${color}; display: flex; align-items: center; 
                         justify-content: center; font-size: ${cellSize * 0.6}px; 
-                        font-weight: bold; color: ${textColor}; cursor: pointer;"
+                        font-weight: bold; color: ${textColor}; cursor: ${cursorStyle};"
                         title="(${x}, ${y})">
                         ${text}
                     </div>`;
                 }
             }
-            
+
             grid += '</div>';
             container.innerHTML = grid;
         }
@@ -318,12 +510,12 @@
         // Afficher les tours
         function displayTowers() {
             const container = document.getElementById('towersList');
-            if (!currentLevel.towerCapcityIds || currentLevel.towerCapcityIds.length === 0) {
+            if (!currentLevel.towerCapacityIds || currentLevel.towerCapacityIds.length === 0) {
                 container.innerHTML = '<div class="text-gray-500 text-sm">Aucune tour</div>';
                 return;
             }
 
-            container.innerHTML = currentLevel.towerCapcityIds.map(id => `
+            container.innerHTML = currentLevel.towerCapacityIds.map(id => `
                 <div class="p-2 bg-green-50 rounded border border-green-200 flex justify-between items-center group hover:bg-green-100 transition-colors">
                     <span class="text-sm font-medium">${id}</span>
                     <button onclick="removeTower('${id}')" 

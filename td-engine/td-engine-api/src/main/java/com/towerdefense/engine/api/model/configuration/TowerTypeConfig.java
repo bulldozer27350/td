@@ -1,5 +1,6 @@
 package com.towerdefense.engine.api.model.configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ public class TowerTypeConfig {
 
     private String id;
     private String name;
-    private List<TowerLevelConfig> levels;
+    private List<TowerLevelConfig> levels = new ArrayList<TowerLevelConfig>();
 
     /** Get the unique identifier of the tower type. */
     public String getId() { return id; }

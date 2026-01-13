@@ -40,7 +40,11 @@
             <!-- Filtres et recherche -->
             <div class="mb-4 flex gap-3">
                 <input type="text" id="searchInput" placeholder="🔍 Rechercher un niveau..." 
-                       class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                    class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="showImportModal()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                    📥 Importer
+                </button>
                 <button onclick="loadLevels()" 
                         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
                     🔄 Actualiser
@@ -64,6 +68,10 @@
             <div class="mt-4 flex justify-end gap-2">
                 <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                     Annuler
+                </button>
+                <button id="modalConfirmBtn" onclick="confirmModalAction()" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Confirmer
                 </button>
             </div>
         </div>
@@ -147,6 +155,10 @@
                             <button onclick="duplicateLevel('${level.metadata.id}')"
                                     class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
                                 📋 Dupliquer
+                            </button>
+                            <button onclick="showExportModal('${level.metadata.id}')"
+                                    class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                📤 Exporter
                             </button>
                             <button onclick="deleteLevel('${level.metadata.id}')"
                                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors flex items-center gap-2 whitespace-nowrap">
@@ -285,6 +297,136 @@
 
         function closeModal() {
             document.getElementById('importExportModal').classList.add('hidden');
+        }
+
+        let currentModalAction = null;
+        let currentLevelId = null;
+
+        function showImportModal() {
+            document.getElementById('modalTitle').textContent = '📥 Importer un niveau';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'import</label>
+                        <select id="importType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin du fichier</label>
+                        <input type="text" id="importPath" 
+                            placeholder="Ex: C:\\levels\\my-level.json"
+                            class="w-full border rounded px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            ⚠️ Chemin sur le serveur (échappez les \\ avec \\\\)
+                        </p>
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'import';
+            document.getElementById('importExportModal').classList.remove('hidden');
+        }
+
+        function showExportModal(levelId) {
+            currentLevelId = levelId;
+            document.getElementById('modalTitle').textContent = '📤 Exporter le niveau';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'export</label>
+                        <select id="exportType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin de destination</label>
+                        <input type="text" id="exportPath" 
+                            placeholder="Ex: C:\\exports\\${levelId}.json"
+                            class="w-full border rounded px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            ⚠️ Chemin sur le serveur (échappez les \\ avec \\\\)
+                        </p>
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'export';
+            document.getElementById('importExportModal').classList.remove('hidden');
+        }
+
+        async function confirmModalAction() {
+            if (currentModalAction === 'import') {
+                await handleImport();
+            } else if (currentModalAction === 'export') {
+                await handleExport();
+            }
+        }
+
+        async function handleImport() {
+            const type = document.getElementById('importType').value;
+            const path = document.getElementById('importPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft' 
+                    ? `${API_URL}/levels/import/draft`
+                    : `${API_URL}/levels/import/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Niveau importé avec succès', 'success');
+                    closeModal();
+                    await loadLevels();
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        async function handleExport() {
+            const type = document.getElementById('exportType').value;
+            const path = document.getElementById('exportPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft'
+                    ? `${API_URL}/levels/${currentLevelId}/export/draft`
+                    : `${API_URL}/levels/${currentLevelId}/export/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Niveau exporté avec succès', 'success');
+                    closeModal();
+                } else {
+                    showNotification('❌ Erreur d\'export', 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
         }
 
         // Charger au démarrage

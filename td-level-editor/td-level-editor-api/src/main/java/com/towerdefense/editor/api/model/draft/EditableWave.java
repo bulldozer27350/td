@@ -8,6 +8,9 @@ public class EditableWave {
     private int count;
     private String enemyType;
     private String pathId;
+    
+    public EditableWave() {
+	}
 
     public EditableWave(String id, int startTick, int spawnInterval, int count, String enemyType, String pathId) {
         this.id = id;

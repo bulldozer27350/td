@@ -14,7 +14,7 @@ info:
     name: Tower Defense Studio Team
 
 servers:
-  - url: http://localhost:8081
+  - url: http://localhost:8080
     description: Serveur de développement local
 
 tags:

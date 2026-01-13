@@ -35,10 +35,15 @@
                 </form>
             </div>
 
+            
             <!-- Filtres et recherche -->
             <div class="mb-4 flex gap-3">
                 <input type="text" id="searchInput" placeholder="🔍 Rechercher une tour..." 
-                       class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                        class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                <button onclick="showImportModal()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                    📥 Importer
+                </button>
                 <button onclick="loadTowers()" 
                         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
                     🔄 Actualiser
@@ -121,10 +126,192 @@
         </div>
     </div>
 
+    <!-- Modal d'import/export -->
+    <div id="importExportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4" id="importExportModalTitle">Import/Export</h3>
+            <div id="modalContent"></div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button onclick="closeImportExportModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                    Annuler
+                </button>
+                <button id="modalConfirmBtn" onclick="confirmModalAction()" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = 'http://localhost:8080/api';
+        const IMPORT_BASE_PATHS = {
+            draft: 'D:\\\\Depots\\\\tower_defense\\\\drafts\\\\towers\\\\',
+            exportable: 'D:\\\\Depots\\\\tower_defense\\\\exportables\\\\towers\\\\'
+        };
         let allTowers = [];
         let currentTowerId = null;
+
+        let currentModalAction = null;
+        let currenttowerId = null;
+
+        function showImportModal() {
+            document.getElementById('importExportModalTitle').textContent = '📥 Importer un type de tour';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'import</label>
+                        <select id="importType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin du fichier</label>
+                        <input
+                            type="text"
+                            id="importPath"
+                            class="w-full border rounded px-3 py-2"
+                        >
+                    </div>
+                </div>
+            `;
+
+            currentModalAction = 'import';
+            document.getElementById('importExportModal').classList.remove('hidden');
+
+            // --- LOGIQUE DYNAMIQUE ---
+            const importTypeSelect = document.getElementById('importType');
+            const importPathInput = document.getElementById('importPath');
+
+            function updateImportPath() {
+                const type = importTypeSelect.value;
+                importPathInput.value = IMPORT_BASE_PATHS[type];
+            }
+
+            importTypeSelect.addEventListener('change', updateImportPath);
+
+            // Initialisation
+            updateImportPath();
+        }
+
+        function showExportModal(towerId) {
+            currenttowerId = towerId;
+            document.getElementById('importExportModalTitle').textContent = '📤 Exporter le type de tour';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'export</label>
+                        <select id="exportType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin de destination</label>
+                        <input
+                            type="text"
+                            id="exportPath"
+                            class="w-full border rounded px-3 py-2"
+                        >
+                    </div>
+                </div>
+            `;
+
+            currentModalAction = 'export';
+            document.getElementById('importExportModal').classList.remove('hidden');
+
+            const exportTypeSelect = document.getElementById('exportType');
+            const exportPathInput = document.getElementById('exportPath');
+
+            function updateExportPath() {
+                const type = exportTypeSelect.value;
+                exportPathInput.value =
+                    IMPORT_BASE_PATHS[type] + `${towerId}.json`;
+            }
+
+            exportTypeSelect.addEventListener('change', updateExportPath);
+
+            updateExportPath();
+        }
+
+
+        async function confirmModalAction() {
+            if (currentModalAction === 'import') {
+                await handleImport();
+            } else if (currentModalAction === 'export') {
+                await handleExport();
+            }
+        }
+
+        async function handleImport() {
+            const type = document.getElementById('importType').value;
+            const path = document.getElementById('importPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft' 
+                    ? `${API_URL}/towers/import/draft`
+                    : `${API_URL}/towers/import/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Tour importée avec succès', 'success');
+                    closeImportExportModal();
+                    await loadTowers();
+                } else {
+                    showNotification('❌ Erreur d\'import', 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        async function handleExport() {
+            const type = document.getElementById('exportType').value;
+            const path = document.getElementById('exportPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft'
+                    ? `${API_URL}/towers/${currenttowerId}/export/draft`
+                    : `${API_URL}/towers/${currenttowerId}/export/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Tour exportée avec succès', 'success');
+                    closeImportExportModal();
+                } else {
+                    showNotification('❌ Erreur d\'export', 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        function closeImportExportModal() {
+            document.getElementById('importExportModal').classList.add('hidden');
+        }
 
         // Charger les tours
         async function loadTowers() {
@@ -207,6 +394,10 @@
                                 <button onclick="manageLevels('${tower.id}')" 
                                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
                                     ⚙️ Niveaux
+                                </button>
+                                <button onclick="showExportModal('${tower.id}')" 
+                                        class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 text-sm">
+                                    📤
                                 </button>
                                 <button onclick="deleteTower('${tower.id}')" 
                                         class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors flex items-center gap-2 whitespace-nowrap">
