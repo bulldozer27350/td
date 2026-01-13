@@ -43,6 +43,10 @@
                                 class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors font-semibold">
                             💾 Sauvegarder
                         </button>
+                        <button onclick="analyzeLevel()" 
+                                class="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600">
+                            🔍 Analyser la difficulté
+                        </button>
                     </form>
                 </div>
 
@@ -837,6 +841,82 @@ Exemple: 0,5;10,5;10,10"></textarea>
             document.body.appendChild(notification);
 
             setTimeout(() => notification.remove(), 3000);
+        }
+
+        async function analyzeLevel() {
+            try {
+                const response = await fetch(`${API_URL}/levels/${levelId}/analyze`);
+                const analysis = await response.json();
+                
+                // Afficher dans une modal
+                showAnalysisModal(analysis);
+            } catch (error) {
+                showNotification('❌ Erreur d\'analyse', 'error');
+            }
+        }
+
+        function showAnalysisModal(analysis) {
+            document.getElementById('modalTitle').textContent = '🔍 Analyse du niveau';
+            
+            let html = `
+                <div class="space-y-4">
+                    <div class="text-center">
+                        <div class="text-6xl font-bold ${getDifficultyColor(analysis.difficultyScore)}">
+                            ${analysis.difficultyScore}/100
+                        </div>
+                        <div class="text-gray-600 mt-2">${getDifficultyLabel(analysis.difficultyScore)}</div>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h4 class="font-semibold mb-2">📊 Métriques</h4>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${analysis.metrics.map(m => `
+                                <div class="bg-gray-50 p-2 rounded">
+                                    <div class="text-sm text-gray-600">${m.name}</div>
+                                    <div class="font-bold">${m.value.toFixed(1)} ${m.unit}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    ${analysis.warnings.length > 0 ? `
+                        <div class="border-t pt-4">
+                            <h4 class="font-semibold mb-2">⚠️ Avertissements</h4>
+                            ${analysis.warnings.map(w => `
+                                <div class="p-2 rounded mb-2 ${getWarningBg(w.severity)}">
+                                    <div class="font-medium">${w.category}</div>
+                                    <div class="text-sm">${w.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = html;
+            showModal();
+        }
+
+        function getDifficultyColor(score) {
+            if (score < 30) return 'text-green-600';
+            if (score < 60) return 'text-yellow-600';
+            if (score < 80) return 'text-orange-600';
+            return 'text-red-600';
+        }
+
+        function getDifficultyLabel(score) {
+            if (score < 30) return 'Facile';
+            if (score < 60) return 'Moyen';
+            if (score < 80) return 'Difficile';
+            return 'Très difficile';
+        }
+
+        function getWarningBg(severity) {
+            switch(severity) {
+                case 'INFO': return 'bg-blue-50 border border-blue-200';
+                case 'WARNING': return 'bg-yellow-50 border border-yellow-200';
+                case 'CRITICAL': return 'bg-red-50 border border-red-200';
+            }
         }
 
         // Charger au démarrage

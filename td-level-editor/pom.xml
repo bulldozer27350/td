@@ -20,5 +20,6 @@
 		<module>td-level-editor-core</module>
 		<module>td-level-editor-ui</module>
 		<module>td-level-editor-http</module>
+		<module>td-level-editor-analyzer</module>
 	</modules>
 </project>

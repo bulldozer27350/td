@@ -743,7 +743,29 @@ paths:
       responses:
         '204':
           description: Niveau de tour supprimé
-
+  # ========================================================================
+  # LEVEL ANALYZER
+  # ========================================================================
+  /api/levels/{levelId}/analyze:
+    get:
+      summary: Analyse la faisabilité et la difficulté du niveau
+      tags: [Level Analysis]
+      operationId: analyzeLevel
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rapport d'analyse du niveau
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LevelAnalysisReport'
+        '404':
+          description: Niveau non trouvé
 # ============================================================================
 # SCHEMAS
 # ============================================================================
@@ -1038,3 +1060,57 @@ components:
           type: integer
         buildTimeTicks:
           type: integer
+
+    LevelAnalysisReport:
+      type: object
+      required:
+        - difficultyScore
+        - warnings
+        - metrics
+      properties:
+        difficultyScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Score de difficulté global (0=facile, 100=impossible)
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisWarning'
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisMetric'
+    AnalysisWarning:
+      type: object
+      required:
+        - category
+        - message
+        - severity
+      properties:
+        category:
+          type: string
+          example: "Economy"
+        message:
+          type: string
+          example: "Starting money is very low"
+        severity:
+          type: string
+          enum: [INFO, WARNING, CRITICAL]
+    AnalysisMetric:
+      type: object
+      required:
+        - name
+        - value
+        - unit
+      properties:
+        name:
+          type: string
+          example: "Economy Score"
+        value:
+          type: number
+          format: double
+          example: 75.5
+        unit:
+          type: string
+          example: "points"
