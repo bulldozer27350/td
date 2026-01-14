@@ -29,8 +29,10 @@ public interface LevelEditorApi {
 	boolean removeAttack(String attackId);
 	
 	
-	boolean addTowerType(String towerTypeId);
+	boolean addTowerCapacity(String towerTypeId, int maxLevel);
 	
-	boolean removeTowerType(String towerTypeId);
+	boolean removeTowerCapacity(String towerTypeId);
+	
+	boolean updateTowerCapacity(String towerTypeId, int newMaxLevel);
 	
 }

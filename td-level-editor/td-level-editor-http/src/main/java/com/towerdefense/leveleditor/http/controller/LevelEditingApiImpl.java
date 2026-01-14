@@ -183,7 +183,7 @@ public class LevelEditingApiImpl extends AbstractEditorController implements Lev
             return ResponseEntity.notFound().build();
         }
 
-        boolean success = levelEditor.removeTowerType(towerTypeId);
+        boolean success = levelEditor.removeTowerCapacity(towerTypeId);
         
         return success 
             ? ResponseEntity.noContent().build()
