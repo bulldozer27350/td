@@ -9,6 +9,7 @@ import com.towerdefense.editor.core.validation.LevelValidator;
 import com.towerdefense.editor.core.validation.ValidationResult;
 import com.towerdefense.engine.api.model.configuration.AttackConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
+import com.towerdefense.engine.api.model.configuration.TowerCapacityConfig;
 import com.towerdefense.engine.api.model.configuration.WaveConfig;
 
 public class LevelExportService {
@@ -26,10 +27,16 @@ public class LevelExportService {
 		}
 		LevelConfig levelConfig = new LevelConfig();
 		List<AttackConfig> attacks = level.getAttacks().stream().map(this::mapAttack).collect(Collectors.toList());
+		
+		List<TowerCapacityConfig> towerCapacities = level.getTowerCapacities().stream()
+			    .map(tc -> new TowerCapacityConfig(tc.getTowerTypeId(), tc.getMaxLevel()))
+			    .collect(Collectors.toList());
+		
 		levelConfig.setId(level.getMetadata().getId());
 		levelConfig.setAttacks(attacks);
 		levelConfig.setStartingLives(level.getMetadata().getStartingLives());
 		levelConfig.setStartingMoney(level.getMetadata().getStartingMoney());
+		levelConfig.setTowerCapacities(towerCapacities);
 		return levelConfig;
 	}
 

@@ -27,7 +27,7 @@ public class LevelScenarioFactory {
 		List<Attack> attacks = definition.getAttacks().stream().map(a -> createAttack(a, enemyFactories, paths))
 				.toList();
 
-		return new LevelScenario(definition.getId(), attacks);
+		return new LevelScenario(definition.getId(), attacks, definition.getTowerCapacities());
 	}
 
 	/**

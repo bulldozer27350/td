@@ -24,6 +24,16 @@ public class GameState {
     private LevelProgress levelProgress;
     private StateEnum state;
     private PlayerState player;
+    
+    private Map<String, Integer> towerMaxLevels = new HashMap<>();
+
+    public void setTowerMaxLevels(Map<String, Integer> maxLevels) {
+        this.towerMaxLevels = maxLevels;
+    }
+
+    public int getTowerMaxLevel(String towerTypeId) {
+        return towerMaxLevels.getOrDefault(towerTypeId, 999); // Par défaut : tous les niveaux
+    }
 
     public Collection<Tower> towers() {
         return towersMap.values();

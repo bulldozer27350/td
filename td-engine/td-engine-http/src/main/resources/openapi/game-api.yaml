@@ -376,7 +376,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AttackConfig'
+        towerCapacities:  # ✅ NOUVEAU
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerCapacityConfig'
       required: [id, startingLives, startingMoney, attacks]
+
+    TowerCapacityConfig: 
+      type: object
+      required:
+        - towerTypeId
+        - maxLevel
+      properties:
+        towerTypeId:
+          type: string
+          example: "machinegun"
+        maxLevel:
+          type: integer
+          minimum: 1
+          example: 3
 
     AttackConfig:
       type: object

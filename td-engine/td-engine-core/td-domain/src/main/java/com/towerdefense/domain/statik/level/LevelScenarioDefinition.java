@@ -11,6 +11,7 @@ public class LevelScenarioDefinition {
 	private final List<AttackDefinition> attacks;
 	private final int startingLives;
 	private final int startingMoney;
+	private final List<TowerCapacityDefinition> towerCapacities;
 
 	/**
 	 * Constructs a LevelScenarioDefinition with the specified id and list of attack
@@ -19,11 +20,12 @@ public class LevelScenarioDefinition {
 	 * @param id      the unique identifier for the level scenario
 	 * @param attacks the list of attack definitions for this level scenario
 	 */
-	public LevelScenarioDefinition(String id, List<AttackDefinition> attacks, int startingLives, int startingMoney) {
+	public LevelScenarioDefinition(String id, List<AttackDefinition> attacks, int startingLives, int startingMoney, List<TowerCapacityDefinition> towerCapacities) {
 		this.id = id;
 		this.attacks = List.copyOf(attacks);
 		this.startingLives = startingLives;
 		this.startingMoney = startingMoney;
+	    this.towerCapacities = towerCapacities != null ? List.copyOf(towerCapacities) : List.of();
 	}
 
 	/**
@@ -60,5 +62,9 @@ public class LevelScenarioDefinition {
 	 */
 	public int getStartingMoney() {
 		return startingMoney;
+	}
+	
+	public List<TowerCapacityDefinition> getTowerCapacities() {  // ✅ NOUVEAU
+	    return towerCapacities;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +24,7 @@ import com.towerdefense.domain.dynamik.level.LevelProgress;
 import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.statik.level.LevelScenarioDefinition;
+import com.towerdefense.domain.statik.level.TowerCapacityDefinition;
 import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.engine.api.model.GameStateDTO;
@@ -127,9 +129,17 @@ public class GameEngineApiImpl implements GameEngineApi {
 
 		LevelScenario levelScenario = levelScenarioFactory.create(this.context.levelScenarioDefinition(),
 				this.context.enemyFactoryRegistry(), this.context.enemyPaths());
-
+		
 		this.state.setPlayer(new PlayerState(this.playerId, gameConfig.levelConfig().getStartingMoney(),
 				gameConfig.levelConfig().getStartingLives()));
+		
+		Map<String, Integer> towerMaxLevels = levelScenario.getTowerCapacities().stream()
+		    .collect(Collectors.toMap(
+		        TowerCapacityDefinition::getTowerTypeId,
+		        TowerCapacityDefinition::getMaxLevel
+		    ));
+		this.state.setTowerMaxLevels(towerMaxLevels);
+		
 		this.sequencer.setLevel(levelScenario);
 	}
 

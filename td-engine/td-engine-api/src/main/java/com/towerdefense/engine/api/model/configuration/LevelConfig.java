@@ -1,5 +1,6 @@
 package com.towerdefense.engine.api.model.configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,8 @@ public class LevelConfig {
 	private List<AttackConfig> attacks;
 	private int startingLives;
 	private int startingMoney;
+	
+    private List<TowerCapacityConfig> towerCapacities = new ArrayList<>();
 
 	/** Get the number of lives for the level. */
 	public int getStartingLives() {
@@ -50,6 +53,14 @@ public class LevelConfig {
 	/** Set the list of attack configurations for the level. */
 	public void setAttacks(List<AttackConfig> attacks) {
 		this.attacks = attacks;
+	}
+
+	public List<TowerCapacityConfig> getTowerCapacities() {
+		return towerCapacities;
+	}
+
+	public void setTowerCapacities(List<TowerCapacityConfig> towerCapacities) {
+		this.towerCapacities = towerCapacities;
 	}
 
 }

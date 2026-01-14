@@ -67,7 +67,9 @@ public class LevelEditorCli {
 	private void addTowerAvailability(LevelEditorApi levelEditorApi) {
 		System.out.println("Tower type id ? (String)");
 		String id = scanner.nextLine();
-		levelEditorApi.addTowerType(id);
+		System.out.println("Tower type level ? (integer)");
+		int level = Integer.parseInt(scanner.nextLine());
+		levelEditorApi.addTowerCapacity(id, level);
 	}
 
 	private void addAttack(LevelEditorApi levelEditorApi) {

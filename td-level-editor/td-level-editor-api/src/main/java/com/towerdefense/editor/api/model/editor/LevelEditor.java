@@ -2,6 +2,7 @@ package com.towerdefense.editor.api.model.editor;
 
 import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.api.model.draft.EditableWave;
+import com.towerdefense.editor.api.model.draft.TowerCapacity;
 import com.towerdefense.editor.api.model.exportable.PathDefinition;
 
 public interface LevelEditor {
@@ -10,7 +11,7 @@ public interface LevelEditor {
 	
 	boolean removePath(String pathId);
 
-    void addTowerCapacity(String towerCapacityId);
+    void addTowerCapacity(TowerCapacity towerCapacityId);
 
     void addEnemyWave(int attackIndex, EditableWave wave);
     

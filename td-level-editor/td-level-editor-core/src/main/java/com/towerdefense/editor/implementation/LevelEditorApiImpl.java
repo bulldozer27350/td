@@ -52,7 +52,6 @@ public class LevelEditorApiImpl implements LevelEditorApi {
         return this.currentLevel.getAttacks().removeIf(e -> e.getId().equalsIgnoreCase(attackId));
     }
 
-    // ✅ NOUVELLES MÉTHODES
     @Override
     public boolean addTowerCapacity(String towerTypeId, int maxLevel) {
         // Vérifier que le type de tour n'existe pas déjà

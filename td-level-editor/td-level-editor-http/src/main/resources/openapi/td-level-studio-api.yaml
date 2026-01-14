@@ -28,6 +28,8 @@ tags:
     description: Gestion des types de tours
   - name: Tower Editing
     description: Édition d'un type de tour spécifique
+  - name: Level Analysis
+    description: Analyse de faisabilité et de difficulté des niveaux
 
 paths:
   # ========================================================================
@@ -384,7 +386,7 @@ paths:
 
   /api/levels/{levelId}/tower-types:
     post:
-      summary: Ajoute un type de tour disponible au niveau
+      summary: Ajoute un type de tour avec niveau max
       tags: [Level Editing]
       operationId: addTowerTypeToLevel
       parameters:
@@ -398,12 +400,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddTowerTypeRequest'
+              type: object
+              required: 
+                - towerTypeId
+                - maxLevel
+              properties:
+                towerTypeId:
+                  type: string
+                maxLevel:
+                  type: integer
+                  minimum: 1
       responses:
         '204':
           description: Type de tour ajouté
 
   /api/levels/{levelId}/tower-types/{towerTypeId}:
+    patch:
+      summary: Met à jour le niveau max d'un type de tour
+      tags: [Level Editing]
+      operationId: updateTowerCapacity
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - maxLevel
+              properties:
+                maxLevel:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Niveau max mis à jour
+    
     delete:
       summary: Retire un type de tour du niveau
       tags: [Level Editing]
@@ -830,14 +872,6 @@ components:
         id:
           type: string
 
-    AddTowerTypeRequest:
-      type: object
-      required:
-        - towerTypeId
-      properties:
-        towerTypeId:
-          type: string
-
     CreateEnemyTypeRequest:
       type: object
       required:
@@ -881,7 +915,7 @@ components:
         - map
         - paths
         - attacks
-        - towerCapacityIds
+        - towerCapacities
       properties:
         metadata:
           $ref: '#/components/schemas/LevelMetadata'
@@ -895,10 +929,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EditableAttack'
-        towerCapacityIds:
+        towerCapacities:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/TowerCapacity'
+            
+    TowerCapacity:
+      type: object
+      required:
+        - towerTypeId
+        - maxLevel
+      properties:
+        towerTypeId:
+          type: string
+          example: "archer"
+        maxLevel:
+          type: integer
+          minimum: 1
+          example: 2
 
     LevelMetadata:
       type: object

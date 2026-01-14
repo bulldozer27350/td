@@ -16,7 +16,7 @@ public class DefaultLevelValidator implements LevelValidator {
             result.addError("Level must define at least one attack");
         }
 
-        if (level.getTowerCapacityIds().isEmpty()) {
+        if (level.getTowerCapacities().isEmpty()) {
             result.addError("Level must define at least one tower capacity");
         }
 

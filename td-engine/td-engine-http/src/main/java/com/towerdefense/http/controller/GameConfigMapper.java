@@ -41,7 +41,22 @@ public class GameConfigMapper {
                         .map(this::toBusiness)
                         .collect(Collectors.toList())
         );
+        if (dto.getTowerCapacities() != null) {
+            config.setTowerCapacities(
+                dto.getTowerCapacities().stream()
+                    .map(this::toBusiness)
+                    .collect(Collectors.toList())
+            );
+        }
         return config;
+    }
+    
+    private com.towerdefense.engine.api.model.configuration.TowerCapacityConfig toBusiness(
+            com.towerdefense.http.model.TowerCapacityConfig dto) {
+        return new com.towerdefense.engine.api.model.configuration.TowerCapacityConfig(
+            dto.getTowerTypeId(),
+            dto.getMaxLevel()
+        );
     }
 
     private AttackConfig toBusiness(com.towerdefense.http.model.AttackConfig dto) {

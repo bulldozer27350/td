@@ -52,15 +52,18 @@ public class TowerServicesImpl implements TowerServices {
 	@Override
 	/** Attempt to upgrade a tower based on the provided intention. */
 	public boolean attemptUpgradeTower(GameState state, UpgradeTowerIntention intent) {
-		Tower tower = state.towers().stream().filter(t -> t.id().equals(intent.towerId())).findFirst().orElseThrow();
+	    Tower tower = state.towers().stream()
+	        .filter(t -> t.id().equals(intent.towerId()))
+	        .findFirst()
+	        .orElseThrow();
 
-		PlayerState player = state.player();
+	    PlayerState player = state.player();
 
-		if (!this.upgradeService.canUpgrade(tower, player)) {
-			return false;
-		}
-		this.upgradeService.upgrade(tower, player);
-		return true;
+	    if (!this.upgradeService.canUpgrade(tower, player, state)) {  // ✅ Passer state
+	        return false;
+	    }
+	    this.upgradeService.upgrade(tower, player, state);
+	    return true;
 	}
 
 	@Override

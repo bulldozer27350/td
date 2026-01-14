@@ -7,6 +7,7 @@ import com.towerdefense.editor.api.model.draft.EditableAttack;
 import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.api.model.draft.EditableMap;
 import com.towerdefense.editor.api.model.draft.EditableWave;
+import com.towerdefense.editor.api.model.draft.TowerCapacity;
 import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 import com.towerdefense.engine.api.model.configuration.AttackConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
@@ -29,7 +30,7 @@ public class LevelImportService {
 		EditableMap map = new EditableMap(10, 10);
 
 		EditableLevel level = new EditableLevel(metadata, map, new ArrayList<EditableAttack>(),
-				new ArrayList<String>());
+				new ArrayList<TowerCapacity>());
 
 		// --- Paths ---
 		// LevelConfig does not expose paths yet

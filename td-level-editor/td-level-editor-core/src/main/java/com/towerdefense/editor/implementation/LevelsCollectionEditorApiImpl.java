@@ -9,6 +9,7 @@ import com.towerdefense.editor.api.level.LevelEditorApi;
 import com.towerdefense.editor.api.model.draft.EditableAttack;
 import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.api.model.draft.EditableMap;
+import com.towerdefense.editor.api.model.draft.TowerCapacity;
 import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 import com.towerdefense.editor.core.GenericIOServices;
 import com.towerdefense.editor.core.exporter.LevelExportService;
@@ -41,7 +42,7 @@ public class LevelsCollectionEditorApiImpl implements LevelsCollectionEditorApi 
 		LevelMetadata metadata = new LevelMetadata(id, 0, 1);
 		EditableMap map = new EditableMap(width, height);
 		EditableLevel editableLevel = new EditableLevel(metadata, map, new ArrayList<EditableAttack>(),
-				new ArrayList<String>());
+				new ArrayList<TowerCapacity>());
 		this.editableLevels.add(editableLevel);
 		return new LevelEditorApiImpl(editableLevel);
 	}

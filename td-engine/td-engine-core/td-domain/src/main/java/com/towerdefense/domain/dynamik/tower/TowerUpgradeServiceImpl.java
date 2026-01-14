@@ -2,6 +2,7 @@ package com.towerdefense.domain.dynamik.tower;
 
 import org.springframework.stereotype.Service;
 
+import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
 
@@ -12,7 +13,6 @@ import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
  */
 public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 
-	@Override
 	/**
 	 * Checks if the specified tower can be upgraded by the player.
 	 *
@@ -20,12 +20,18 @@ public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 	 * @param player The player's state, including available resources.
 	 * @return true if the tower can be upgraded; false otherwise.
 	 */
-	public boolean canUpgrade(Tower tower, PlayerState player) {
-		if (!tower.canUpgrade())
-			return false;
+	@Override
+	public boolean canUpgrade(Tower tower, PlayerState player, GameState state) {
+	    if (!tower.canUpgrade())
+	        return false;
 
-		TowerLevelDefinition next = tower.nextLevelDefinition();
-		return player.gold() >= next.upgradeCost();
+	    int maxLevelAllowed = state.getTowerMaxLevel(tower.type().name());
+	    if (tower.level() >= maxLevelAllowed) {
+	        return false;
+	    }
+
+	    TowerLevelDefinition next = tower.nextLevelDefinition();
+	    return player.gold() >= next.upgradeCost();
 	}
 
 	@Override
@@ -36,8 +42,8 @@ public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 	 * @param player The player's state, including available resources.
 	 * @throws IllegalStateException if the upgrade is not allowed.
 	 */
-	public void upgrade(Tower tower, PlayerState player) {
-		if (!canUpgrade(tower, player)) {
+	public void upgrade(Tower tower, PlayerState player, GameState state) {
+		if (!canUpgrade(tower, player, state)) {
 			throw new IllegalStateException("Upgrade not allowed");
 		}
 

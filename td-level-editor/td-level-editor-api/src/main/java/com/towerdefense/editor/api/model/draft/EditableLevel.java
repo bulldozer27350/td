@@ -2,6 +2,7 @@ package com.towerdefense.editor.api.model.draft;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 
 public class EditableLevel {

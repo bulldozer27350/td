@@ -133,7 +133,8 @@ public class LevelAnalyzer {
         Set<String> pathCells = extractPathCells(path);
         
         // Range max des tours disponibles
-        double maxRange = level.getTowerCapacityIds().stream()
+        double maxRange = level.getTowerCapacities().stream()
+        		.map(TowerCapacity::getTowerTypeId)
             .map(towerTypeRegistry::get)
             .filter(Objects::nonNull)
             .flatMap(t -> t.upgrades().stream())
@@ -284,7 +285,7 @@ public class LevelAnalyzer {
         }
         
         // Pas de tours disponibles
-        if (level.getTowerCapacityIds().isEmpty()) {
+        if (level.getTowerCapacities().isEmpty()) {
             report.addWarning(
                 "Configuration",
                 "No tower types available. Players cannot defend.",

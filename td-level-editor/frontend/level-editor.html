@@ -741,7 +741,6 @@ Exemple: 0,5;10,5;10,10"></textarea>
             }
         }
 
-        // Modal : Ajouter une tour
         async function showAddTowerModal() {
             const response = await fetch(`${API_URL}/towers`);
             const towers = await response.json();
@@ -752,8 +751,25 @@ Exemple: 0,5;10,5;10,10"></textarea>
                     <div>
                         <label class="block text-sm font-medium mb-1">Type de tour</label>
                         <select id="towerTypeId" class="w-full border rounded px-3 py-2">
-                            ${towers.map(t => `<option value="${t.id}">${t.id} (${t.towerType})</option>`).join('')}
+                            ${towers.map(t => `
+                                <option value="${t.id}">
+                                    ${t.id} (${t.upgrades.length} niveaux disponibles)
+                                </option>
+                            `).join('')}
                         </select>
+                    </div>
+                    
+                    <!-- ✅ NOUVEAU CHAMP -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Niveau maximum autorisé</label>
+                        <input type="number" 
+                            id="maxLevel" 
+                            min="1" 
+                            value="1"
+                            class="w-full border rounded px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            Limite le niveau auquel les joueurs peuvent améliorer cette tour
+                        </p>
                     </div>
                 </div>
             `;
@@ -764,12 +780,16 @@ Exemple: 0,5;10,5;10,10"></textarea>
 
         async function addTower() {
             const towerTypeId = document.getElementById('towerTypeId').value;
+            const maxLevel = parseInt(document.getElementById('maxLevel').value);
 
             try {
                 const response = await fetch(`${API_URL}/levels/${levelId}/tower-types`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ towerTypeId })
+                    body: JSON.stringify({ 
+                        towerTypeId,
+                        maxLevel  // ✅ NOUVEAU
+                    })
                 });
 
                 if (response.ok) {
@@ -783,6 +803,84 @@ Exemple: 0,5;10,5;10,10"></textarea>
                 showNotification('❌ Erreur de connexion', 'error');
                 console.error(error);
             }
+        }
+
+        // ✅ Modifier displayTowers pour afficher le niveau max
+        function displayTowers() {
+            const container = document.getElementById('towersList');
+            const capacities = currentLevel.towerCapacities || [];
+            
+            if (capacities.length === 0) {
+                container.innerHTML = '<div class="text-gray-500 text-sm">Aucune tour</div>';
+                return;
+            }
+
+            container.innerHTML = capacities.map(capacity => `
+                <div class="p-2 bg-green-50 rounded border border-green-200 flex justify-between items-center group hover:bg-green-100 transition-colors">
+                    <div class="flex-1">
+                        <span class="text-sm font-medium">${capacity.towerTypeId}</span>
+                        <span class="text-xs text-gray-600 ml-2">
+                            (max niveau ${capacity.maxLevel})
+                        </span>
+                    </div>
+                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="editTowerCapacity('${capacity.towerTypeId}', ${capacity.maxLevel})" 
+                                class="text-blue-500 hover:text-blue-700 text-xs">
+                            ✏️
+                        </button>
+                        <button onclick="removeTower('${capacity.towerTypeId}')" 
+                                class="text-red-500 hover:text-red-700 text-xs">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ✅ NOUVELLE FONCTION
+        async function editTowerCapacity(towerTypeId, currentMaxLevel) {
+            document.getElementById('modalTitle').textContent = '✏️ Modifier le niveau max';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">
+                            Niveau maximum pour ${towerTypeId}
+                        </label>
+                        <input type="number" 
+                            id="newMaxLevel" 
+                            min="1" 
+                            value="${currentMaxLevel}"
+                            class="w-full border rounded px-3 py-2">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalConfirm').onclick = async () => {
+                const newMaxLevel = parseInt(document.getElementById('newMaxLevel').value);
+                
+                try {
+                    const response = await fetch(
+                        `${API_URL}/levels/${levelId}/tower-types/${towerTypeId}`,
+                        {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ maxLevel: newMaxLevel })
+                        }
+                    );
+
+                    if (response.ok) {
+                        closeModal();
+                        showNotification('✅ Niveau max mis à jour !', 'success');
+                        await loadLevel();
+                    } else {
+                        showNotification('❌ Erreur de mise à jour', 'error');
+                    }
+                } catch (error) {
+                    showNotification('❌ Erreur de connexion', 'error');
+                }
+            };
+            
+            showModal();
         }
 
         // Suppression
