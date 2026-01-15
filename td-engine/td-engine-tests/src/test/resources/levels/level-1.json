@@ -35,5 +35,11 @@
     }
   ],
   "startingMoney": 400,
-  "startingLives": 10
+  "startingLives": 10,
+  "towerCapacities": [
+	{
+		"towerTypeId": "machinegun",
+		"maxLevel": 3
+	}
+  ]
 }
