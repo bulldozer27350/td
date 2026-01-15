@@ -1,3 +1,4 @@
+
 # 🛡️ Tower Defense – Moteur de jeu Java modulaire
 
 Un moteur de Tower Defense extensible, orienté architecture propre et conception métier.
@@ -116,6 +117,107 @@ Des **assemblers** et **mappers dédiés** assurent la transformation DTO ➜ do
 
 ---
 
+### 🧠 Couche Méta (progression & multi-niveaux)
+
+Le projet distingue explicitement le moteur de jeu du système de progression méta.
+
+La couche méta n’est pas responsable de l’exécution d’une partie, mais de tout ce qui l’entoure :
+enchaînement des niveaux, évolution des tours, récompenses, et persistance de la progression du joueur.
+
+---
+### 🎯 Rôle de la méta
+
+La méta a pour responsabilités principales :
+
+- 🧩 Gérer la progression multi-niveaux
+- 🌳 Définir et appliquer des arbres d’évolution (tours, ennemis, capacités)
+- 🏆 Calculer les récompenses à l’issue d’une partie
+- 📊 Exploiter les statistiques de fin de partie produites par le moteur
+- 🔄 Projeter des capacités effectives en fonction de la progression du joueur
+
+⚠ La méta ne contient aucune logique de gameplay temps réel.
+
+---
+### 🗂️ Sources de vérité & flux de données
+
+Le projet repose sur une séparation stricte des rôles :
+🧱 TD Level Studio (contenu de base)
+- Source de vérité des données statiques
+- Définit :
+	- niveaux
+	- types de tours
+	- types d’ennemis
+- Données immuables, versionnées et analysables
+- Exemple :
+``` json
+{ "range": 2.0, "damage": 20 }
+```
+---
+### 🧠 Méta (projection & progression)
+
+- Lit les données du TD Level Studio
+- Applique ses règles de progression en fonction du joueur
+- Ne modifie jamais les données sources
+- Produit un JSON dérivé, spécifique à :
+	- un joueur
+	- un instant
+	- un mode de jeu
+
+Exemple (projection calculée) :
+``` json
+{ "range": 2.2, "damage": 25 }
+```
+
+Les règles de progression restent internes à la méta
+(le moteur ne reçoit jamais de formules ou de bonus).
+
+---
+### ⚙️ Moteur de jeu
+
+- Consomme uniquement des données finales
+- Ignore totalement :
+	- la progression
+	- la méta
+	- l’origine des valeurs
+- Exécute la partie de manière déterministe
+
+👉 Le moteur reste totalement agnostique de la méta.
+
+---
+### 🔄 Retour moteur → méta
+
+À la fin d’une partie, le moteur produit un résumé neutre :
+- victoire / défaite
+- durée
+- vies restantes
+- ennemis éliminés
+- tours construites / améliorées
+- statistiques agrégées
+
+La méta consomme ce résultat pour :
+- calculer les récompenses
+- mettre à jour la progression
+- ajuster l’équilibrage
+
+⚠ Le moteur ne calcule jamais de récompenses ou d’XP.
+
+---
+### 🧩 Principes clés de conception méta
+🧱 Le contenu de base est immuable
+🧠 La méta projette, elle ne modifie pas
+⚙️ Le moteur consomme des valeurs finales
+🔁 Les projections sont jetables et recalculables
+🧪 Chaque couche est testable indépendamment
+
+---
+### 🧭 Objectif à long terme
+
+Cette séparation permet :
+- d’évoluer la méta sans casser le moteur
+- d’analyser les niveaux avec différents profils de joueurs
+- de rejouer une partie passée avec de nouvelles règles de progression
+- de supporter plusieurs modes de jeu (campagne, sandbox, hardcore)
+---
 ### 🖥️ Rendu ASCII (`td-console-viewer`)
 
 Le viewer console fournit un rendu ASCII riche :
