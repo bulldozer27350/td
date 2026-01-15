@@ -3,12 +3,16 @@ package com.towerdefense.leveleditor.http.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
+
 @Configuration
 @ConfigurationProperties(prefix = "editor.storage")
 public class EditorPathsConfiguration {
-    
-    private String baseDirectory = "D:\\Depots\\tower_defense";
-    
+
+
+    private final String defaultBaseDirectory = System.getProperty("user.dir");
+    private String baseDirectory; // value is read from application.properties
+
     // Sous-répertoires
     private String draftsDir = "drafts";
     private String exportablesDir = "exportables";
@@ -19,7 +23,7 @@ public class EditorPathsConfiguration {
     private String levelsDir = "levels";
     
     // Getters et setters
-    public String getBaseDirectory() { return baseDirectory; }
+    public String getBaseDirectory() { return ((new File(baseDirectory)).exists()) ?baseDirectory:defaultBaseDirectory; }
     public void setBaseDirectory(String baseDirectory) { this.baseDirectory = baseDirectory; }
     
     public String getDraftsDir() { return draftsDir; }
@@ -39,26 +43,26 @@ public class EditorPathsConfiguration {
     
     // Méthodes utilitaires
     public String getDraftTowersPath() {
-        return String.join("\\", baseDirectory, draftsDir, towersDir);
+        return String.join(File.separator, getBaseDirectory(), draftsDir, towersDir);
     }
     
     public String getDraftEnemiesPath() {
-        return String.join("\\", baseDirectory, draftsDir, enemiesDir);
+        return String.join(File.separator, getBaseDirectory(), draftsDir, enemiesDir);
     }
     
     public String getDraftLevelsPath() {
-        return String.join("\\", baseDirectory, draftsDir, levelsDir);
+        return String.join(File.separator, getBaseDirectory(), draftsDir, levelsDir);
     }
     
     public String getExportableTowersPath() {
-        return String.join("\\", baseDirectory, exportablesDir, towersDir);
+        return String.join(File.separator, getBaseDirectory(), exportablesDir, towersDir);
     }
     
     public String getExportableEnemiesPath() {
-        return String.join("\\", baseDirectory, exportablesDir, enemiesDir);
+        return String.join(File.separator, getBaseDirectory(), exportablesDir, enemiesDir);
     }
     
     public String getExportableLevelsPath() {
-        return String.join("\\", baseDirectory, exportablesDir, levelsDir);
+        return String.join(File.separator, getBaseDirectory(), exportablesDir, levelsDir);
     }
 }

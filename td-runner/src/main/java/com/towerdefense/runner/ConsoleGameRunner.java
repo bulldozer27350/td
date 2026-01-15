@@ -1,5 +1,6 @@
 package com.towerdefense.runner;
 
+import java.io.File;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -58,8 +59,7 @@ public class ConsoleGameRunner implements CommandLineRunner {
         ConsoleViewer viewer = new ConsoleViewer(asciiRenderer);
         FileViewer fileViewer = new FileViewer(
                 asciiRenderer,
-                "D:\\Depots\\tower_defense\\td-console-viewer\\src\\test\\resources\\output.txt"
-        );
+		        String.join(File.separator,System.getProperty("user.dir"),"td-console-viewer","src","test","resources","output.txt"));
 
         // Observers
         runtime.addObserver(viewer);
