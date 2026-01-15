@@ -141,6 +141,7 @@ La méta a pour responsabilités principales :
 ### 🗂️ Sources de vérité & flux de données
 
 Le projet repose sur une séparation stricte des rôles :
+
 🧱 TD Level Studio (contenu de base)
 - Source de vérité des données statiques
 - Définit :
@@ -203,10 +204,15 @@ La méta consomme ce résultat pour :
 
 ---
 ### 🧩 Principes clés de conception méta
+
 🧱 Le contenu de base est immuable
+
 🧠 La méta projette, elle ne modifie pas
+
 ⚙️ Le moteur consomme des valeurs finales
+
 🔁 Les projections sont jetables et recalculables
+
 🧪 Chaque couche est testable indépendamment
 
 ---
