@@ -1,0 +1,454 @@
+openapi: 3.0.3
+
+info:
+  title: Tower Defense Meta Progression API
+  description: API pour gérer la progression méta-jeu (niveaux, upgrades, récompenses)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8082
+    description: Serveur de développement local
+
+paths:
+
+  # ========================================================================
+  # PROGRESSION DU JOUEUR
+  # ========================================================================
+
+  /api/player/progress:
+    get:
+      summary: Obtenir la progression du joueur
+      operationId: getPlayerProgress
+      tags: [Player]
+      responses:
+        '200':
+          description: Progression du joueur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerProgressResponse'
+
+  /api/player/levels:
+    get:
+      summary: Liste des niveaux disponibles
+      operationId: getAvailableLevels
+      tags: [Player]
+      responses:
+        '200':
+          description: Niveaux disponibles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailableLevel'
+
+  /api/player/levels/{levelId}/prepare:
+    post:
+      summary: Préparer un niveau pour le jeu (avec upgrades appliqués)
+      operationId: prepareLevel
+      tags: [Player]
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Configuration du niveau prête pour td-engine
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameConfig'
+        '400':
+          description: Niveau non débloqué ou inexistant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/player/levels/{levelId}/complete:
+    post:
+      summary: Signaler la fin d'un niveau
+      operationId: completeLevel
+      tags: [Player]
+      parameters:
+        - name: levelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LevelCompletionRequest'
+      responses:
+        '200':
+          description: Niveau complété, récompenses attribuées
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LevelCompletionResponse'
+
+  # ========================================================================
+  # UPGRADES
+  # ========================================================================
+
+  /api/upgrades:
+    get:
+      summary: Liste tous les upgrades disponibles
+      operationId: getAllUpgrades
+      tags: [Upgrades]
+      responses:
+        '200':
+          description: Liste des upgrades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UpgradeInfo'
+
+  /api/upgrades/tower/{towerTypeId}:
+    get:
+      summary: Upgrades disponibles pour un type de tour
+      operationId: getUpgradesForTower
+      tags: [Upgrades]
+      parameters:
+        - name: towerTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Upgrades pour cette tour
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UpgradeInfo'
+
+  /api/upgrades/{upgradeId}/purchase:
+    post:
+      summary: Acheter un upgrade
+      operationId: purchaseUpgrade
+      tags: [Upgrades]
+      parameters:
+        - name: upgradeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Upgrade acheté avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseUpgradeResponse'
+        '400':
+          description: Points insuffisants ou upgrade déjà débloqué
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ========================================================================
+  # ADMINISTRATION DES UPGRADES
+  # ========================================================================
+
+  /api/admin/upgrades:
+    get:
+      summary: Liste tous les upgrades (admin)
+      operationId: listAllUpgrades
+      tags: [Admin]
+      responses:
+        '200':
+          description: Tous les upgrades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UpgradeDefinition'
+    
+    post:
+      summary: Créer un nouvel upgrade
+      operationId: createUpgrade
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpgradeRequest'
+      responses:
+        '201':
+          description: Upgrade créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpgradeDefinition'
+
+  /api/admin/upgrades/{upgradeId}:
+    put:
+      summary: Modifier un upgrade
+      operationId: updateUpgrade
+      tags: [Admin]
+      parameters:
+        - name: upgradeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUpgradeRequest'
+      responses:
+        '200':
+          description: Upgrade modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpgradeDefinition'
+    
+    delete:
+      summary: Supprimer un upgrade
+      operationId: deleteUpgrade
+      tags: [Admin]
+      parameters:
+        - name: upgradeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Upgrade supprimé
+
+  /api/admin/upgrades/reload:
+    post:
+      summary: Recharger les upgrades depuis le fichier JSON
+      operationId: reloadUpgrades
+      tags: [Admin]
+      responses:
+        '200':
+          description: Upgrades rechargés
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Nombre d'upgrades chargés
+
+components:
+  schemas:
+
+    # ========================================================================
+    # PLAYER PROGRESS
+    # ========================================================================
+
+    PlayerProgressResponse:
+      type: object
+      properties:
+        upgradePoints:
+          type: integer
+          example: 8
+        completedLevels:
+          type: integer
+          example: 2
+        unlockedUpgrades:
+          type: array
+          items:
+            type: string
+          example: ["archer_l1_damage_1", "archer_l1_reload_1"]
+
+    AvailableLevel:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "Plaines Vertes"
+        unlocked:
+          type: boolean
+        completed:
+          type: boolean
+        stars:
+          type: integer
+          minimum: 0
+          maximum: 3
+
+    LevelCompletionRequest:
+      type: object
+      required:
+        - stars
+      properties:
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 3
+          example: 2
+
+    LevelCompletionResponse:
+      type: object
+      properties:
+        upgradePointsEarned:
+          type: integer
+          example: 3
+        totalUpgradePoints:
+          type: integer
+          example: 11
+        newLevelsUnlocked:
+          type: array
+          items:
+            type: string
+          example: ["2"]
+
+    # ========================================================================
+    # UPGRADES
+    # ========================================================================
+
+    UpgradeInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "archer_l1_damage_1"
+        name:
+          type: string
+          example: "Flèches acérées I"
+        towerTypeId:
+          type: string
+          example: "archer"
+        towerLevel:
+          type: integer
+          example: 1
+        cost:
+          type: integer
+          example: 3
+        unlocked:
+          type: boolean
+        effect:
+          $ref: '#/components/schemas/UpgradeEffect'
+
+    UpgradeEffect:
+      type: object
+      properties:
+        stat:
+          type: string
+          example: "damage"
+        modifier:
+          type: number
+          format: double
+          example: 5.0
+        type:
+          type: string
+          enum: [ADD, MULTIPLY]
+          example: "ADD"
+
+    PurchaseUpgradeResponse:
+      type: object
+      properties:
+        upgradeId:
+          type: string
+        success:
+          type: boolean
+        remainingPoints:
+          type: integer
+
+    # ========================================================================
+    # ADMIN - UPGRADE DEFINITIONS
+    # ========================================================================
+
+    UpgradeDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        towerTypeId:
+          type: string
+        towerLevel:
+          type: integer
+        cost:
+          type: integer
+        effect:
+          $ref: '#/components/schemas/UpgradeEffect'
+
+    CreateUpgradeRequest:
+      type: object
+      required:
+        - id
+        - name
+        - towerTypeId
+        - towerLevel
+        - cost
+        - effect
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        towerTypeId:
+          type: string
+        towerLevel:
+          type: integer
+        cost:
+          type: integer
+        effect:
+          $ref: '#/components/schemas/UpgradeEffect'
+
+    UpdateUpgradeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        cost:
+          type: integer
+        effect:
+          $ref: '#/components/schemas/UpgradeEffect'
+
+    # ========================================================================
+    # GAME CONFIG (pour td-engine)
+    # ========================================================================
+
+    GameConfig:
+      type: object
+      properties:
+        levelConfig:
+          type: object
+        pathsConfig:
+          type: object
+        towersConfig:
+          type: object
+        enemiesConfig:
+          type: object
+
+    # ========================================================================
+    # ERROR
+    # ========================================================================
+
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

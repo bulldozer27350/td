@@ -1,0 +1,17 @@
+server:
+  port: 8082
+
+tdmeta:
+  data:
+    directory: ${TD_DATA_DIR:src/main/resources/exportables}
+  upgrades:
+    file: ${TD_UPGRADES_FILE:src/main/resources/upgrades/tower-upgrades.json}
+
+spring:
+  application:
+    name: td-progression-http
+
+logging:
+  level:
+    com.tdmeta: DEBUG
+    com.tdprogressionhttp: DEBUG

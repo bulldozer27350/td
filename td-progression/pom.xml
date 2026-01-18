@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>td-progression</artifactId>
+	<description>Gestion des informations du joueur transverse à l'ensemble des
+		niveaux</description>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.moe</groupId>
+		<artifactId>tower-defense</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<modules>
+		<module>td-progression-core</module>
+		<module>td-progression-http</module>
+	</modules>
+
+</project>
