@@ -9,10 +9,20 @@
 <body class="bg-gray-100 min-h-screen">
     <nav class="bg-blue-600 text-white p-4 shadow-lg">
         <div class="container mx-auto flex gap-6">
-            <a href="index.html" class="hover:underline">🏠 Accueil</a>
-            <a href="levels.html" class="hover:underline">🗺️ Niveaux</a>
-            <a href="enemies.html" class="font-bold underline">👾 Ennemis</a>
-            <a href="towers.html" class="hover:underline">🗼 Tours</a>
+            <div>
+                <h1 class="text-2xl font-bold"><a href="index.html" class="hover:underline">🏠 Accueil</a></h1>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold">🏗️ TD Studio</h1>
+                <p class="text-sm text-blue-200"></p>
+                <a href="levels.html" class="hover:underline">🗺️ Niveaux</a>
+                <a href="enemies.html" class="font-bold underline">👾 Ennemis</a>
+                <a href="towers.html" class="hover:underline">🗼 Tours</a>
+            </div>
+
+            <div><h1 class="text-2xl font-bold"><a href="td-progression.html">
+                ⭐ Progression
+            </a> </h1></div>
         </div>
     </nav>
 
@@ -150,7 +160,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8080/api';
+        const API_URL = 'http://localhost:8081/api';
         let allEnemies = [];
         let currentModalAction = null;
         let currentEnemyId = null;
