@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense - Menu Principal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Écran de sélection de niveau -->
+        <div id="level-selection-screen" class="screen active">
+            <div class="container">
+                <h1>🎮 Tower Defense</h1>
+                
+                <div class="player-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="upgrade-points">-</div>
+                        <div class="stat-label">⭐ Points d'Upgrade</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completed-levels">-</div>
+                        <div class="stat-label">✅ Niveaux Complétés</div>
+                    </div>
+                </div>
+
+                <div class="levels-grid" id="levels-grid">
+                    <div class="loading">Chargement des niveaux...</div>
+                </div>
+
+                <button onclick="gameManager.showUpgrades()" class="btn btn-secondary">
+                    ⭐ Gérer les Upgrades
+                </button>
+            </div>
+        </div>
+
+        <!-- Écran de gestion des upgrades -->
+        <div id="upgrades-screen" class="screen">
+            <div class="container">
+                <h1>⭐ Upgrades Disponibles</h1>
+                
+                <div class="back-button">
+                    <button onclick="gameManager.showLevelSelection()" class="btn btn-secondary">
+                        ← Retour
+                    </button>
+                </div>
+
+                <div class="player-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="upgrade-points-2">-</div>
+                        <div class="stat-label">⭐ Points Disponibles</div>
+                    </div>
+                </div>
+
+                <div id="upgrades-list" class="upgrades-list">
+                    <div class="loading">Chargement des upgrades...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de jeu -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="game-info">
+                    <span id="level-name">Niveau</span>
+                </div>
+                <div class="game-stats">
+                    <span class="stat">💰 <span id="player-gold">0</span></span>
+                    <span class="stat">❤️ <span id="player-lives">0</span></span>
+                    <span class="stat">📊 Tick: <span id="current-tick">0</span></span>
+                </div>
+                <div class="game-controls">
+                    <button id="pause-btn" onclick="gameEngine.togglePause()" class="btn btn-small">⏸️ Pause</button>
+                    <button onclick="gameManager.quitGame()" class="btn btn-small btn-danger">🚪 Quitter</button>
+                </div>
+            </div>
+
+            <div class="game-container">
+                <div class="game-canvas-container">
+                    <canvas id="game-canvas"></canvas>
+                </div>
+
+                <div class="game-sidebar">
+                    <div class="sidebar-section">
+                        <h3>🗼 Tours Disponibles</h3>
+                        <div id="available-towers"></div>
+                    </div>
+
+                    <div class="sidebar-section" id="selected-tower-info" style="display: none;">
+                        <h3>🎯 Tour Sélectionnée</h3>
+                        <div id="tower-details"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de fin de partie -->
+        <div id="game-over-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="game-over-title">Partie Terminée</h2>
+                <div id="game-over-message"></div>
+                <div id="game-over-rewards"></div>
+                <button onclick="gameManager.returnToMenu()" class="btn btn-primary">
+                    Retour au Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de construction de tour -->
+        <div id="build-tower-modal" class="modal">
+            <div class="modal-content">
+                <h2>🗼 Construire une Tour</h2>
+                <div id="build-tower-options"></div>
+                <button onclick="gameEngine.closeBuildModal()" class="btn btn-secondary">
+                    Annuler
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal d'action sur tour -->
+        <div id="tower-action-modal" class="modal">
+            <div class="modal-content">
+                <h2>🎯 Actions sur la Tour</h2>
+                <div id="tower-action-details"></div>
+                <div id="tower-action-buttons"></div>
+                <button onclick="gameEngine.closeTowerActionModal()" class="btn btn-secondary">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api-client.js"></script>
+    <script src="game-renderer.js"></script>
+    <script src="game-engine.js"></script>
+    <script src="game-manager.js"></script>
+    <script>
+        // Initialisation
+        gameManager.init();
+    </script>
+</body>
+</html>

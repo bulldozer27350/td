@@ -22,6 +22,15 @@ Le projet a vocation à servir à la fois de :
 
 ---
 
+Etat actuel
+
+✔️Mise en place d'un front de jeu (html, css, js)
+⚠️ProgressionConfiguration => chemin en dur à supprimer
+⚠️Les données issues du TD Studio ne sont pas OK (des champs à null même si remplies dans l'IHM)
+⚠️Des paramètres des RestController sans nom posent problème. Regarder modification sur PlayerController pour poursuivre ces modifications
+
+---
+
 ## ✨ Fonctionnalités clés
 
 ✔ Java 21 uniquement (aucune dette legacy)

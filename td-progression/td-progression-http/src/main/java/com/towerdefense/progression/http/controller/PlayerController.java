@@ -56,7 +56,7 @@ public class PlayerController implements PlayerApi {
     }
     
     @Override
-    public ResponseEntity<GameConfig> prepareLevel(@PathVariable String levelId) {
+    public ResponseEntity<GameConfig> prepareLevel(@PathVariable("levelId") String levelId) {
         try {
         	Map<String, Object> level = metaGameService.prepareLevel(levelId);
         	GameConfig gameConfig = new GameConfig();

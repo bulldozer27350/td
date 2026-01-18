@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.domain.upgrade.TowerUpgrade;
 import com.towerdefense.progression.http.api.UpgradesApi;
@@ -11,6 +12,7 @@ import com.towerdefense.progression.http.model.PurchaseUpgradeResponse;
 import com.towerdefense.progression.http.model.UpgradeInfo;
 import com.towerdefense.progression.service.MetaGameService;
 
+@RestController
 public class UpgradesController implements UpgradesApi {
 
 	private final MetaGameService metaGameService;

@@ -13,7 +13,8 @@ import com.towerdefense.progression.service.UpgradeAdminService;
 @Configuration
 public class ProgressionConfiguration {
     
-	@Value("${tdmeta.data.directory:src/main/resources/exportables}")
+	@Value("D:\\Depots\\tower_defense\\exportables\\")
+//	@Value("${tdmeta.data.directory:src/main/resources/exportables}")
     private String dataDirectory;
     
     @Value("${tdmeta.upgrades.file:src/main/resources/upgrades/tower-upgrades.json}")

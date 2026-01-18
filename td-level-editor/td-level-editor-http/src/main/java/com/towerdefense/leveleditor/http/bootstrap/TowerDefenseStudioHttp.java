@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.towerdefense.leveleditor.http", "com.towerdefense.editor.core.configuration"})
+@ComponentScan(basePackages = {
+		"com.towerdefense.leveleditor", 
+		"com.towerdefense.editor.core.configuration"})
 public class TowerDefenseStudioHttp {
 	public static void main(String[] args) {
         SpringApplication.run(TowerDefenseStudioHttp.class, args);
