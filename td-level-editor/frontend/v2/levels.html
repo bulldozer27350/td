@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense Studio - Niveaux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex gap-6">
+            <div>
+                <h1 class="text-2xl font-bold"><a href="index.html" class="hover:underline">🏠 Accueil</a></h1>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold">🏗️ TD Studio</h1>
+                <p class="text-sm text-blue-200"></p>
+                <a href="levels.html" class="font-bold underline">🗺️ Niveaux</a>
+                <a href="enemies.html" class="hover:underline">👾 Ennemis</a>
+                <a href="towers.html" class="hover:underline">🗼 Tours</a>
+            </div>
+
+            <div><h1 class="text-2xl font-bold"><a href="td-progression.html">
+                ⭐ Progression
+            </a> </h1></div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Gestion des Niveaux</h1>
+            
+            <!-- Formulaire de création -->
+            <div class="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                <h2 class="text-lg font-semibold mb-4 text-gray-700">✨ Créer un nouveau niveau</h2>
+                <form id="createForm" class="grid md:grid-cols-4 gap-3">
+                    <input type="text" id="levelId" placeholder="ID du niveau (ex: level-1)" 
+                           class="border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <input type="number" id="width" placeholder="Largeur" min="5" max="50" value="20"
+                           class="border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <input type="number" id="height" placeholder="Hauteur" min="5" max="50" value="15"
+                           class="border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <button type="submit" 
+                            class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors font-semibold shadow">
+                        Créer
+                    </button>
+                </form>
+            </div>
+
+            <!-- Filtres et recherche -->
+            <div class="mb-4 flex gap-3">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher un niveau..." 
+                    class="flex-1 border rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="showImportModal()" 
+                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                    📥 Importer
+                </button>
+                <button onclick="loadLevels()" 
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
+                    🔄 Actualiser
+                </button>
+            </div>
+
+            <!-- Liste des niveaux -->
+            <div id="levelsList">
+                <div class="text-center py-8 text-gray-500">
+                    <div class="animate-pulse">Chargement...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'import/export -->
+    <div id="importExportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4" id="modalTitle">Import/Export</h3>
+            <div id="modalContent"></div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                    Annuler
+                </button>
+                <button id="modalConfirmBtn" onclick="confirmModalAction()" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8081/api';
+
+        // Charger les niveaux au démarrage
+        async function loadLevels() {
+            try {
+                const response = await fetch(`${API_URL}/levels`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const levels = await response.json();
+                displayLevels(levels);
+            } catch (error) {
+                document.getElementById('levelsList').innerHTML = 
+                    `<div class="text-center py-8">
+                        <div class="text-red-500 text-lg mb-2">⚠️ Erreur de connexion au serveur</div>
+                        <div class="text-gray-600 text-sm">Vérifiez que le serveur est démarré sur ${API_URL}</div>
+                    </div>`;
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher les niveaux
+        function displayLevels(levels) {
+            const container = document.getElementById('levelsList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredLevels = levels.filter(level => 
+                level.metadata.id.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredLevels.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <div class="text-6xl mb-4">🗺️</div>
+                        <div class="text-lg">Aucun niveau trouvé</div>
+                        ${levels.length > 0 ? '<div class="text-sm mt-2">Essayez une autre recherche</div>' : ''}
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filteredLevels.map(level => `
+                <div class="border rounded-lg p-5 mb-4 hover:shadow-md transition-shadow bg-white">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-xl text-gray-800 mb-2">📍 ${level.metadata.id}</h3>
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+                                <div class="bg-blue-50 p-2 rounded">
+                                    <span class="text-gray-600">Dimensions:</span>
+                                    <span class="font-semibold ml-1">${level.map.width}×${level.map.height}</span>
+                                </div>
+                                <div class="bg-green-50 p-2 rounded">
+                                    <span class="text-gray-600">Argent:</span>
+                                    <span class="font-semibold ml-1">${level.metadata.startingMoney} 💰</span>
+                                </div>
+                                <div class="bg-red-50 p-2 rounded">
+                                    <span class="text-gray-600">Vies:</span>
+                                    <span class="font-semibold ml-1">${level.metadata.startingLives} ❤️</span>
+                                </div>
+                                <div class="bg-purple-50 p-2 rounded">
+                                    <span class="text-gray-600">Contenu:</span>
+                                    <span class="font-semibold ml-1">${level.paths.length} chemins, ${level.attacks.length} attaques</span>
+                                </div>
+                            </div>
+                            ${level.towerCapcityIds && level.towerCapcityIds.length > 0 ? `
+                                <div class="text-sm text-gray-600">
+                                    <span class="font-medium">Tours disponibles:</span> ${level.towerCapcityIds.join(', ')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
+                            <button onclick="editLevel('${level.metadata.id}')"
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                ✏️ Éditer
+                            </button>
+                            <button onclick="duplicateLevel('${level.metadata.id}')"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                📋 Dupliquer
+                            </button>
+                            <button onclick="showExportModal('${level.metadata.id}')"
+                                    class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                📤 Exporter
+                            </button>
+                            <button onclick="deleteLevel('${level.metadata.id}')"
+                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                🗑️ Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Recherche en temps réel
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('searchInput').addEventListener('input', () => {
+                const levels = window.cachedLevels || [];
+                displayLevels(levels);
+            });
+        });
+
+        // Créer un niveau
+        document.getElementById('createForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = 'Création...';
+            btn.disabled = true;
+
+            const data = {
+                id: document.getElementById('levelId').value,
+                width: parseInt(document.getElementById('width').value),
+                height: parseInt(document.getElementById('height').value)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/levels`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    e.target.reset();
+                    // Réinitialiser les valeurs par défaut
+                    document.getElementById('width').value = 20;
+                    document.getElementById('height').value = 15;
+                    await loadLevels();
+                    showNotification('✅ Niveau créé avec succès !', 'success');
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Éditer un niveau
+        function editLevel(levelId) {
+            window.location.href = `level-editor.html?id=${encodeURIComponent(levelId)}`;
+        }
+
+        // Dupliquer un niveau
+        async function duplicateLevel(levelId) {
+            const newId = prompt(`Dupliquer "${levelId}" sous le nom:`, levelId + '-copy');
+            if (!newId || newId === levelId) return;
+
+            try {
+                // Récupérer le niveau source
+                const response = await fetch(`${API_URL}/levels/${levelId}`);
+                const level = await response.json();
+
+                // Créer le nouveau niveau
+                const createResponse = await fetch(`${API_URL}/levels`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: newId,
+                        width: level.map.width,
+                        height: level.map.height
+                    })
+                });
+
+                if (createResponse.ok) {
+                    showNotification('✅ Niveau dupliqué !', 'success');
+                    loadLevels();
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de duplication', 'error');
+                console.error(error);
+            }
+        }
+
+        // Supprimer un niveau
+        async function deleteLevel(levelId) {
+            if (!confirm(`⚠️ Supprimer définitivement le niveau "${levelId}" ?`)) return;
+
+            try {
+                const response = await fetch(`${API_URL}/levels/${levelId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Niveau supprimé', 'success');
+                    loadLevels();
+                } else {
+                    showNotification('❌ Erreur lors de la suppression', 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        // Système de notifications
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function closeModal() {
+            document.getElementById('importExportModal').classList.add('hidden');
+        }
+
+        let currentModalAction = null;
+        let currentLevelId = null;
+
+        function showImportModal() {
+            document.getElementById('modalTitle').textContent = '📥 Importer un niveau';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'import</label>
+                        <select id="importType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin du fichier</label>
+                        <input type="text" id="importPath" 
+                            placeholder="Ex: C:\\levels\\my-level.json"
+                            class="w-full border rounded px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            ⚠️ Chemin sur le serveur (échappez les \\ avec \\\\)
+                        </p>
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'import';
+            document.getElementById('importExportModal').classList.remove('hidden');
+        }
+
+        function showExportModal(levelId) {
+            currentLevelId = levelId;
+            document.getElementById('modalTitle').textContent = '📤 Exporter le niveau';
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type d'export</label>
+                        <select id="exportType" class="w-full border rounded px-3 py-2">
+                            <option value="draft">Format Draft (éditable)</option>
+                            <option value="exportable">Format Exportable (moteur)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chemin de destination</label>
+                        <input type="text" id="exportPath" 
+                            placeholder="Ex: C:\\exports\\${levelId}.json"
+                            class="w-full border rounded px-3 py-2">
+                        <p class="text-xs text-gray-500 mt-1">
+                            ⚠️ Chemin sur le serveur (échappez les \\ avec \\\\)
+                        </p>
+                    </div>
+                </div>
+            `;
+            currentModalAction = 'export';
+            document.getElementById('importExportModal').classList.remove('hidden');
+        }
+
+        async function confirmModalAction() {
+            if (currentModalAction === 'import') {
+                await handleImport();
+            } else if (currentModalAction === 'export') {
+                await handleExport();
+            }
+        }
+
+        async function handleImport() {
+            const type = document.getElementById('importType').value;
+            const path = document.getElementById('importPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft' 
+                    ? `${API_URL}/levels/import/draft`
+                    : `${API_URL}/levels/import/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Niveau importé avec succès', 'success');
+                    closeModal();
+                    await loadLevels();
+                } else {
+                    const error = await response.text();
+                    showNotification('❌ Erreur: ' + error, 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        async function handleExport() {
+            const type = document.getElementById('exportType').value;
+            const path = document.getElementById('exportPath').value;
+            
+            if (!path) {
+                showNotification('❌ Veuillez saisir un chemin', 'error');
+                return;
+            }
+
+            try {
+                const endpoint = type === 'draft'
+                    ? `${API_URL}/levels/${currentLevelId}/export/draft`
+                    : `${API_URL}/levels/${currentLevelId}/export/exportable`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                if (response.ok) {
+                    showNotification('✅ Niveau exporté avec succès', 'success');
+                    closeModal();
+                } else {
+                    showNotification('❌ Erreur d\'export', 'error');
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion', 'error');
+                console.error(error);
+            }
+        }
+
+        // Charger au démarrage
+        loadLevels();
+    </script>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+    </style>
+</body>
+</html>

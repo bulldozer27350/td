@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>TD Studio – Progression</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+<nav class="bg-blue-600 text-white p-4 shadow-lg">
+    <div class="container mx-auto flex gap-6">
+        <div>
+            <h1 class="text-2xl font-bold"><a href="index.html" class="hover:underline">🏠 Accueil</a></h1>
+        </div>
+
+        <div>
+            <h1 class="text-2xl font-bold">🏗️ TD Studio</h1>
+            <a href="levels.html" class="hover:underline">🗺️ Niveaux</a>
+            <a href="enemies.html" class="hover:underline">👾 Ennemis</a>
+            <a href="towers.html" class="hover:underline">🗼 Tours</a>
+        </div>
+
+        <div>
+            <h1 class="text-2xl font-bold"><a href="td-progression.html" class="font-bold underline">⭐ Progression</a></h1>
+        </div>
+
+    </div>
+</nav>
+
+<!-- Contenu principal -->
+<main class="container mx-auto px-6 py-8">
+
+    <!-- Création d'upgrade -->
+    <div class="bg-white rounded-xl shadow-xl p-8 border-t-4 border-purple-500">
+        <h3 class="text-2xl font-bold mb-6 text-gray-800">
+            ✨ Nouvel Upgrade de Tour
+        </h3>
+
+        <!-- Avertissement fonctionnel -->
+        <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-800">
+            Les données de base (tours, niveaux) proviennent du <strong>TD Studio</strong>.
+            Cette page ne fait que définir des <strong>règles de progression</strong>.
+        </div>
+
+        <form id="upgradeForm" class="space-y-6">
+
+            <!-- Identité de l'upgrade -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <input id="upgradeId"
+                    class="border rounded-lg px-4 py-2"
+                    placeholder="ID technique (ex: archer_l1_damage_1)"
+                    required>
+
+                <input id="upgradeName"
+                    class="border rounded-lg px-4 py-2"
+                    placeholder="Nom affiché (ex: Flèches acérées I)"
+                    required>
+
+                <input id="upgradeCost"
+                    type="number"
+                    min="1"
+                    class="border rounded-lg px-4 py-2"
+                    placeholder="Coût (points)"
+                    required>
+            </div>
+
+            <!-- Ciblage -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <select id="towerTypeSelect"
+                        class="border rounded-lg px-4 py-2"
+                        required>
+                    <option value="">-- Type de tour --</option>
+                </select>
+
+                <select id="towerLevelSelect"
+                        class="border rounded-lg px-4 py-2"
+                        required>
+                    <option value="">-- Niveau de tour --</option>
+                </select>
+
+                <select id="statSelect"
+                        class="border rounded-lg px-4 py-2"
+                        required>
+                    <option value="damage">Dégâts</option>
+                    <option value="range">Portée</option>
+                    <option value="reloadSeconds">Temps de recharge</option>
+                    <option value="buildTimeTicks">Temps de construction</option>
+                </select>
+            </div>
+
+            <!-- Effet -->
+            <div class="grid md:grid-cols-2 gap-4">
+                <input id="modifierValue"
+                    type="number"
+                    step="0.1"
+                    class="border rounded-lg px-4 py-2"
+                    placeholder="Valeur (ex: 5 ou 0.1)"
+                    required>
+
+                <select id="modifierType"
+                        class="border rounded-lg px-4 py-2"
+                        required>
+                    <option value="ADD">Addition (+)</option>
+                    <option value="MULTIPLY">Multiplication (×)</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                    class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 font-semibold">
+                ⭐ Créer l’upgrade
+            </button>
+        </form>
+    </div>
+
+    <!-- Liste des upgrades existants -->
+    <div class="mt-10 bg-white rounded-xl shadow-xl p-8">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">
+            📋 Upgrades existants
+        </h3>
+
+        <div id="upgradesList"
+            class="space-y-4 text-sm text-gray-600">
+            Chargement...
+        </div>
+    </div>
+
+
+</main>
+
+<script>
+/*
+ * ============================================================
+ * CONFIGURATION
+ * ============================================================
+ *
+ * Cette page :
+ * - lit les données de base depuis TD Level Studio (lecture seule)
+ * - écrit des règles de progression vers td-progression
+ * - ne modifie JAMAIS les données source
+ */
+
+const STUDIO_API = 'http://localhost:8081/api';
+const PROGRESSION_API = 'http://localhost:8082/api';
+
+/*
+ * ============================================================
+ * ÉTAT LOCAL (en mémoire)
+ * ============================================================
+ *
+ * On conserve localement les tours et leurs niveaux
+ * pour permettre une saisie dynamique sans multiplier les appels HTTP.
+ */
+
+let towerTypes = []; // données brutes issues du Studio
+
+/*
+ * ============================================================
+ * INITIALISATION
+ * ============================================================
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadTowerTypes();
+    loadExistingUpgrades();
+    bindForm();
+});
+
+/*
+ * ============================================================
+ * CHARGEMENT DES TOURS (depuis le Studio)
+ * ============================================================
+ */
+
+async function loadTowerTypes() {
+    try {
+        const response = await fetch(`${STUDIO_API}/towers`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        towerTypes = await response.json();
+
+        populateTowerTypeSelect();
+    } catch (error) {
+        console.error('Erreur chargement tours:', error);
+    }
+}
+
+function populateTowerTypeSelect() {
+    const select = document.getElementById('towerTypeSelect');
+    select.innerHTML = '<option value="">-- Type de tour --</option>';
+
+    towerTypes.forEach(tower => {
+        const option = document.createElement('option');
+        option.value = tower.id;
+        option.textContent = tower.id;
+        select.appendChild(option);
+    });
+
+    select.addEventListener('change', onTowerTypeChanged);
+}
+
+/*
+ * ============================================================
+ * GESTION DU CHANGEMENT DE TYPE DE TOUR
+ * ============================================================
+ *
+ * Lorsqu’un type de tour est sélectionné,
+ * on propose dynamiquement les niveaux existants.
+ */
+
+function onTowerTypeChanged(event) {
+    const towerTypeId = event.target.value;
+    const levelSelect = document.getElementById('towerLevelSelect');
+
+    levelSelect.innerHTML = '<option value="">-- Niveau de tour --</option>';
+
+    if (!towerTypeId) return;
+
+    const tower = towerTypes.find(t => t.id === towerTypeId);
+    if (!tower || !tower.upgrades) return;
+
+    tower.upgrades.forEach(level => {
+        const option = document.createElement('option');
+        option.value = level.level;
+        option.textContent = `Niveau ${level.level}`;
+        levelSelect.appendChild(option);
+    });
+}
+
+/*
+ * ============================================================
+ * FORMULAIRE DE CRÉATION D’UPGRADE
+ * ============================================================
+ */
+
+function bindForm() {
+    const form = document.getElementById('upgradeForm');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const payload = {
+            id: document.getElementById('upgradeId').value,
+            name: document.getElementById('upgradeName').value,
+            cost: Number(document.getElementById('upgradeCost').value),
+            towerTypeId: document.getElementById('towerTypeSelect').value,
+            towerLevel: Number(document.getElementById('towerLevelSelect').value),
+            effect: {
+                stat: document.getElementById('statSelect').value,
+                modifier: Number(document.getElementById('modifierValue').value),
+                type: document.getElementById('modifierType').value
+            }
+        };
+
+        try {
+            const response = await fetch(`${PROGRESSION_API}/admin/upgrades`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                alert('Erreur : ' + message);
+                return;
+            }
+
+            form.reset();
+            loadExistingUpgrades();
+        } catch (error) {
+            console.error('Erreur création upgrade:', error);
+        }
+    });
+}
+
+/*
+ * ============================================================
+ * LISTE DES UPGRADES EXISTANTS
+ * ============================================================
+ */
+
+async function loadExistingUpgrades() {
+    const container = document.getElementById('upgradesList');
+    container.textContent = 'Chargement...';
+
+    try {
+        const response = await fetch(`${PROGRESSION_API}/admin/upgrades`);
+        const upgrades = await response.json();
+
+        if (upgrades.length === 0) {
+            container.textContent = 'Aucun upgrade défini.';
+            return;
+        }
+
+        container.innerHTML = upgrades.map(renderUpgrade).join('');
+    } catch (error) {
+        container.textContent = 'Erreur de chargement.';
+    }
+}
+
+function renderUpgrade(upgrade) {
+    const symbol = upgrade.effect.type === 'ADD' ? '+' : '×';
+
+    return `
+        <div class="border rounded-lg p-4 bg-purple-50">
+            <div class="font-semibold text-purple-900">
+                ⭐ ${upgrade.name}
+            </div>
+            <div class="text-xs text-gray-600 mt-1">
+                ${upgrade.towerTypeId} – Niveau ${upgrade.towerLevel}
+            </div>
+            <div class="mt-2 text-sm">
+                ${upgrade.effect.stat} ${symbol}${upgrade.effect.modifier}
+                · Coût ${upgrade.cost}
+            </div>
+        </div>
+    `;
+}
+</script>
+
+
+</body>
+</html>
