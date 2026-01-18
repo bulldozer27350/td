@@ -66,7 +66,7 @@ tower-defense
 ├── td-console-viewer            # Rendu ASCII console / fichier
 ├── td-runner                    # Lanceur de parties
 ├── td-level-editor              # Éditeur de niveaux (WIP)
-├── td-meta                      # Utilitaires transverses
+├── td-progression               # Utilitaires transverses
 │
 ├── level-1.json                 # Exemple de configuration de niveau
 └── scenario/                    # Univers narratif & game design (Obsidian)
@@ -154,7 +154,7 @@ Le projet repose sur une séparation stricte des rôles :
 { "range": 2.0, "damage": 20 }
 ```
 ---
-### 🧠 Méta (projection & progression)
+### 🧠 Progression (projection & progression)
 
 - Lit les données du TD Level Studio
 - Applique ses règles de progression en fonction du joueur
@@ -241,6 +241,71 @@ Deux modes sont disponibles :
 Le rendu repose sur un **registre de renderers extensible**.
 
 ---
+
+## 🧱 Architecture
+
+### Vue d’ensemble (C4 – Context)
+```mermaid
+flowchart TB
+
+    Designer["🎨 Game Designer"]
+    Player["🎮 Joueur"]
+    Browser["🌐 Navigateur Web"]
+    
+    System["🛡️ Tower Defense System
+    (Moteur + Progression + Studio)"]
+
+    Designer --> Browser
+    Browser --> System
+    Player --> System
+```
+
+### Conteneurs principaux (C4 – Containers)
+
+```mermaid
+flowchart LR
+
+    StudioUI["🏗️ TD Studio
+    (UI Web)"]
+
+    LevelEditor["🧱 td-level-editor
+    Source de vérité
+    Données statiques"]
+
+    Progression["⭐ td-progression
+    Progression & Méta"]
+
+    Engine["⚙️ td-engine-core
+    Gameplay temps réel"]
+
+    Viewer["🖥️ td-console-viewer
+    Rendu ASCII"]
+
+    StudioUI -->|HTTP / OpenAPI| LevelEditor
+    LevelEditor -->|Lecture JSON| Progression
+    Progression -->|JSON projeté| Engine
+    Engine -->|État final| Viewer
+    Engine -->|Statistiques fin de partie| Progression
+```
+
+🟨 C3 — Vue interne de td-progression
+
+```mermaid
+flowchart TB
+
+    Rules["📜 Progression Rules
+    (Java)"]
+
+    Projection["🔄 Projection Service"]
+
+    Validation["✅ Validation métier"]
+
+    Rewards["🏆 Reward Calculator"]
+
+    Rules --> Projection
+    Projection --> Validation
+    Projection --> Rewards
+```
 
 ## 🔄 Boucle de jeu
 
