@@ -32,10 +32,10 @@ public class LevelExportService {
 			    .map(tc -> new TowerCapacityConfig(tc.getTowerTypeId(), tc.getMaxLevel()))
 			    .collect(Collectors.toList());
 		
-		levelConfig.setId(level.getMetadata().getId());
+		levelConfig.setId(level.getId());
 		levelConfig.setAttacks(attacks);
-		levelConfig.setStartingLives(level.getMetadata().getStartingLives());
-		levelConfig.setStartingMoney(level.getMetadata().getStartingMoney());
+		levelConfig.setStartingLives(level.getStartingLives());
+		levelConfig.setStartingMoney(level.getStartingMoney());
 		levelConfig.setTowerCapacities(towerCapacities);
 		return levelConfig;
 	}

@@ -10,7 +10,6 @@ import com.towerdefense.editor.api.model.draft.EditableAttack;
 import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.api.model.draft.EditableMap;
 import com.towerdefense.editor.api.model.draft.TowerCapacity;
-import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 import com.towerdefense.editor.core.GenericIOServices;
 import com.towerdefense.editor.core.exporter.LevelExportService;
 import com.towerdefense.editor.core.importer.LevelImportService;
@@ -39,9 +38,8 @@ public class LevelsCollectionEditorApiImpl implements LevelsCollectionEditorApi 
 
 	@Override
 	public LevelEditorApi createLevel(String id, int width, int height) {
-		LevelMetadata metadata = new LevelMetadata(id, 0, 1);
 		EditableMap map = new EditableMap(width, height);
-		EditableLevel editableLevel = new EditableLevel(metadata, map, new ArrayList<EditableAttack>(),
+		EditableLevel editableLevel = new EditableLevel(id, 0, 1, map, new ArrayList<EditableAttack>(),
 				new ArrayList<TowerCapacity>());
 		this.editableLevels.add(editableLevel);
 		return new LevelEditorApiImpl(editableLevel);
@@ -74,7 +72,7 @@ public class LevelsCollectionEditorApiImpl implements LevelsCollectionEditorApi 
 
 	@Override
 	public boolean removeLevel(String id) {
-		return editableLevels.removeIf(e -> e.getMetadata().getId().equals(id));
+		return editableLevels.removeIf(e -> e.getId().equals(id));
 	}
 
 	@Override
@@ -113,7 +111,7 @@ public class LevelsCollectionEditorApiImpl implements LevelsCollectionEditorApi 
 
 	@Override
 	public EditableLevel getEditableLevel(String id) {
-		return this.editableLevels.stream().filter(e -> e.getMetadata().getId().equalsIgnoreCase(id)).findFirst()
+		return this.editableLevels.stream().filter(e -> e.getId().equalsIgnoreCase(id)).findFirst()
 				.orElse(null);
 
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.domain.upgrade.TowerUpgrade;
@@ -44,7 +45,7 @@ public class UpgradesController implements UpgradesApi {
 	}
 
 	@Override
-	public ResponseEntity<List<UpgradeInfo>> getUpgradesForTower(String towerTypeId) {
+	public ResponseEntity<List<UpgradeInfo>> getUpgradesForTower(@PathVariable("towerTypeId") String towerTypeId) {
 		var unlockedIds = metaGameService.getPlayerProgress().getUnlockedUpgrades();
 		
 		var dtos = metaGameService.getAllUpgrades().stream().filter(u -> u.getTowerTypeId().equals(towerTypeId))
@@ -56,7 +57,7 @@ public class UpgradesController implements UpgradesApi {
 	}
 
 	@Override
-	public ResponseEntity<PurchaseUpgradeResponse> purchaseUpgrade(String upgradeId) {
+	public ResponseEntity<PurchaseUpgradeResponse> purchaseUpgrade(@PathVariable("upgradeId") String upgradeId) {
 		boolean success = metaGameService.purchaseUpgrade(upgradeId);
         int remaining = metaGameService.getPlayerProgress().getUpgradePoints();
         

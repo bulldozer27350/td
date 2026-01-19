@@ -63,7 +63,7 @@ public class LevelAnalyzer {
     // ECONOMY SCORE : Argent vs coût minimum de défense
     // ===============================================================
     private double calculateEconomyScore(EditableLevel level) {
-        int startingMoney = level.getMetadata().getStartingMoney();
+        int startingMoney = level.getStartingMoney();
         
         // Coût minimum : une tour niveau 1
         int minTowerCost = towerTypeRegistry.values().stream()
@@ -213,7 +213,7 @@ public class LevelAnalyzer {
     // LIVES SCORE : Nombre de vies vs ennemis
     // ===============================================================
     private double calculateLivesScore(EditableLevel level) {
-        int lives = level.getMetadata().getStartingLives();
+        int lives = level.getStartingLives();
         int totalEnemies = level.getAttacks().stream()
             .flatMap(a -> a.getWaves().stream())
             .mapToInt(EditableWave::getCount)

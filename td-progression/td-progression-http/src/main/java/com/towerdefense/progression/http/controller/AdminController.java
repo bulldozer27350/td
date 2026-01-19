@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.http.api.AdminApi;
@@ -79,7 +80,7 @@ public class AdminController implements AdminApi {
     
     @Override
     public ResponseEntity<UpgradeDefinition> updateUpgrade(
-            String upgradeId,
+    		@PathVariable("upgradeId") String upgradeId,
             @Valid UpdateUpgradeRequest request) {
         
         try {
@@ -114,7 +115,7 @@ public class AdminController implements AdminApi {
     }
     
     @Override
-    public ResponseEntity<Void> deleteUpgrade(String upgradeId) {
+    public ResponseEntity<Void> deleteUpgrade(@PathVariable("upgradeId") String upgradeId) {
         try {
             boolean deleted = upgradeAdminService.deleteUpgrade(upgradeId);
             

@@ -70,7 +70,6 @@ class GameInvariantsPropertyTest {
             // Enregistre la configuration problématique
             GameConfig problemConfig = new GameConfig(
                 levelConfig, 
-                null, // PathsConfig 
                 null, // TowersConfig
                 null  // EnemiesConfig
             );
@@ -123,7 +122,7 @@ class GameInvariantsPropertyTest {
             }
 
         } catch (AssertionError | Exception e) {
-            GameConfig problemConfig = new GameConfig(levelConfig, null, null, null);
+            GameConfig problemConfig = new GameConfig(levelConfig, null, null);
             TestFailureRecorder.recordFailure(
                 "player_lives_stay_within_bounds",
                 problemConfig,
@@ -169,7 +168,7 @@ class GameInvariantsPropertyTest {
             );
 
         } catch (AssertionError | Exception e) {
-            GameConfig problemConfig = new GameConfig(levelConfig, null, null, null);
+            GameConfig problemConfig = new GameConfig(levelConfig, null, null);
             TestFailureRecorder.recordFailure(
                 "game_always_terminates",
                 problemConfig,
@@ -228,7 +227,7 @@ class GameInvariantsPropertyTest {
             );
 
         } catch (AssertionError | Exception e) {
-            GameConfig problemConfig = new GameConfig(levelConfig, null, null, null);
+            GameConfig problemConfig = new GameConfig(levelConfig, null, null);
             TestFailureRecorder.recordFailure(
                 "game_end_state_is_consistent",
                 problemConfig,
@@ -278,7 +277,7 @@ class GameInvariantsPropertyTest {
             }
 
         } catch (AssertionError | Exception e) {
-            GameConfig problemConfig = new GameConfig(levelConfig, null, null, null);
+            GameConfig problemConfig = new GameConfig(levelConfig, null, null);
             TestFailureRecorder.recordFailure(
                 "entity_counts_are_always_positive",
                 problemConfig,

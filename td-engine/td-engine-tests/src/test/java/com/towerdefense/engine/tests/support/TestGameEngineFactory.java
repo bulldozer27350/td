@@ -6,7 +6,6 @@ import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
-import com.towerdefense.engine.api.model.configuration.PathsConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
 import com.towerdefense.runner.config.loader.JsonConfigLoader;
 
@@ -42,13 +41,11 @@ public final class TestGameEngineFactory {
 
     // Valeurs par défaut
     private String levelPath = "levels/level-1.json";
-    private String pathsPath = "paths/paths-1.json";
     private String towersPath = "towers/towers.json";
     private String enemiesPath = "enemies/enemies.json";
     
     // ✅ NOUVEAU : Support des configs directes (pour property-based testing)
     private LevelConfig directLevelConfig = null;
-    private PathsConfig directPathsConfig = null;
     private TowersConfig directTowersConfig = null;
     private EnemiesConfig directEnemiesConfig = null;
 
@@ -84,8 +81,6 @@ public final class TestGameEngineFactory {
         if (pathsPath == null || pathsPath.trim().isEmpty()) {
             throw new IllegalArgumentException("Le chemin des paths ne peut pas être null ou vide");
         }
-        this.pathsPath = pathsPath;
-        this.directPathsConfig = null;
         return this;
     }
 
@@ -121,18 +116,6 @@ public final class TestGameEngineFactory {
         }
         this.directLevelConfig = config;
         this.levelPath = null;
-        return this;
-    }
-
-    /**
-     * Utilise une PathsConfig directement.
-     */
-    public TestGameEngineFactory withPaths(PathsConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("PathsConfig ne peut pas être null");
-        }
-        this.directPathsConfig = config;
-        this.pathsPath = null;
         return this;
     }
 
@@ -174,11 +157,10 @@ public final class TestGameEngineFactory {
 
         // 2. Chargement de la configuration de jeu
         LevelConfig level = loadLevelConfig();
-        PathsConfig paths = loadPathsConfig();
         TowersConfig towers = loadTowersConfig();
         EnemiesConfig enemies = loadEnemiesConfig();
 
-        GameConfig gameConfig = new GameConfig(level, paths, towers, enemies);
+        GameConfig gameConfig = new GameConfig(level, towers, enemies);
 
         // 3. Initialisation explicite du moteur
         engine.initialize(gameConfig);
@@ -194,14 +176,8 @@ public final class TestGameEngineFactory {
         if (directLevelConfig != null) {
             return directLevelConfig;
         }
-        return loader.load(levelPath, LevelConfig.class);
-    }
-
-    private PathsConfig loadPathsConfig() {
-        if (directPathsConfig != null) {
-            return directPathsConfig;
-        }
-        return loader.load(pathsPath, PathsConfig.class);
+        LevelConfig levelConfig = loader.load(levelPath, LevelConfig.class);
+        return levelConfig;
     }
 
     private TowersConfig loadTowersConfig() {

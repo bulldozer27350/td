@@ -97,13 +97,13 @@ public class LevelEditorApiImpl implements LevelEditorApi {
 
     @Override
     public boolean attributeInitialMoney(int initialMoney) {
-        this.currentLevel.getMetadata().setStartingMoney(initialMoney);
+        this.currentLevel.setStartingMoney(initialMoney);
         return true;
     }
 
     @Override
     public boolean attributeInitialLives(int initialLives) {
-        this.currentLevel.getMetadata().setStartingLives(initialLives);
+        this.currentLevel.setStartingLives(initialLives);
         return true;
     }
 }

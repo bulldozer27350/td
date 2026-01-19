@@ -27,10 +27,10 @@ public class GameEngineConfiguration {
 	@Bean
 	GameEngineApi getGameEngineApi(LevelScenarioFactory levelScenarioFactory, EngineContext context,
 			TowerServices towerServices, TowerTypeAssembler towerTypeAssembler,
-			EnemyFactoryAssembler enemyFactoryAssembler, LevelAssembler levelAssembler, PathAssembler pathAssembler,
+			EnemyFactoryAssembler enemyFactoryAssembler, LevelAssembler levelAssembler,
 			Map<Class<?>, GameCommandHandler<?>> gameCommandHandlers) {
 		return new GameEngineApiImpl(levelScenarioFactory, context, towerTypeAssembler, enemyFactoryAssembler,
-				levelAssembler, pathAssembler, gameCommandHandlers);
+				levelAssembler, gameCommandHandlers);
 	}
 
 	@Bean

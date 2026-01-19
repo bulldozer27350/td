@@ -46,7 +46,7 @@ public class MetaGameService {
         List<EnemyTypeData> enemyList = dataLoader.loadEnemies();
         
         this.levels = levelList.stream()
-            .collect(Collectors.toMap(l -> l.metadata().id(), l -> l));
+            .collect(Collectors.toMap(l -> l.id(), l -> l));
         this.towers = towerList.stream()
             .collect(Collectors.toMap(TowerTypeData::id, t -> t));
         this.enemies = enemyList.stream()
@@ -68,7 +68,7 @@ public class MetaGameService {
                 LevelData level = levels.get(levelId);
                 int stars = playerProgress.getLevelStars(levelId);
                 boolean completed = playerProgress.hasCompleted(levelId);
-                return new AvailableLevel(levelId, level.metadata().id(), completed, stars);
+                return new AvailableLevel(levelId, level.id(), completed, stars);
             })
             .toList();
     }

@@ -44,4 +44,30 @@ public class EditableWave {
     public String getPathId() {
         return pathId;
     }
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setStartTick(int startTick) {
+		this.startTick = startTick;
+	}
+
+	public void setSpawnInterval(int spawnInterval) {
+		this.spawnInterval = spawnInterval;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public void setEnemyType(String enemyType) {
+		this.enemyType = enemyType;
+	}
+
+	public void setPathId(String pathId) {
+		this.pathId = pathId;
+	}
+    
+    
 }

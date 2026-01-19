@@ -13,8 +13,7 @@ import com.towerdefense.editor.api.model.draft.EditableLevel;
 @Mapper(componentModel = "spring", uses = { 
 		EditablePathMapper.class, 
 		EditableAttackMapper.class,
-		EditableMapMapper.class, 
-		LevelMetadataMapper.class })
+		EditableMapMapper.class })
 public interface EditableLevelMapper {
 
 	/*

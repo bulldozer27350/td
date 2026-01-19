@@ -17,6 +17,12 @@
       "hp": 200,
       "speed": 0.05,
       "bounty": 50
+    },
+    {
+      "id": "gobelins",
+      "hp": 200,
+      "speed": 0.05,
+      "bounty": 50
     }
   ]
 }

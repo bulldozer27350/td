@@ -1,5 +1,7 @@
 package com.towerdefense.http.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -9,8 +11,8 @@ import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.engine.api.model.configuration.EnemyTypeConfig;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
+import com.towerdefense.engine.api.model.configuration.MapDimensions;
 import com.towerdefense.engine.api.model.configuration.PathConfig;
-import com.towerdefense.engine.api.model.configuration.PathsConfig;
 import com.towerdefense.engine.api.model.configuration.PointConfig;
 import com.towerdefense.engine.api.model.configuration.TowerLevelConfig;
 import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
@@ -23,7 +25,6 @@ public class GameConfigMapper {
     public GameConfig toBusiness(com.towerdefense.http.model.GameConfig dto) {
         return new GameConfig(
                 toBusiness(dto.getLevelConfig()),
-                toBusiness(dto.getPathsConfig()),
                 toBusiness(dto.getTowersConfig()),
                 toBusiness(dto.getEnemiesConfig())
         );
@@ -34,8 +35,12 @@ public class GameConfigMapper {
     private LevelConfig toBusiness(com.towerdefense.http.model.LevelConfig dto) {
         LevelConfig config = new LevelConfig();
         config.setId(dto.getId());
+        config.setMap(new MapDimensions(dto.getMap().getWidth(), dto.getMap().getHeight()));
         config.setStartingLives(dto.getStartingLives());
         config.setStartingMoney(dto.getStartingMoney());
+        List<PathConfig> paths = new ArrayList<>();
+        dto.getPaths().stream().map(p->paths.add(this.toBusiness(p)));
+        config.setPaths(paths);
         config.setAttacks(
                 dto.getAttacks().stream()
                         .map(this::toBusiness)
@@ -80,16 +85,6 @@ public class GameConfigMapper {
     }
 
     // ---------- Paths ----------
-
-    private PathsConfig toBusiness(com.towerdefense.http.model.PathsConfig dto) {
-        PathsConfig config = new PathsConfig();
-        config.setPaths(
-                dto.getPaths().stream()
-                        .map(this::toBusiness)
-                        .collect(Collectors.toList())
-        );
-        return config;
-    }
 
     private PathConfig toBusiness(com.towerdefense.http.model.PathConfig dto) {
         PathConfig config = new PathConfig();

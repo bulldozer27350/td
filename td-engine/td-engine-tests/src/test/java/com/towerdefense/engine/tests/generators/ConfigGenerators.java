@@ -1,11 +1,25 @@
 package com.towerdefense.engine.tests.generators;
 
-import com.towerdefense.engine.api.model.configuration.*;
-import net.jqwik.api.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.towerdefense.engine.api.model.configuration.AttackConfig;
+import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
+import com.towerdefense.engine.api.model.configuration.EnemyTypeConfig;
+import com.towerdefense.engine.api.model.configuration.GameConfig;
+import com.towerdefense.engine.api.model.configuration.LevelConfig;
+import com.towerdefense.engine.api.model.configuration.PathConfig;
+import com.towerdefense.engine.api.model.configuration.PointConfig;
+import com.towerdefense.engine.api.model.configuration.TowerLevelConfig;
+import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
+import com.towerdefense.engine.api.model.configuration.TowersConfig;
+import com.towerdefense.engine.api.model.configuration.WaveConfig;
+
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Combinators;
+import net.jqwik.api.Provide;
 
 /**
  * Générateurs de configurations aléatoires mais valides pour les tests
@@ -223,46 +237,17 @@ public class ConfigGenerators {
 					level.setAttacks(fixedAttacks);
 
 					// ✅ ÉTAPE 2 : Créer les configs avec les méthodes helper
-					PathsConfig pathsConfig = createPathsConfig(pathsList);
+					level.setPaths(pathsList);
 					TowersConfig towersConfig = createTowersConfig(towersList);
 					EnemiesConfig enemiesConfig = createEnemiesConfig(enemiesList);
 
-					return new GameConfig(level, pathsConfig, towersConfig, enemiesConfig);
+					return new GameConfig(level, towersConfig, enemiesConfig);
 				});
 	}
 
 	// ========================
 	// ✅ MÉTHODES HELPER POUR CRÉER LES CONFIGS
 	// ========================
-
-	/**
-	 * Crée un PathsConfig à partir d'une liste de PathConfig.
-	 * 
-	 * Note : PathsConfig n'a pas de setter public pour 'paths', donc on utilise la
-	 * réflexion pour l'initialiser.
-	 */
-	private PathsConfig createPathsConfig(List<PathConfig> pathsList) {
-		PathsConfig config = new PathsConfig();
-
-		try {
-			// Accès via réflexion car pas de setter public
-			var field = PathsConfig.class.getDeclaredField("paths");
-			field.setAccessible(true);
-			field.set(config, new ArrayList<>(pathsList));
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			// Fallback : si le champ n'existe pas ou n'est pas accessible,
-			// on essaie le setter public (s'il existe)
-			try {
-				config.setPaths(pathsList);
-			} catch (Exception ex) {
-				throw new RuntimeException(
-						"Cannot initialize PathsConfig. Add public setPaths() method or make 'paths' field accessible",
-						e);
-			}
-		}
-
-		return config;
-	}
 
 	/**
 	 * Crée un TowersConfig à partir d'une liste de TowerTypeConfig.

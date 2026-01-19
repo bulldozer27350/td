@@ -61,7 +61,6 @@ public class PlayerController implements PlayerApi {
         	Map<String, Object> level = metaGameService.prepareLevel(levelId);
         	GameConfig gameConfig = new GameConfig();
         	gameConfig.levelConfig(level.get("levelConfig"));
-        	gameConfig.pathsConfig(level.get("pathsConfig"));
         	gameConfig.towersConfig(level.get("towersConfig"));
         	gameConfig.enemiesConfig(level.get("enemiesConfig"));
             return ResponseEntity.ok(gameConfig);
@@ -72,7 +71,7 @@ public class PlayerController implements PlayerApi {
     
     @Override
     public ResponseEntity<LevelCompletionResponse> completeLevel(
-            @PathVariable String levelId,
+            @PathVariable("levelId") String levelId,
             @RequestBody LevelCompletionRequest request) {
         
         int previousPoints = metaGameService.getPlayerProgress().getUpgradePoints();

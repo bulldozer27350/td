@@ -18,7 +18,6 @@ import com.towerdefense.engine.api.model.command.UpgradeTowerCommand;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.runner.config.reader.EnemiesConfigProvider;
 import com.towerdefense.runner.config.reader.LevelConfigProvider;
-import com.towerdefense.runner.config.reader.PathsConfigProvider;
 import com.towerdefense.runner.config.reader.TowersConfigProvider;
 import com.towerdefense.viewer.ConsoleViewer;
 import com.towerdefense.viewer.FileViewer;
@@ -68,7 +67,6 @@ public class ConsoleGameRunner implements CommandLineRunner {
         // Game configuration
         GameConfig gameConfig = new GameConfig(
                 new LevelConfigProvider().providesDTO(),
-                new PathsConfigProvider().providesDTO(),
                 new TowersConfigProvider().providesDTO(),
                 new EnemiesConfigProvider().providesDTO()
         );

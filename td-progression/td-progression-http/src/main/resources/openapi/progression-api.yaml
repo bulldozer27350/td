@@ -431,8 +431,6 @@ components:
       properties:
         levelConfig:
           type: object
-        pathsConfig:
-          type: object
         towersConfig:
           type: object
         enemiesConfig:

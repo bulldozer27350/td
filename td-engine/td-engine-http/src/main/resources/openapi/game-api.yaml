@@ -355,8 +355,6 @@ components:
       properties:
         levelConfig:
           $ref: '#/components/schemas/LevelConfig'
-        pathsConfig:
-          $ref: '#/components/schemas/PathsConfig'
         towersConfig:
           $ref: '#/components/schemas/TowersConfig'
         enemiesConfig:
@@ -368,6 +366,8 @@ components:
       properties:
         id:
           type: string
+        map:
+          $ref: '#/components/schemas/MapDimensions'
         startingLives:
           type: integer
         startingMoney:
@@ -376,11 +376,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AttackConfig'
-        towerCapacities:  # ✅ NOUVEAU
+        towerCapacities: 
           type: array
           items:
             $ref: '#/components/schemas/TowerCapacityConfig'
-      required: [id, startingLives, startingMoney, attacks]
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PathConfig'
+      required: [id, startingLives, startingMoney, attacks, map, paths]
+
+    MapDimensions:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+      required: [width, height]
 
     TowerCapacityConfig: 
       type: object
@@ -423,15 +436,6 @@ components:
         pathId:
           type: string
       required: [id, startTick, spawnInterval, count, enemyType, pathId]
-
-    PathsConfig:
-      type: object
-      properties:
-        paths:
-          type: array
-          items:
-            $ref: '#/components/schemas/PathConfig'
-      required: [paths]
 
     PathConfig:
       type: object

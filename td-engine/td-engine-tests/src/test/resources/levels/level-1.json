@@ -1,45 +1,104 @@
 {
-  "id": 0,
-  "attacks": [
-    {
-      "waves": [
-        {
-		  "id": "fastWave",
-          "startTick": 0,
-          "spawnInterval": 2,
-          "count": 20,
-          "enemyType": "fast",
-          "pathId": "0"
-        },
-        {
-		  "id": "tankWave",
-          "startTick": 3,
-          "spawnInterval": 3,
-          "count": 10,
-          "enemyType": "tank",
-          "pathId": "1"
-        }
-      ]
-    },
-    {
-      "waves": [
-        {
-		  "id": "bossWave",
-          "startTick": 0,
-          "spawnInterval": 1,
-          "count": 1,
-          "enemyType": "boss",
-          "pathId": "0"
-        }
-      ]
-    }
-  ],
-  "startingMoney": 400,
-  "startingLives": 10,
-  "towerCapacities": [
-	{
-		"towerTypeId": "machinegun",
-		"maxLevel": 3
-	}
-  ]
+  "id" : "1",
+  "startingMoney" : 400,
+  "startingLives" : 10,
+  "map" : {
+    "width" : 10,
+    "height" : 10
+  },
+  "paths" : [ {
+    "id" : "1",
+    "points" : [ {
+      "x" : 3,
+      "y" : 0
+    }, {
+      "x" : 3,
+      "y" : 1
+    }, {
+      "x" : 3,
+      "y" : 2
+    }, {
+      "x" : 3,
+      "y" : 3
+    }, {
+      "x" : 2,
+      "y" : 3
+    }, {
+      "x" : 1,
+      "y" : 3
+    }, {
+      "x" : 1,
+      "y" : 4
+    }, {
+      "x" : 1,
+      "y" : 5
+    }, {
+      "x" : 2,
+      "y" : 5
+    }, {
+      "x" : 3,
+      "y" : 5
+    }, {
+      "x" : 3,
+      "y" : 6
+    }, {
+      "x" : 3,
+      "y" : 7
+    }, {
+      "x" : 3,
+      "y" : 8
+    }, {
+      "x" : 4,
+      "y" : 8
+    }, {
+      "x" : 5,
+      "y" : 8
+    }, {
+      "x" : 5,
+      "y" : 7
+    }, {
+      "x" : 5,
+      "y" : 6
+    }, {
+      "x" : 5,
+      "y" : 5
+    }, {
+      "x" : 5,
+      "y" : 4
+    }, {
+      "x" : 5,
+      "y" : 3
+    }, {
+      "x" : 5,
+      "y" : 2
+    }, {
+      "x" : 5,
+      "y" : 1
+    }, {
+      "x" : 5,
+      "y" : 0
+    } ]
+  } ],
+  "attacks" : [ {
+    "waves" : [ {
+      "id" : "1",
+      "startTick" : 0,
+      "spawnInterval" : 1,
+      "count" : 20,
+      "enemyType" : "gobelins",
+      "pathId" : "1"
+    }, {
+      "id" : "2",
+      "startTick" : 0,
+      "spawnInterval" : 1,
+      "count" : 25,
+      "enemyType" : "gobelins",
+      "pathId" : "1"
+    } ],
+    "id" : "1"
+  } ],
+  "towerCapacities" : [ {
+    "towerTypeId" : "machinegun",
+    "maxLevel" : 2
+  } ]
 }

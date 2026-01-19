@@ -8,7 +8,6 @@ import com.towerdefense.editor.api.model.draft.EditableLevel;
 import com.towerdefense.editor.api.model.draft.EditableMap;
 import com.towerdefense.editor.api.model.draft.EditableWave;
 import com.towerdefense.editor.api.model.draft.TowerCapacity;
-import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 import com.towerdefense.engine.api.model.configuration.AttackConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.WaveConfig;
@@ -22,14 +21,11 @@ public class LevelImportService {
 
 	public EditableLevel importLevel(LevelConfig config) {
 
-		// --- Metadata ---
-		LevelMetadata metadata = new LevelMetadata(config.getId(), config.getStartingMoney(), config.getStartingLives());
-
 		// --- Map ---
 		// Dimensions are not part of LevelConfig yet → default placeholder
 		EditableMap map = new EditableMap(10, 10);
 
-		EditableLevel level = new EditableLevel(metadata, map, new ArrayList<EditableAttack>(),
+		EditableLevel level = new EditableLevel(config.getId(), config.getStartingMoney(), config.getStartingLives(), map, new ArrayList<EditableAttack>(),
 				new ArrayList<TowerCapacity>());
 
 		// --- Paths ---

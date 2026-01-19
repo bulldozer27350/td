@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import com.towerdefense.config.EngineContext;
 import com.towerdefense.config.assembler.EnemyFactoryAssembler;
 import com.towerdefense.config.assembler.LevelAssembler;
-import com.towerdefense.config.assembler.PathAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 
 @Configuration
@@ -32,8 +31,4 @@ public class EngineInternalConfiguration {
 		return new LevelAssembler();
 	}
 	
-	@Bean
-	PathAssembler pathConfiguration() {
-		return new PathAssembler();
-	}
 }

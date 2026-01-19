@@ -13,6 +13,10 @@ public class LevelConfig {
 	private int startingLives;
 	private int startingMoney;
 	
+	private MapDimensions map;
+	
+	private List<PathConfig> paths;
+	
     private List<TowerCapacityConfig> towerCapacities = new ArrayList<>();
 
 	/** Get the number of lives for the level. */
@@ -63,4 +67,20 @@ public class LevelConfig {
 		this.towerCapacities = towerCapacities;
 	}
 
+	public MapDimensions getMap() {
+		return map;
+	}
+
+	public void setMap(MapDimensions map) {
+		this.map = map;
+	}
+	
+	/** Get the list of path configurations. */
+	public List<PathConfig> getPaths() {
+	    return paths;
+	}
+	
+	public void setPaths(List<PathConfig> paths) {
+	    this.paths = paths;
+	}
 }

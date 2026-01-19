@@ -22,7 +22,6 @@ public class GameConfigBuilder {
      
      Map<String, Object> config = new HashMap<>();
      config.put("levelConfig", buildLevelConfig(level));
-     config.put("pathsConfig", buildPathsConfig(level.paths()));
      config.put("towersConfig", buildTowersConfig(towers));
      config.put("enemiesConfig", buildEnemiesConfig(enemies));
      
@@ -31,14 +30,23 @@ public class GameConfigBuilder {
  
  private Map<String, Object> buildLevelConfig(LevelData level) {
      Map<String, Object> config = new HashMap<>();
-     config.put("id", level.metadata().id());
-     config.put("startingLives", level.metadata().startingLives());
-     config.put("startingMoney", level.metadata().startingMoney());
+     config.put("id", level.id());
+     config.put("startingLives", level.startingLives());
+     config.put("startingMoney", level.startingMoney());
      config.put("attacks", buildAttacks(level.attacks()));
      config.put("towerCapacities", buildTowerCapacities(level.towerCapacities()));
+     config.put("map", buildMap(level.map()));
+     config.put("paths", buildPathsConfig(level.paths()));
      return config;
  }
  
+ private Map<String, Object> buildMap(com.towerdefense.progression.model.Map map) {
+     Map<String, Object> mapDimensions = new HashMap<String, Object>();
+     mapDimensions.put("width", map.width());
+     mapDimensions.put("height", map.height());
+     return mapDimensions;
+}
+
  private List<Map<String, Object>> buildAttacks(List<Attack> attacks) {
      return attacks.stream().map(attack -> {
          Map<String, Object> attackMap = new HashMap<>();
@@ -72,17 +80,15 @@ public class GameConfigBuilder {
  
  private Map<String, Object> buildPathsConfig(List<Path> paths) {
      Map<String, Object> config = new HashMap<>();
-     config.put("paths", paths.stream().map(path -> {
-         Map<String, Object> pathMap = new HashMap<>();
-         pathMap.put("id", path.id());
-         pathMap.put("points", path.points().stream().map(point -> {
+     for (Path p : paths) {
+         config.put("id", p.id());
+         config.put("points", p.points().stream().map(point -> {
              Map<String, Object> pointMap = new HashMap<>();
              pointMap.put("x", point.x());
              pointMap.put("y", point.y());
              return pointMap;
          }).toList());
-         return pathMap;
-     }).toList());
+     }
      return config;
  }
  

@@ -10,7 +10,6 @@ import com.towerdefense.editor.api.model.draft.EditablePath;
 import com.towerdefense.editor.api.model.draft.EditableWave;
 import com.towerdefense.editor.api.model.draft.TowerCapacity;
 import com.towerdefense.editor.api.model.editor.LevelEditor;
-import com.towerdefense.editor.api.model.exportable.LevelMetadata;
 import com.towerdefense.editor.api.model.exportable.PathDefinition;
 
 public class DefaultLevelEditor implements LevelEditor {
@@ -20,12 +19,12 @@ public class DefaultLevelEditor implements LevelEditor {
 	private final List<EditableAttack> attacks;
 	private final List<TowerCapacity> towerCapacityIds;
 
-	public DefaultLevelEditor(LevelMetadata metadata, int mapWidth, int mapHeight) {
+	public DefaultLevelEditor(String id, int startingMoney, int startingLives, int mapWidth, int mapHeight) {
 		this.map = new EditableMap(mapWidth, mapHeight);
 		this.attacks = new ArrayList<>();
 		this.towerCapacityIds = new ArrayList<>();
 
-		this.level = new EditableLevel(metadata, map, attacks, towerCapacityIds);
+		this.level = new EditableLevel(id, startingMoney, startingLives, map, attacks, towerCapacityIds);
 	}
 
 	@Override
