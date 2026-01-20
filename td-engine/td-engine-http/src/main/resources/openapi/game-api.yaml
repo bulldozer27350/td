@@ -359,7 +359,7 @@ components:
           $ref: '#/components/schemas/TowersConfig'
         enemiesConfig:
           $ref: '#/components/schemas/EnemiesConfig'
-      required: [levelConfig, pathsConfig, towersConfig, enemiesConfig]
+      required: [levelConfig, towersConfig, enemiesConfig]
 
     LevelConfig:
       type: object

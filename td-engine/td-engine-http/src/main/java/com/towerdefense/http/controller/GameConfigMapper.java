@@ -19,6 +19,8 @@ import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
 import com.towerdefense.engine.api.model.configuration.WaveConfig;
 
+import jakarta.validation.Valid;
+
 @Component
 public class GameConfigMapper {
 
@@ -39,7 +41,10 @@ public class GameConfigMapper {
         config.setStartingLives(dto.getStartingLives());
         config.setStartingMoney(dto.getStartingMoney());
         List<PathConfig> paths = new ArrayList<>();
-        dto.getPaths().stream().map(p->paths.add(this.toBusiness(p)));
+        for (com.towerdefense.http.model.@Valid PathConfig pathConfig : dto.getPaths()) {
+            paths.add(this.toBusiness(pathConfig));
+        }
+//        dto.getPaths().stream().map(p->paths.add(this.toBusiness(p)));
         config.setPaths(paths);
         config.setAttacks(
                 dto.getAttacks().stream()

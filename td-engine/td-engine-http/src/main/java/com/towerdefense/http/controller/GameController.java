@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.GameRuntime;
 import com.towerdefense.engine.api.model.GameStateDTO;
 import com.towerdefense.engine.api.model.command.PlaceTowerCommand;
@@ -17,20 +18,23 @@ import com.towerdefense.http.model.GameStatus;
 import com.towerdefense.http.model.PlaceTowerRequest;
 import com.towerdefense.http.model.SellTowerRequest;
 import com.towerdefense.http.model.UpgradeTowerRequest;
+import com.towerdefense.starter.GameRuntimeImpl;
 
 import jakarta.validation.Valid;
 
 @RestController
 public class GameController implements DefaultApi {
 
-    private final GameRuntime gameRuntime;
+    private GameRuntime gameRuntime;
     private final GameStateMapper mapper;
     private final GameConfigMapper configMapper;
+    private final GameEngineApi gameEngineApi;
 
-    public GameController(GameRuntime gameRuntime, GameStateMapper mapper, GameConfigMapper configMapper) {
-        this.gameRuntime = gameRuntime;
+    public GameController(GameStateMapper mapper, GameConfigMapper configMapper, GameEngineApi engineApi) {
         this.mapper = mapper;
         this.configMapper = configMapper;
+        this.gameEngineApi = engineApi;
+        this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
     }
 
     @Override
@@ -100,7 +104,8 @@ public class GameController implements DefaultApi {
 
 	@Override
 	public ResponseEntity<Void> initializeGame(@Valid GameConfig gameConfig) {
-		com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
+		this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
+	    com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
 	    gameRuntime.initialize(config);
 	    return ResponseEntity.noContent().build();
 	}

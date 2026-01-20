@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.towerdefense.progression.domain.game.GameConfig;
 import com.towerdefense.progression.model.Attack;
 import com.towerdefense.progression.model.EnemyTypeData;
 import com.towerdefense.progression.model.LevelData;
@@ -15,17 +16,12 @@ import com.towerdefense.progression.model.Wave;
 //Construit le GameConfig au format attendu par td-engine
 public class GameConfigBuilder {
  
- public Map<String, Object> buildGameConfig(
+ public GameConfig buildGameConfig(
          LevelData level,
          List<TowerTypeData> towers,
          List<EnemyTypeData> enemies) {
      
-     Map<String, Object> config = new HashMap<>();
-     config.put("levelConfig", buildLevelConfig(level));
-     config.put("towersConfig", buildTowersConfig(towers));
-     config.put("enemiesConfig", buildEnemiesConfig(enemies));
-     
-     return config;
+     return new GameConfig(level, towers, enemies);
  }
  
  private Map<String, Object> buildLevelConfig(LevelData level) {

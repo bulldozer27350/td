@@ -35,12 +35,14 @@ class GameEngine {
             
             // Récupérer l'état initial
             this.gameState = await apiClient.getGameState();
+
+            this.playerId = this.gameState.player.id;
             
             // Initialiser le renderer
             this.renderer.init(
-                gameConfig.levelConfig.startingMoney ? 20 : gameConfig.pathsConfig.paths[0]?.points[gameConfig.pathsConfig.paths[0].points.length - 1]?.x + 5 || 20,
-                gameConfig.levelConfig.startingLives ? 15 : gameConfig.pathsConfig.paths[0]?.points[gameConfig.pathsConfig.paths[0].points.length - 1]?.y + 5 || 15,
-                gameConfig.pathsConfig.paths
+                gameConfig.levelConfig.startingMoney ? 20 : gameConfig.levelConfig.paths[0]?.points[gameConfig.pathsConfig.paths[0].points.length - 1]?.x + 5 || 20,
+                gameConfig.levelConfig.startingLives ? 15 : gameConfig.levelConfig.paths[0]?.points[gameConfig.pathsConfig.paths[0].points.length - 1]?.y + 5 || 15,
+                gameConfig.levelConfig.paths
             );
             
             // Afficher les tours disponibles

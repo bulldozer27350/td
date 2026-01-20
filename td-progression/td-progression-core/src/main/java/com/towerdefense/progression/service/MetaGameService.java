@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.towerdefense.progression.domain.game.GameConfig;
 import com.towerdefense.progression.domain.player.PlayerProgress;
 import com.towerdefense.progression.domain.progression.LinearProgression;
 import com.towerdefense.progression.domain.reward.RewardCalculator;
@@ -74,7 +75,7 @@ public class MetaGameService {
     }
     
     // Prépare un niveau pour être joué (avec upgrades appliqués)
-    public Map<String, Object> prepareLevel(String levelId) {
+    public GameConfig prepareLevel(String levelId) {
         LevelData level = levels.get(levelId);
         if (level == null) {
             throw new IllegalArgumentException("Level not found: " + levelId);

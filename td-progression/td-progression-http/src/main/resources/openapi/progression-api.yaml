@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GameConfig'
+                $ref: '#/components/schemas/GameConfiguration'
         '400':
           description: Niveau non débloqué ou inexistant
           content:
@@ -426,15 +426,196 @@ components:
     # GAME CONFIG (pour td-engine)
     # ========================================================================
 
-    GameConfig:
+    GameConfiguration:
       type: object
       properties:
         levelConfig:
-          type: object
+          $ref: '#/components/schemas/LevelConfiguration'
         towersConfig:
-          type: object
+          $ref: '#/components/schemas/TowersConfiguration'
         enemiesConfig:
-          type: object
+          $ref: '#/components/schemas/EnemiesConfiguration'
+
+    # ========================================================================
+    # LevelConfig
+    # ========================================================================
+
+    LevelConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        map:
+          $ref: '#/components/schemas/MapDimensionsConfiguration'
+        startingLives:
+          type: integer
+        startingMoney:
+          type: integer
+        attacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttackConfiguration'
+        towerCapacities: 
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerCapacityConfiguration'
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PathConfiguration'
+      required: [id, startingLives, startingMoney, attacks, map, paths, towerCapacities]
+
+    MapDimensionsConfiguration:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+      required: [width, height]
+
+    TowerCapacityConfiguration: 
+      type: object
+      required:
+        - towerTypeId
+        - maxLevel
+      properties:
+        towerTypeId:
+          type: string
+          example: "machinegun"
+        maxLevel:
+          type: integer
+          minimum: 1
+          example: 3
+
+    AttackConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        waves:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaveConfiguration'
+      required: [id, waves]
+
+    WaveConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        startTick:
+          type: integer
+        spawnInterval:
+          type: integer
+        count:
+          type: integer
+        enemyType:
+          type: string
+        pathId:
+          type: string
+      required: [id, startTick, spawnInterval, count, enemyType, pathId]
+
+    PathConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointConfiguration'
+      required: [id, points]
+
+    PointConfiguration:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+      required: [x, y]
+
+    # ========================================================================
+    # TowersConfig
+    # ========================================================================
+
+    TowersConfiguration:
+      type: object
+      properties:
+        towers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerTypeConfiguration'
+      required: [towers]
+
+    TowerTypeConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        levels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TowerLevelConfiguration'
+      required: [id, name, levels]
+
+    TowerLevelConfiguration:
+      type: object
+      properties:
+        level:
+          type: integer
+        upgradeCost:
+          type: integer
+        sellValue:
+          type: integer
+        range:
+          type: number
+          format: double
+        damage:
+          type: integer
+        reloadSeconds:
+          type: number
+          format: double
+        buildTimeTicks:
+          type: integer
+      required:
+        - level
+        - upgradeCost
+        - sellValue
+        - range
+        - damage
+        - reloadSeconds
+        - buildTimeTicks
+
+    # ========================================================================
+    # EnemiesConfiguration
+    # ========================================================================
+
+    EnemiesConfiguration:
+      type: object
+      properties:
+        enemies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnemyTypeConfiguration'
+      required: [enemies]
+
+    EnemyTypeConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+        hp:
+          type: integer
+        speed:
+          type: number
+          format: double
+        bounty:
+          type: integer
+      required: [id, hp, speed, bounty]
 
     # ========================================================================
     # ERROR
