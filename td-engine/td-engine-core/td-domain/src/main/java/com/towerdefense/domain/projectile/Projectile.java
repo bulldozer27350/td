@@ -53,8 +53,6 @@ public class Projectile implements GameObject {
         double normX = dx / dist;
         double normY = dy / dist;
 
-        // ❌ ANCIEN : double move = speed;
-        // ✅ NOUVEAU :
         double move = speedPerTick;
         
         if (move >= dist) {

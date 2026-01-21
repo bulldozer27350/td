@@ -320,18 +320,18 @@
             if (!currentLevel) return;
 
             // Titre
-            document.getElementById('levelTitle').textContent = `Édition: ${currentLevel.metadata.id}`;
+            document.getElementById('levelTitle').textContent = `Édition: ${currentLevel.id}`;
 
             // Informations
             document.getElementById('levelInfo').innerHTML = `
-                <div class="font-bold text-lg mb-1">${currentLevel.metadata.id}</div>
+                <div class="font-bold text-lg mb-1">${currentLevel.id}</div>
                 <div class="text-sm">Taille: ${currentLevel.map.width}×${currentLevel.map.height}</div>
             `;
             document.getElementById('gridSize').textContent = `${currentLevel.map.width}×${currentLevel.map.height}`;
 
             // Métadonnées
-            document.getElementById('startingMoney').value = currentLevel.metadata.startingMoney;
-            document.getElementById('startingLives').value = currentLevel.metadata.startingLives;
+            document.getElementById('startingMoney').value = currentLevel.startingMoney;
+            document.getElementById('startingLives').value = currentLevel.startingLives;
 
             // Grille
             renderGrid();

@@ -50,7 +50,7 @@ public class ShootingSystem implements GameSystem {
      */
     private Projectile createProjectile(Tower tower, EntityId targetId) {
         // TODO: Rendre configurable via TowerLevelDefinition
-        double projectileSpeed = 8.0;
+        double projectileSpeed = 16.0;
         
         return new Projectile(
             EntityId.random(),

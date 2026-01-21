@@ -30,7 +30,7 @@ import com.towerdefense.progression.http.model.WaveConfiguration;
 import com.towerdefense.progression.model.Attack;
 import com.towerdefense.progression.model.EnemyTypeData;
 import com.towerdefense.progression.model.LevelData;
-import com.towerdefense.progression.model.Path;
+import com.towerdefense.progression.model.LevelPath;
 import com.towerdefense.progression.model.Point;
 import com.towerdefense.progression.model.TowerCapacity;
 import com.towerdefense.progression.model.TowerLevel;
@@ -131,7 +131,7 @@ public class PlayerController implements PlayerApi {
                 wave.pathId());
     }
 
-    private @Valid PathConfiguration toHttp(Path path) {
+    private @Valid PathConfiguration toHttp(LevelPath path) {
         return new PathConfiguration(path.id(), path.points().stream().map(p -> toHttp(p)).toList());
     }
 

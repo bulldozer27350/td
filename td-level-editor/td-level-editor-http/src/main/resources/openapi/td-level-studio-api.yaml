@@ -911,14 +911,20 @@ components:
     EditableLevel:
       type: object
       required:
-        - metadata
+        - id
+        - startingMoney
+        - startingLives
         - map
         - paths
         - attacks
         - towerCapacities
       properties:
-        metadata:
-          $ref: '#/components/schemas/LevelMetadata'
+        id:
+          type: string
+        startingMoney:
+          type: integer
+        startingLives:
+          type: integer
         map:
           $ref: '#/components/schemas/EditableMap'
         paths:

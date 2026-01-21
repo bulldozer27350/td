@@ -7,8 +7,8 @@ public record LevelData(
  String id,
  int startingMoney,
  int startingLives,
- Map map,
- List<Path> paths,
+ LevelMap map,
+ List<LevelPath> paths,
  List<Attack> attacks,
  List<TowerCapacity> towerCapacities
 ) {}

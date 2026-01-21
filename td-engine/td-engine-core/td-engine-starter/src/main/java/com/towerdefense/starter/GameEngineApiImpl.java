@@ -79,7 +79,6 @@ public class GameEngineApiImpl implements GameEngineApi {
         this.towerTypeAssembler = towerTypeAssembler;
         this.enemyFactoryAssembler = enemyFactoryAssembler;
         this.levelAssembler = levelAssembler;
-
     }
 
     public void dispatch(GameCommand command) {
@@ -89,6 +88,7 @@ public class GameEngineApiImpl implements GameEngineApi {
 
     @Override
     public void initialize(GameConfig gameConfig) {
+        this.state = new GameState();
         this.configureLevel(gameConfig);
         this.configureGameMap();
         this.state.setLevelProgress(new LevelProgress(gameConfig.levelConfig().getId(), 0));

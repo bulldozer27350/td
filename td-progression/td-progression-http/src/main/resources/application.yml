@@ -3,7 +3,7 @@ server:
 
 tdmeta:
   data:
-    directory: ${TD_DATA_DIR:src/main/resources/exportables}
+    directory: D:/Depots/tower_defense/exportables/
   upgrades:
     file: ${TD_UPGRADES_FILE:src/main/resources/upgrades/tower-upgrades.json}
 

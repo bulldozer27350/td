@@ -8,7 +8,7 @@ import com.towerdefense.progression.domain.game.GameConfig;
 import com.towerdefense.progression.model.Attack;
 import com.towerdefense.progression.model.EnemyTypeData;
 import com.towerdefense.progression.model.LevelData;
-import com.towerdefense.progression.model.Path;
+import com.towerdefense.progression.model.LevelPath;
 import com.towerdefense.progression.model.TowerCapacity;
 import com.towerdefense.progression.model.TowerTypeData;
 import com.towerdefense.progression.model.Wave;
@@ -36,7 +36,7 @@ public class GameConfigBuilder {
      return config;
  }
  
- private Map<String, Object> buildMap(com.towerdefense.progression.model.Map map) {
+ private Map<String, Object> buildMap(com.towerdefense.progression.model.LevelMap map) {
      Map<String, Object> mapDimensions = new HashMap<String, Object>();
      mapDimensions.put("width", map.width());
      mapDimensions.put("height", map.height());
@@ -74,9 +74,9 @@ public class GameConfigBuilder {
      }).toList();
  }
  
- private Map<String, Object> buildPathsConfig(List<Path> paths) {
+ private Map<String, Object> buildPathsConfig(List<LevelPath> paths) {
      Map<String, Object> config = new HashMap<>();
-     for (Path p : paths) {
+     for (LevelPath p : paths) {
          config.put("id", p.id());
          config.put("points", p.points().stream().map(point -> {
              Map<String, Object> pointMap = new HashMap<>();
