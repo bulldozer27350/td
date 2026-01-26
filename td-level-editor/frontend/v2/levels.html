@@ -89,6 +89,10 @@
 
     <script>
         const API_URL = 'http://localhost:8081/api';
+        const IMPORT_BASE_PATHS = {
+            draft: 'D:\\\\Depots\\\\tower_defense\\\\drafts\\\\levels\\\\',
+            exportable: 'D:\\\\Depots\\\\tower_defense\\\\exportables\\\\levels\\\\'
+        };
 
         // Charger les niveaux au démarrage
         async function loadLevels() {
@@ -363,6 +367,18 @@
             `;
             currentModalAction = 'export';
             document.getElementById('importExportModal').classList.remove('hidden');
+            const exportTypeSelect = document.getElementById('exportType');
+            const exportPathInput = document.getElementById('exportPath');
+
+            function updateExportPath() {
+                const type = exportTypeSelect.value;
+                exportPathInput.value =
+                    IMPORT_BASE_PATHS[type] + `${levelId}.json`;
+            }
+
+            exportTypeSelect.addEventListener('change', updateExportPath);
+
+            updateExportPath();
         }
 
         async function confirmModalAction() {

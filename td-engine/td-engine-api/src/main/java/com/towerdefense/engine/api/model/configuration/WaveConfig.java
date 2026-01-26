@@ -23,6 +23,7 @@ public class WaveConfig {
 		this.count = count;
 		this.enemyType = enemyType;
 		this.pathId = pathId;
+		this.id = id;
 	}
 
 	/** Get the unique identifier of the wave. */

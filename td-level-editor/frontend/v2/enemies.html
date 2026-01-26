@@ -64,25 +64,10 @@
             </div>
 
             <!-- Tableau des ennemis -->
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse" id="enemiesTable">
-                    <thead>
-                        <tr class="bg-gray-100 border-b-2 border-gray-300">
-                            <th class="p-3 text-left font-semibold">ID</th>
-                            <th class="p-3 text-center font-semibold">❤️ PV</th>
-                            <th class="p-3 text-center font-semibold">⚡ Vitesse</th>
-                            <th class="p-3 text-center font-semibold">💰 Récompense</th>
-                            <th class="p-3 text-center font-semibold">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="enemiesList">
-                        <tr>
-                            <td colspan="5" class="text-center py-8 text-gray-500">
-                                <div class="animate-pulse">Chargement...</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div id="enemiesList">
+                <div class="text-center py-8 text-gray-500">
+                    <div class="animate-pulse">Chargement...</div>
+                </div>
             </div>
         </div>
 
@@ -345,10 +330,10 @@
                 updateStats(allEnemies);
             } catch (error) {
                 document.getElementById('enemiesList').innerHTML = 
-                    `<tr><td colspan="5" class="text-center py-8">
-                        <div class="text-red-500 text-lg mb-2">⚠️ Erreur de connexion</div>
-                        <div class="text-gray-600 text-sm">Vérifiez que le serveur est démarré</div>
-                    </td></tr>`;
+                    `<div class="text-center py-8">
+                        <div class="text-red-500 text-lg mb-2">⚠️ Erreur de connexion au serveur</div>
+                        <div class="text-gray-600 text-sm">Vérifiez que le serveur est démarré sur ${API_URL}</div>
+                    </div>`;
                 console.error('Erreur:', error);
             }
         }
@@ -370,42 +355,41 @@
             }
 
             tbody.innerHTML = filtered.map(enemy => `
-                <tr class="border-b hover:bg-gray-50 transition-colors">
-                    <td class="p-3">
-                        <div class="font-semibold text-gray-800">${enemy.id}</div>
-                    </td>
-                    <td class="p-3 text-center">
-                        <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full font-semibold">
-                            ${enemy.health}
-                        </span>
-                    </td>
-                    <td class="p-3 text-center">
-                        <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-semibold">
-                            ${enemy.speed.toFixed(2)}
-                        </span>
-                    </td>
-                    <td class="p-3 text-center">
-                        <span class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-semibold">
-                            ${enemy.reward}
-                        </span>
-                    </td>
-                    <td class="p-3 text-center">
-                        <div class="flex justify-center gap-2">
+                <div class="border rounded-lg p-5 mb-4 hover:shadow-md transition-shadow bg-white">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-xl text-gray-800 mb-2">👾 ${enemy.id}</h3>
+                            <div class="grid grid-cols-3 gap-3 text-sm mb-3">
+                                <div class="bg-red-50 p-2 rounded">
+                                    <span class="text-gray-600">PV:</span>
+                                    <span class="font-semibold ml-1">${enemy.health} ❤️</span>
+                                </div>
+                                <div class="bg-blue-50 p-2 rounded">
+                                    <span class="text-gray-600">Vitesse:</span>
+                                    <span class="font-semibold ml-1">${enemy.speed.toFixed(2)} ⚡</span>
+                                </div>
+                                <div class="bg-green-50 p-2 rounded">
+                                    <span class="text-gray-600">Récompense:</span>
+                                    <span class="font-semibold ml-1">${enemy.reward} 💰</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
                             <button onclick='editEnemy(${JSON.stringify(enemy)})' 
-                                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
                                 ✏️ Éditer
                             </button>
                             <button onclick="showExportModal('${enemy.id}')" 
-                                    class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 text-sm">
-                                📤
+                                    class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                📤 Exporter
                             </button>
                             <button onclick="deleteEnemy('${enemy.id}')" 
-                                    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
-                                🗑️
+                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors flex items-center gap-2 whitespace-nowrap">
+                                🗑️ Supprimer
                             </button>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             `).join('');
         }
 
