@@ -6,15 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.moe.td.back.tower.TowerBack;
-import com.moe.td.back.tower.api.TowerManagement;
-import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.StateEnum;
-import com.towerdefense.domain.dynamik.enemy.Enemy;
-import com.towerdefense.domain.dynamik.tower.Tower;
-import com.towerdefense.domain.intentions.ShootIntention;
-import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
 import com.towerdefense.orchestrator.systems.cleanup.DeadEntityCleanupSystem;
