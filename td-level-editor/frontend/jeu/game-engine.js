@@ -48,9 +48,11 @@ class GameEngine {
 
         gameEvents.on('enemy-hit', (data) => {
             console.log(`🎯 ${Date.now()} enemy-hit - Remaining HP: ${data.remainingHp}`);
+            let enemy = data.enemy;
             
             if (data.towerPosition && data.enemyPosition) {
                 this.renderer.addShotLine({
+                    enemy: enemy,
                     towerPosition: data.towerPosition,
                     targetPosition: data.enemyPosition
                 });
@@ -241,10 +243,13 @@ class GameEngine {
     updateEnemyHealth(hitData) {
         if (!this.gameState || !this.gameState.enemies) return;
         
-        const enemy = this.gameState.enemies.find(e => e.id === hitData.enemyId);
+        const enemy = this.gameState.enemies.find(e => e.id === hitData.enemy.id);
         if (enemy) {
+            const oldHp = enemy.currentHp;
             enemy.currentHp = hitData.remainingHp;
             
+            console.log(`💔 HP UPDATE: ${oldHp} → ${hitData.remainingHp}`);
+
             if (enemy.currentHp <= 0) {
                 enemy.isAlive = false;
             }

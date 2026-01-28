@@ -151,13 +151,6 @@ class GameRenderer {
             const gridY = Math.floor(tower.position.y);
             
             // Fond de la cellule
-            this.ctx.fillStyle = 'rgba(50, 150, 50, 0.3)';
-            this.ctx.fillRect(
-                gridX * this.cellSize,
-                gridY * this.cellSize,
-                this.cellSize,
-                this.cellSize
-            );
             
             // Icône de la tour
             let icon = this.icons.tower.default;
@@ -240,27 +233,25 @@ class GameRenderer {
         // Dessiner les traits actifs et supprimer les expirés
         this.shotLines = this.shotLines.filter(shot => {
             const age = now - shot.timestamp;
-            
+            if (!shot.enemy || shot.enemy.currentHp <= 0 || shot.enemy.isAlive === false) {
+                return false;
+            }
             if (age > shot.duration) {
+                console.log(`💨 ${now} SHOT VISUAL REMOVED (age: ${age}ms)`);
                 return false; // Supprimer ce trait
             }
             
             // Calculer l'opacité en fonction de l'âge
             const opacity = 1 - (age / shot.duration);
             
-            // Dessiner le trait
-            this.ctx.strokeStyle = `rgba(255, 200, 50, ${opacity})`;
-            this.ctx.lineWidth = 0.1;
+            // Trait ultra-fin pour simuler une trainée de balle
+            this.ctx.strokeStyle = `rgba(255, 230, 100, ${opacity * 0.8})`;
+            this.ctx.lineWidth = 0.5; // Ultra fin
             this.ctx.lineCap = 'round';
-            
+
             this.ctx.beginPath();
             this.ctx.moveTo(shot.fromX, shot.fromY);
             this.ctx.lineTo(shot.toX, shot.toY);
-            this.ctx.stroke();
-            
-            // Petit effet de lueur
-            this.ctx.strokeStyle = `rgba(255, 255, 150, ${opacity * 0.5})`;
-            this.ctx.lineWidth = 4;
             this.ctx.stroke();
             
             return true; // Garder ce trait
@@ -271,13 +262,16 @@ class GameRenderer {
     
     addShotLine(shotData) {
         this.shotLines.push({
+            enemy: shotData.enemy,
             fromX: shotData.towerPosition.x * this.cellSize + this.cellSize / 2,
             fromY: shotData.towerPosition.y * this.cellSize + this.cellSize / 2,
             toX: shotData.targetPosition.x * this.cellSize + this.cellSize / 2,
             toY: shotData.targetPosition.y * this.cellSize + this.cellSize / 2,
             timestamp: Date.now(),
-            duration: 75
+            duration: 5
         });
+
+        console.log(`✨ ${Date.now()} SHOT VISUAL ADDED (will disappear at ${Date.now() + 50})`);
         
         // Redessiner immédiatement
         this.render(gameEngine.gameState);
