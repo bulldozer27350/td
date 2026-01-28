@@ -14,14 +14,16 @@ public class Projectile implements GameObject {
     private final double speedPerTick;
 	private final int damage;
 	private final EntityId targetId;
+	private final EntityId towerId;
 
 	/** Constructor to initialize projectile with given attributes. */
-	public Projectile(EntityId id, Position pos, double speedCasesPerSecond, int damage, EntityId targetId) {
+	public Projectile(EntityId id, Position pos, double speedCasesPerSecond, int damage, EntityId targetId, EntityId towerId) {
 		this.id = id;
 		this.position = pos;
         this.speedPerTick = GameTime.casesPerSecondToCasesPerTick(speedCasesPerSecond);
 		this.damage = damage;
 		this.targetId = targetId;
+		this.towerId = towerId;
 	}
 
 	/** Getters for projectile attributes */
@@ -43,6 +45,10 @@ public class Projectile implements GameObject {
 	public EntityId targetId() {
 		return targetId;
 	}
+	
+	public EntityId towerId() {
+        return towerId;
+    }
 
 	public void updateTowards(Position target) {
         double dx = target.x() - position.x();

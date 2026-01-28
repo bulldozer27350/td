@@ -35,7 +35,7 @@ class GameEngine {
     
         gameEvents.on('tower-shot', (data) => {
             console.log(`🔫 ${Date.now()} tower-shot`);
-            this.renderer.addShotLine(data);
+            //this.renderer.addShotLine(data);
             // addShotLine fait déjà son propre render
         });
 
@@ -48,6 +48,14 @@ class GameEngine {
 
         gameEvents.on('enemy-hit', (data) => {
             console.log(`🎯 ${Date.now()} enemy-hit - Remaining HP: ${data.remainingHp}`);
+            
+            if (data.towerPosition && data.enemyPosition) {
+                this.renderer.addShotLine({
+                    towerPosition: data.towerPosition,
+                    targetPosition: data.enemyPosition
+                });
+            }
+
             this.updateEnemyHealth(data);
             // Render pour afficher la vie mise à jour
             this.renderer.render(this.gameState);

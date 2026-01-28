@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.engine.api.GameStateObserver;
+import com.towerdefense.engine.api.model.PositionDTO;
 import com.towerdefense.engine.api.model.events.EnemyHitEvent;
 import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
@@ -42,11 +44,12 @@ public class CollisionSystem implements GameSystem {
                 // Applique les dégâts
                 target.health().applyDamage(projectile.damage());
 
+                Tower tower = state.getTower(projectile.towerId());
                 System.out.println("[Tick " + tick + "]Sending event : Projectile " + projectile.id().value() + " hit Enemy "
                         + target.id().value() + " for " + projectile.damage() + " damage. Enemy health: "
                         + target.health().current());
                 observers.forEach(observer -> observer.onEnemyHit(new EnemyHitEvent(target.id().value(),
-                        projectile.id().value(), projectile.damage(), target.health().current(), tick)));
+                        projectile.id().value(), projectile.damage(), target.health().current(), new PositionDTO(tower.position().x(), tower.position().y()),new PositionDTO(target.position().x(), target.position().y()), tick)));
 
                 if (target.health().isDead()) {
                     System.out.println(

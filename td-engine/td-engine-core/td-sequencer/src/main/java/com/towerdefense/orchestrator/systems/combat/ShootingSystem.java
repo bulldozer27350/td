@@ -67,7 +67,7 @@ public class ShootingSystem implements GameSystem {
         // TODO: Rendre configurable via TowerLevelDefinition
         double projectileSpeed = 16.0;
 
-        return new Projectile(EntityId.random(), tower.position(), projectileSpeed, tower.damage(), targetId);
+        return new Projectile(EntityId.random(), tower.position(), projectileSpeed, tower.damage(), targetId, tower.id());
     }
 
     @Override
