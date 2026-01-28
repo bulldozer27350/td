@@ -1,8 +1,11 @@
 package com.towerdefense.orchestrator.systems.cleanup;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -17,7 +20,7 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
 public class OutOfBoundsCleanupSystem implements GameSystem {
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Supprime les projectiles sans cible valide
         state.projectiles().removeIf(projectile -> 
             state.getEnemy(projectile.targetId()) == null

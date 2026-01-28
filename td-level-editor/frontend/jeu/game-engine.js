@@ -16,6 +16,8 @@ class GameEngine {
         this.playerId = 'player-1';
         this.selectedTowerType = null;
         this.selectedTowerPosition = null;
+        this.lastTickTime = 0;
+        this.updateDebounceTimer = null;
         
         this.setupEventListeners();
     }
@@ -24,11 +26,59 @@ class GameEngine {
     // INITIALISATION
     // ========================================================================
     
+    // ========================================================================
+    // GESTION DES LISTENERS SSE
+    // ========================================================================
+
+    setupSSEListeners() {
+        gameEvents.removeAllListeners();
+    
+        gameEvents.on('tower-shot', (data) => {
+            console.log(`🔫 ${Date.now()} tower-shot`);
+            this.renderer.addShotLine(data);
+            // addShotLine fait déjà son propre render
+        });
+
+        gameEvents.on('enemy-moved', (data) => {
+            console.log(`🚶 ${Date.now()} enemy-moved - HP: ${data.enemy.currentHp}`);
+            this.updateEnemyPosition(data.enemy);
+            // AJOUT : Render pour afficher le mouvement
+            this.renderer.render(this.gameState);
+        });
+
+        gameEvents.on('enemy-hit', (data) => {
+            console.log(`🎯 ${Date.now()} enemy-hit - Remaining HP: ${data.remainingHp}`);
+            this.updateEnemyHealth(data);
+            // Render pour afficher la vie mise à jour
+            this.renderer.render(this.gameState);
+        });
+
+        gameEvents.on('enemy-killed', (data) => {
+            console.log(`💀 ${Date.now()} enemy-killed - ID: ${data.enemyId}`);
+            this.markEnemyAsDead(data.enemyId);
+            // Render pour faire disparaître l'ennemi
+            this.renderer.render(this.gameState);
+        });
+
+        gameEvents.on('game-won', () => this.onGameOver());
+        gameEvents.on('game-lost', () => this.onGameOver());
+    }
+
     async startGame(levelId, gameConfig) {
         try {
             this.gameConfig = gameConfig;
             this.currentTick = 0;
             this.isPaused = false;
+
+            // Configurer les listeners SSE (retire les doublons)
+            this.setupSSEListeners();
+
+            // Écouter les mises à jour d'état (moins fréquentes)
+            gameEvents.on('state-update', (state) => {
+                this.gameState = state;
+                this.updateUI();
+                this.renderer.render(this.gameState);
+            });
             
             // Initialiser le moteur de jeu
             await apiClient.initializeGame(gameConfig);
@@ -54,11 +104,12 @@ class GameEngine {
             
             // Démarrer la boucle de jeu
             this.isRunning = true;
-            this.startGameLoop();
+            this.startTickLoop();
             
             console.log('Game started successfully');
         } catch (error) {
             console.error('Failed to start game:', error);
+            gameEvents.disconnect(); // AJOUT : Déconnecter en cas d'erreur
             alert('Erreur lors du démarrage du jeu: ' + error.message);
             gameManager.returnToMenu();
         }
@@ -67,52 +118,65 @@ class GameEngine {
     stopGame() {
         this.isRunning = false;
         this.isPaused = false;
+
         if (this.tickInterval) {
             clearInterval(this.tickInterval);
             this.tickInterval = null;
         }
+        
+        gameEvents.removeAllListeners();
     }
-    
+       
     // ========================================================================
-    // BOUCLE DE JEU
+    // BOUCLE DE TICK
     // ========================================================================
-    
-    startGameLoop() {
+
+    startTickLoop() {
+        // S'assurer qu'il n'y a pas déjà une boucle en cours
         if (this.tickInterval) {
             clearInterval(this.tickInterval);
         }
         
-        this.tickInterval = setInterval(async () => {
-            if (!this.isPaused && this.isRunning) {
-                await this.gameTick();
-            }
+        this.tickInterval = setInterval(() => {
+            this.executeTick();
         }, this.tickSpeed);
     }
-    
-    async gameTick() {
+
+    async executeTick() {
+        // Ne pas exécuter si le jeu n'est pas en cours ou est en pause
+        if (!this.isRunning || this.isPaused) {
+            return;
+        }
+        
+        // Éviter les appels trop rapides (throttling)
+        const now = Date.now();
+        if (now - this.lastTickTime < 50) { // Minimum 50ms entre les ticks
+            return;
+        }
+        this.lastTickTime = now;
+        
         try {
             // Appeler le tick du moteur
             await apiClient.tick();
             this.currentTick++;
             
-            // Récupérer le nouvel état
-            this.gameState = await apiClient.getGameState();
-            
-            // Mettre à jour l'affichage
-            this.updateUI();
-            this.renderer.render(this.gameState);
-            
-            // Vérifier si la partie est terminée
-            const status = await apiClient.getGameStatus();
-            if (status.gameOver) {
-                this.onGameOver();
-            }
+            // Mettre à jour le compteur de tick
+            document.getElementById('current-tick').textContent = this.currentTick;
         } catch (error) {
             console.error('Tick error:', error);
-            // Si le jeu est terminé, gérer la fin
-            if (error.message.includes('game is over')) {
+            
+            if (error.message.includes('game is over') || error.message.includes('GAME_OVER')) {
                 this.onGameOver();
             }
+        }
+    }
+
+    changeTickSpeed(newSpeed) {
+        this.tickSpeed = newSpeed;
+        
+        // Redémarrer la boucle avec la nouvelle vitesse
+        if (this.isRunning && this.tickInterval) {
+            this.startTickLoop();
         }
     }
     
@@ -120,6 +184,11 @@ class GameEngine {
         this.isPaused = !this.isPaused;
         const btn = document.getElementById('pause-btn');
         btn.textContent = this.isPaused ? '▶️ Reprendre' : '⏸️ Pause';
+
+        const speedSelector = document.getElementById('speed-selector');
+        if (speedSelector) {
+            speedSelector.disabled = this.isPaused;
+        }
     }
     
     // ========================================================================
@@ -155,6 +224,43 @@ class GameEngine {
     selectTowerType(towerType) {
         this.selectedTowerType = towerType;
         this.displayAvailableTowers();
+    }
+
+    // ========================================================================
+    // MISE À JOUR DES ENTITÉS VIA SSE
+    // ========================================================================
+
+    updateEnemyHealth(hitData) {
+        if (!this.gameState || !this.gameState.enemies) return;
+        
+        const enemy = this.gameState.enemies.find(e => e.id === hitData.enemyId);
+        if (enemy) {
+            enemy.currentHp = hitData.remainingHp;
+            
+            if (enemy.currentHp <= 0) {
+                enemy.isAlive = false;
+            }
+        }
+    }
+
+    markEnemyAsDead(enemyId) {
+        if (!this.gameState || !this.gameState.enemies) return;
+        
+        const enemy = this.gameState.enemies.find(e => e.id === enemyId);
+        if (enemy) {
+            enemy.isAlive = false;
+            enemy.currentHp = 0;
+        }
+    }
+
+    updateEnemyPosition(enemyData) {
+        if (!this.gameState || !this.gameState.enemies) return;
+        
+        const enemy = this.gameState.enemies.find(e => e.id === enemyData.id);
+        if (enemy) {
+            enemy.position.x = enemyData.position.x;
+            enemy.position.y = enemyData.position.y;
+        }
     }
     
     // ========================================================================

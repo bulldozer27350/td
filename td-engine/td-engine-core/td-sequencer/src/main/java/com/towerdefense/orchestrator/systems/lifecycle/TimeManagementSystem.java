@@ -1,8 +1,11 @@
 package com.towerdefense.orchestrator.systems.lifecycle;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -18,7 +21,7 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
 public class TimeManagementSystem implements GameSystem {
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Tick toutes les tours (cooldowns, construction, upgrade)
         state.towers().forEach(tower -> tower.tick());
     }

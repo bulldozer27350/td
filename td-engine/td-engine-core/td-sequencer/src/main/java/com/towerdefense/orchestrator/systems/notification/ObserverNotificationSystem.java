@@ -26,7 +26,7 @@ public class ObserverNotificationSystem implements GameSystem {
     private final List<GameStateObserver> observers = new ArrayList<>();
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Notification de mise à jour du state
         notifyStateUpdated(state, tick);
         

@@ -9,54 +9,69 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.projectile.Projectile;
+import com.towerdefense.engine.api.GameStateObserver;
+import com.towerdefense.engine.api.model.events.EnemyHitEvent;
+import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
 /**
  * Détecte et gère les collisions entre projectiles et ennemis.
  * 
- * Responsabilités :
- * - Détecte les collisions projectile/ennemi
- * - Applique les dégâts aux ennemis touchés
- * - Marque les projectiles pour destruction
+ * Responsabilités : - Détecte les collisions projectile/ennemi - Applique les
+ * dégâts aux ennemis touchés - Marque les projectiles pour destruction
  */
 @Component
 public class CollisionSystem implements GameSystem {
-    
+
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         List<EntityId> projectilesToRemove = new ArrayList<>();
-        
+
         for (Projectile projectile : state.projectiles()) {
             Enemy target = state.getEnemy(projectile.targetId());
-            
+
             if (target == null) {
                 // Cible disparue, marque pour nettoyage
                 projectilesToRemove.add(projectile.id());
                 continue;
             }
-            
+
             // Vérifie la collision (position identique)
             if (hasCollided(projectile, target)) {
                 // Applique les dégâts
                 target.health().applyDamage(projectile.damage());
-                
+
+                System.out.println("[Tick " + tick + "]Sending event : Projectile " + projectile.id().value() + " hit Enemy "
+                        + target.id().value() + " for " + projectile.damage() + " damage. Enemy health: "
+                        + target.health().current());
+                observers.forEach(observer -> observer.onEnemyHit(new EnemyHitEvent(target.id().value(),
+                        projectile.id().value(), projectile.damage(), target.health().current(), tick)));
+
+                if (target.health().isDead()) {
+                    System.out.println(
+                            "[Tick " + tick + "]Sending event : Enemy " + target.id().value() + " killed. Bounty: " + target.bounty());
+                    observers.forEach(observer -> observer
+                            .onEnemyKilled(new EnemyKilledEvent(target.id().value(), target.bounty(), tick)));
+                    state.removeEnemy(target.id());
+                }
+
                 // Marque le projectile pour suppression
                 projectilesToRemove.add(projectile.id());
             }
         }
-        
+
         // Supprime les projectiles qui ont touché
         projectilesToRemove.forEach(state::removeProjectile);
     }
-    
+
     /**
      * Vérifie si un projectile a touché sa cible.
      */
     private boolean hasCollided(Projectile projectile, Enemy target) {
         return projectile.position().equals(target.position());
     }
-    
+
     @Override
     public SystemPriority priority() {
         return SystemPriority.LOW;

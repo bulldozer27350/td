@@ -89,8 +89,9 @@ public class Sequencer {
 	 * 
 	 * @param state l'état actuel du jeu (sera modifié)
 	 * @param tick  le numéro du tick courant
+	 * @param observers la liste des observateurs à notifier 
 	 */
-	public void tick(GameState state, int tick) {
+	public void tick(GameState state, int tick, List<GameStateObserver> observers) {
 		// Vérifie si le jeu est en cours
 		if (state.getState() != StateEnum.IN_PROGRESS) {
 			return;
@@ -99,7 +100,7 @@ public class Sequencer {
 		// Exécute chaque system dans l'ordre de priorité
 		for (GameSystem system : systems) {
 			if (system.shouldProcess(state, tick)) {
-				system.process(state, tick);
+				system.process(state, tick, observers);
 			}
 		}
 

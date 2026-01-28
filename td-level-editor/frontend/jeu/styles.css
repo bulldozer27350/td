@@ -438,3 +438,21 @@ h1 {
 .mb-20 {
     margin-bottom: 20px;
 }
+
+/* Sélecteur de vitesse */
+#speed-selector {
+    background: #0f3460;
+    color: white;
+    border: 1px solid #16213e;
+    cursor: pointer;
+    padding: 8px 12px;
+}
+
+#speed-selector:hover {
+    background: #1a4d7a;
+}
+
+#speed-selector:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

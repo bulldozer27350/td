@@ -3,6 +3,10 @@ package com.towerdefense.viewer;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.engine.api.model.GameStateDTO;
 import com.towerdefense.engine.api.model.LevelMapDTO;
+import com.towerdefense.engine.api.model.events.EnemyHitEvent;
+import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
+import com.towerdefense.engine.api.model.events.EnemyMovedEvent;
+import com.towerdefense.engine.api.model.events.TowerShotEvent;
 
 public class ConsoleViewer implements GameStateObserver {
 
@@ -31,5 +35,29 @@ public class ConsoleViewer implements GameStateObserver {
 	public void onGameLoose() {
 		System.out.println("Partie écouhée");
 	}
+
+    @Override
+    public void onTowerShot(TowerShotEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onEnemyHit(EnemyHitEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onEnemyKilled(EnemyKilledEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onEnemyMoved(EnemyMovedEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

@@ -1,10 +1,13 @@
 package com.towerdefense.orchestrator.systems.combat;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.projectile.Projectile;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -19,7 +22,7 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
 public class ProjectileSystem implements GameSystem {
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         for (Projectile projectile : state.projectiles()) {
             // Récupère la cible
             Enemy target = state.getEnemy(projectile.targetId());

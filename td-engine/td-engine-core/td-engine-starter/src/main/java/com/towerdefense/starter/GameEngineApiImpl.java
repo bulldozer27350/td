@@ -114,7 +114,7 @@ public class GameEngineApiImpl implements GameEngineApi {
 
     @Override
     public void tick() {
-        this.sequencer.tick(this.state, this.tickNumber);
+        this.sequencer.tick(this.state, this.tickNumber, this.observers);
         this.tickNumber++;
     }
 

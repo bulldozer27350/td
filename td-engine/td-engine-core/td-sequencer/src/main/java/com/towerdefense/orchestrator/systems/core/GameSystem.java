@@ -1,6 +1,9 @@
 package com.towerdefense.orchestrator.systems.core;
 
+import java.util.List;
+
 import com.towerdefense.domain.GameState;
+import com.towerdefense.engine.api.GameStateObserver;
 
 /**
  * Interface de base pour tous les systems du moteur de jeu.
@@ -15,8 +18,9 @@ public interface GameSystem {
      * 
      * @param state l'état actuel du jeu (mutable)
      * @param tick le numéro du tick courant
+     * @param observers la liste des observateurs à notifier
      */
-    void process(GameState state, int tick);
+    void process(GameState state, int tick, List<GameStateObserver> observers);
     
     /**
      * Priorité d'exécution du system.

@@ -1,6 +1,7 @@
 package com.towerdefense.orchestrator.systems.combat;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.dynamik.tower.Tower;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -28,10 +30,10 @@ public class TargetingSystem implements GameSystem {
      * Cache des cibles sélectionnées pour le tick courant.
      * Clé : ID de la tour, Valeur : ID de l'ennemi ciblé
      */
-    private final Map<EntityId, EntityId> targetCache = new HashMap<>();
+    private final Map<EntityId, Enemy> targetCache = new HashMap<>();
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Réinitialise le cache
         targetCache.clear();
         
@@ -43,7 +45,7 @@ public class TargetingSystem implements GameSystem {
             
             // Sélectionne la cible la plus proche
             findClosestTargetInRange(tower, state)
-                .ifPresent(target -> targetCache.put(tower.id(), target.id()));
+                .ifPresent(target -> targetCache.put(tower.id(), target));
         }
     }
     
@@ -53,7 +55,7 @@ public class TargetingSystem implements GameSystem {
      * @param towerId l'ID de la tour
      * @return l'ID de l'ennemi ciblé, ou empty si aucune cible
      */
-    public Optional<EntityId> getTarget(EntityId towerId) {
+    public Optional<Enemy> getTarget(EntityId towerId) {
         return Optional.ofNullable(targetCache.get(towerId));
     }
     

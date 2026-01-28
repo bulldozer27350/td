@@ -1,9 +1,12 @@
 package com.towerdefense.orchestrator.systems.lifecycle;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.StateEnum;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -25,7 +28,7 @@ public class GameOverSystem implements GameSystem {
     }
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Vérifie la défaite (plus de vies)
         if (state.player().lives() <= 0) {
             state.setState(StateEnum.TERMINATED);

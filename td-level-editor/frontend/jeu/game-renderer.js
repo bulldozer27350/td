@@ -11,6 +11,7 @@ class GameRenderer {
         this.gridHeight = 0;
         this.paths = [];
         this.hoveredCell = null;
+        this.shotLines = [];
         
         // Icônes pour les entités
         this.icons = {
@@ -82,9 +83,9 @@ class GameRenderer {
         // Dessiner les ennemis
         this.drawEnemies(gameState.enemies);
         
-        // Dessiner les projectiles
-        this.drawProjectiles(gameState.projectiles);
-        
+        // Dessiner les traits de tir actifs
+        this.drawShotLines();
+
         // Dessiner la cellule survolée
         if (this.hoveredCell) {
             this.highlightCell(this.hoveredCell.x, this.hoveredCell.y, this.colors.hover);
@@ -160,7 +161,7 @@ class GameRenderer {
             
             // Icône de la tour
             let icon = this.icons.tower.default;
-            if (tower.state === 'UNDER_CONSTRUCTION') {
+            if (tower.state === 'BUILDING') {
                 icon = this.icons.tower.construction;
             } else if (this.icons.tower[tower.towerType]) {
                 icon = this.icons.tower[tower.towerType];
@@ -185,43 +186,103 @@ class GameRenderer {
     
     drawEnemies(enemies) {
         enemies.forEach(enemy => {
-            if (!enemy.isAlive) return;
-            
-            const x = enemy.position.x * this.cellSize + this.cellSize / 2;
-            const y = enemy.position.y * this.cellSize + this.cellSize / 2;
-            
-            // Icône de l'ennemi
-            let icon = this.icons.enemy.default;
-            // Vous pouvez mapper les types d'ennemis ici
-            
-            this.ctx.font = `${this.cellSize * 0.5}px Arial`;
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(icon, x, y);
-            
-            // Barre de vie
-            const healthBarWidth = this.cellSize * 0.6;
-            const healthBarHeight = 4;
-            const healthPercent = enemy.currentHp / enemy.maxHp;
-            
-            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            this.ctx.fillRect(
-                x - healthBarWidth / 2,
-                y - this.cellSize * 0.4,
-                healthBarWidth,
-                healthBarHeight
-            );
-            
-            this.ctx.fillStyle = healthPercent > 0.5 ? '#4ade80' : healthPercent > 0.25 ? '#fbbf24' : '#ef4444';
-            this.ctx.fillRect(
-                x - healthBarWidth / 2,
-                y - this.cellSize * 0.4,
-                healthBarWidth * healthPercent,
-                healthBarHeight
-            );
+            this.drawEnemy(enemy);
         });
     }
+
+    drawEnemy(enemy) {
+        if (!enemy.isAlive) return;
+        
+        const x = enemy.position.x * this.cellSize + this.cellSize / 2;
+        const y = enemy.position.y * this.cellSize + this.cellSize / 2;
+        
+        // Réinitialiser le style avant de dessiner l'ennemi
+        this.ctx.globalAlpha = 1.0;
+        this.ctx.fillStyle = '#ffffff';
+
+        // Icône de l'ennemi
+        let icon = this.icons.enemy.default;
+        // Vous pouvez mapper les types d'ennemis ici
+        
+        this.ctx.font = `${this.cellSize * 0.5}px Arial`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(icon, x, y);
+        
+        // Barre de vie
+        const healthBarWidth = this.cellSize * 0.6;
+        const healthBarHeight = 4;
+        const healthPercent = enemy.currentHp / enemy.maxHp;
+        
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        this.ctx.fillRect(
+            x - healthBarWidth / 2,
+            y - this.cellSize * 0.4,
+            healthBarWidth,
+            healthBarHeight
+        );
+        
+        this.ctx.fillStyle = healthPercent > 0.5 ? '#4ade80' : healthPercent > 0.25 ? '#fbbf24' : '#ef4444';
+        this.ctx.fillRect(
+            x - healthBarWidth / 2,
+            y - this.cellSize * 0.4,
+            healthBarWidth * healthPercent,
+            healthBarHeight
+        );
+    }
+
+    drawShotLines() {
+        const now = Date.now();
+        
+        // Sauvegarder l'état du contexte
+        this.ctx.save();
+        
+        // Dessiner les traits actifs et supprimer les expirés
+        this.shotLines = this.shotLines.filter(shot => {
+            const age = now - shot.timestamp;
+            
+            if (age > shot.duration) {
+                return false; // Supprimer ce trait
+            }
+            
+            // Calculer l'opacité en fonction de l'âge
+            const opacity = 1 - (age / shot.duration);
+            
+            // Dessiner le trait
+            this.ctx.strokeStyle = `rgba(255, 200, 50, ${opacity})`;
+            this.ctx.lineWidth = 0.1;
+            this.ctx.lineCap = 'round';
+            
+            this.ctx.beginPath();
+            this.ctx.moveTo(shot.fromX, shot.fromY);
+            this.ctx.lineTo(shot.toX, shot.toY);
+            this.ctx.stroke();
+            
+            // Petit effet de lueur
+            this.ctx.strokeStyle = `rgba(255, 255, 150, ${opacity * 0.5})`;
+            this.ctx.lineWidth = 4;
+            this.ctx.stroke();
+            
+            return true; // Garder ce trait
+        });
+        // Restaurer l'état du contexte
+        this.ctx.restore();
+    }
     
+    addShotLine(shotData) {
+        this.shotLines.push({
+            fromX: shotData.towerPosition.x * this.cellSize + this.cellSize / 2,
+            fromY: shotData.towerPosition.y * this.cellSize + this.cellSize / 2,
+            toX: shotData.targetPosition.x * this.cellSize + this.cellSize / 2,
+            toY: shotData.targetPosition.y * this.cellSize + this.cellSize / 2,
+            timestamp: Date.now(),
+            duration: 75
+        });
+        
+        // Redessiner immédiatement
+        this.render(gameEngine.gameState);
+    }
+
     drawProjectiles(projectiles) {
         projectiles.forEach(projectile => {
             const x = projectile.position.x * this.cellSize;

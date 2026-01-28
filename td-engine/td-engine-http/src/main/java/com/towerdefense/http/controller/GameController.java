@@ -29,12 +29,15 @@ public class GameController implements DefaultApi {
     private final GameStateMapper mapper;
     private final GameConfigMapper configMapper;
     private final GameEngineApi gameEngineApi;
+    
+    private GameEventsController gameEventsController;
 
-    public GameController(GameStateMapper mapper, GameConfigMapper configMapper, GameEngineApi engineApi) {
+    public GameController(GameStateMapper mapper, GameConfigMapper configMapper, GameEngineApi engineApi, GameEventsController gameEventsController) {
         this.mapper = mapper;
         this.configMapper = configMapper;
         this.gameEngineApi = engineApi;
         this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
+        this.gameEventsController = gameEventsController;
     }
 
     @Override
@@ -105,8 +108,12 @@ public class GameController implements DefaultApi {
 	@Override
 	public ResponseEntity<Void> initializeGame(@Valid GameConfig gameConfig) {
 		this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
+		
+		// Enregistrer le contrôleur SSE comme observer
+	    gameRuntime.addObserver(gameEventsController);
 	    com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
 	    gameRuntime.initialize(config);
 	    return ResponseEntity.noContent().build();
 	}
+
 }

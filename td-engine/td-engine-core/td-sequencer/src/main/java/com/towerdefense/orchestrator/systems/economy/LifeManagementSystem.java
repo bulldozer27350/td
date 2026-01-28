@@ -1,9 +1,12 @@
 package com.towerdefense.orchestrator.systems.economy;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
+import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -18,7 +21,7 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
 public class LifeManagementSystem implements GameSystem {
     
     @Override
-    public void process(GameState state, int tick) {
+    public void process(GameState state, int tick, List<GameStateObserver> observers) {
         for (Enemy enemy : state.enemies()) {
             // Vérifie si l'ennemi a atteint la fin du chemin
             if (enemy.isAtEnd() && !enemy.health().isDead()) {
