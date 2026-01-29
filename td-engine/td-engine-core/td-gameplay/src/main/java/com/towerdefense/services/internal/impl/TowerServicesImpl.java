@@ -1,5 +1,7 @@
 package com.towerdefense.services.internal.impl;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.towerdefense.domain.GameState;
@@ -36,22 +38,22 @@ public class TowerServicesImpl implements TowerServices {
 
 	@Override
 	/** Attempt to sell a tower based on the provided intention. */
-	public boolean attemptSellTower(GameState state, SellTowerIntention intent) {
+	public Optional<Tower> attemptSellTower(GameState state, SellTowerIntention intent) {
 		Tower tower = state.towers().stream().filter(t -> t.id().equals(intent.towerId())).findFirst().orElseThrow();
 		PlayerState player = state.player();
 
 		if (!this.sellService.canSell(tower, player)) {
-			return false;
+			return Optional.empty();
 		}
 
 		this.sellService.sell(tower, player);
 		state.removeTower(tower.id());
-		return true;
+		return Optional.of(tower);
 	}
 
 	@Override
 	/** Attempt to upgrade a tower based on the provided intention. */
-	public boolean attemptUpgradeTower(GameState state, UpgradeTowerIntention intent) {
+	public Optional<Tower> attemptUpgradeTower(GameState state, UpgradeTowerIntention intent) {
 	    Tower tower = state.towers().stream()
 	        .filter(t -> t.id().equals(intent.towerId()))
 	        .findFirst()
@@ -60,25 +62,25 @@ public class TowerServicesImpl implements TowerServices {
 	    PlayerState player = state.player();
 
 	    if (!this.upgradeService.canUpgrade(tower, player, state)) {  // ✅ Passer state
-	        return false;
+	        return Optional.empty();
 	    }
 	    this.upgradeService.upgrade(tower, player, state);
-	    return true;
+	    return Optional.of(tower);
 	}
 
 	@Override
 	/** Attempt to build a tower based on the provided intention. */
-	public boolean attemptBuildTower(GameState state, BuildTowerIntention intent) {
+	public Optional<Tower> attemptBuildTower(GameState state, BuildTowerIntention intent) {
 		if (!state.player().id().equals(intent.playerId())) {
-			return false;
+			return Optional.empty();
 		}
 		if (!this.buildService.canBuild(state, state.player(), intent.towerType(), intent.position())) {
-			return false;
+			return Optional.empty();
 		}
 
 		Tower tower = this.buildService.build(state, state.player(), intent.towerType(), intent.position());
 		state.addTower(tower);
-		return true;
+		return Optional.of(tower);
 	}
 
 }

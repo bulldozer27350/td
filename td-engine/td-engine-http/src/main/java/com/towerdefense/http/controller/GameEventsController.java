@@ -16,7 +16,10 @@ import com.towerdefense.engine.api.model.LevelMapDTO;
 import com.towerdefense.engine.api.model.events.EnemyHitEvent;
 import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.engine.api.model.events.EnemyMovedEvent;
+import com.towerdefense.engine.api.model.events.TowerPlacedEvent;
 import com.towerdefense.engine.api.model.events.TowerShotEvent;
+import com.towerdefense.engine.api.model.events.TowerSoldEvent;
+import com.towerdefense.engine.api.model.events.TowerUpgradedEvent;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,17 +49,17 @@ public class GameEventsController implements GameStateObserver {
         
         emitter.onCompletion(() -> {
             System.out.println("SSE connection completed - removing emitter");
-            emitters.remove(emitter);
+            emitters.remove(clientId);
         });
         
         emitter.onTimeout(() -> {
             System.out.println("SSE connection timeout - removing emitter");
-            emitters.remove(emitter);
+            emitters.remove(clientId);
         });
         
         emitter.onError((e) -> {
             System.out.println("SSE connection error - removing emitter: " + e.getMessage());
-            emitters.remove(emitter);
+            emitters.remove(clientId);
         });
         
         emitters.put(clientId, emitter);
@@ -82,10 +85,6 @@ public class GameEventsController implements GameStateObserver {
         System.out.println("Active emitters after send: " + emitters.size());
     }
 
-    @Override
-    public void onTowerShot(TowerShotEvent event) {
-        sendEventToAll("tower-shot", event);
-    }
 
     @Override
     public void onEnemyHit(EnemyHitEvent event) {
@@ -102,20 +101,25 @@ public class GameEventsController implements GameStateObserver {
         sendEventToAll("enemy-moved", event);
     }
 
-//    @Override
-//    public void onTowerPlaced(TowerPlacedEvent event) {
-//        sendEventToAll("tower-placed", event);
-//    }
-//
-//    @Override
-//    public void onTowerUpgraded(TowerUpgradedEvent event) {
-//        sendEventToAll("tower-upgraded", event);
-//    }
-//
-//    @Override
-//    public void onTowerSold(TowerSoldEvent event) {
-//        sendEventToAll("tower-sold", event);
-//    }
+    @Override
+    public void onTowerPlaced(TowerPlacedEvent event) {
+        sendEventToAll("tower-placed", event);
+    }
+
+    @Override
+    public void onTowerShot(TowerShotEvent event) {
+        sendEventToAll("tower-shot", event);
+    }
+    
+    @Override
+    public void onTowerUpgraded(TowerUpgradedEvent event) {
+        sendEventToAll("tower-upgraded", event);
+    }
+
+    @Override
+    public void onTowerSold(TowerSoldEvent event) {
+        sendEventToAll("tower-sold", event);
+    }
 
     @Override
     public void onStateUpdated(GameStateDTO state, int tick) {

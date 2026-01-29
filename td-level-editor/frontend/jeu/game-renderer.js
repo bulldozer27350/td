@@ -147,10 +147,9 @@ class GameRenderer {
     
     drawTowers(towers) {
         towers.forEach(tower => {
+            console.log('dessine moi une tour ');
             const gridX = Math.floor(tower.position.x);
             const gridY = Math.floor(tower.position.y);
-            
-            // Fond de la cellule
             
             // Icône de la tour
             let icon = this.icons.tower.default;

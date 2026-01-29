@@ -379,14 +379,14 @@ class GameEngine {
         detailsContainer.innerHTML = `
             <div style="margin-bottom: 20px;">
                 <h3>🗼 ${towerConfig.name}</h3>
-                <p>État: ${tower.state === 'UNDER_CONSTRUCTION' ? '🏗️ En construction' : '✅ Opérationnelle'}</p>
+                <p>État: ${tower.state === 'BUILDING' ? '🏗️ En construction' : '✅ Opérationnelle'}</p>
             </div>
         `;
         
         buttonsContainer.innerHTML = '';
         
         // Bouton d'amélioration
-        if (tower.state !== 'UNDER_CONSTRUCTION') {
+        if (tower.state !== 'BUILDING') {
             const upgradeBtn = document.createElement('button');
             upgradeBtn.className = 'btn btn-primary';
             upgradeBtn.style.marginRight = '10px';
@@ -396,7 +396,7 @@ class GameEngine {
         }
         
         // Bouton de vente
-        if (tower.state !== 'UNDER_CONSTRUCTION') {
+        if (tower.state !== 'BUILDING') {
             const sellBtn = document.createElement('button');
             sellBtn.className = 'btn btn-danger';
             sellBtn.textContent = '💰 Vendre';

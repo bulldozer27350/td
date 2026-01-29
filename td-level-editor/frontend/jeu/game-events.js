@@ -5,7 +5,7 @@ class GameEventsHandler {
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 10;
         this.reconnectDelay = 1000;
-        this.isConnected = false; // CHANGÉ : plus clair que isManuallyDisconnected
+        this.isConnected = false; 
     }
     
     connect() {
@@ -32,11 +32,35 @@ class GameEventsHandler {
             this.eventSource = new EventSource(`http://localhost:8080/game/events?clientId=${clientId}`);
             
             // Événements du jeu
+
+            // Gestion des tours
+            this.eventSource.addEventListener('tower-placed', (event) => {
+                const data = JSON.parse(event.data);
+                this.emit('tower-placed', data);
+            });
+            
             this.eventSource.addEventListener('tower-shot', (event) => {
                 const data = JSON.parse(event.data);
                 this.emit('tower-shot', data);
             });
             
+            this.eventSource.addEventListener('tower-upgraded', (event) => {
+                const data = JSON.parse(event.data);
+                this.emit('tower-upgraded', data);
+            });
+            
+            this.eventSource.addEventListener('tower-sold', (event) => {
+                const data = JSON.parse(event.data);
+                this.emit('tower-sold', data);
+            });
+
+            // Gestion des ennemis
+            
+            this.eventSource.addEventListener('enemy-moved', (event) => {
+                const data = JSON.parse(event.data);
+                this.emit('enemy-moved', data);
+            });
+
             this.eventSource.addEventListener('enemy-hit', (event) => {
                 const data = JSON.parse(event.data);
                 this.emit('enemy-hit', data);
@@ -46,11 +70,8 @@ class GameEventsHandler {
                 const data = JSON.parse(event.data);
                 this.emit('enemy-killed', data);
             });
-            
-            this.eventSource.addEventListener('enemy-moved', (event) => {
-                const data = JSON.parse(event.data);
-                this.emit('enemy-moved', data);
-            });
+
+            // Gestion des évènements de jeu
             
             this.eventSource.addEventListener('state-update', (event) => {
                 const data = JSON.parse(event.data);

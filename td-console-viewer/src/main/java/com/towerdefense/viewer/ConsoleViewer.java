@@ -6,7 +6,10 @@ import com.towerdefense.engine.api.model.LevelMapDTO;
 import com.towerdefense.engine.api.model.events.EnemyHitEvent;
 import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.engine.api.model.events.EnemyMovedEvent;
+import com.towerdefense.engine.api.model.events.TowerPlacedEvent;
 import com.towerdefense.engine.api.model.events.TowerShotEvent;
+import com.towerdefense.engine.api.model.events.TowerSoldEvent;
+import com.towerdefense.engine.api.model.events.TowerUpgradedEvent;
 
 public class ConsoleViewer implements GameStateObserver {
 
@@ -56,6 +59,24 @@ public class ConsoleViewer implements GameStateObserver {
 
     @Override
     public void onEnemyMoved(EnemyMovedEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onTowerPlaced(TowerPlacedEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onTowerUpgraded(TowerUpgradedEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onTowerSold(TowerSoldEvent event) {
         // TODO Auto-generated method stub
         
     }

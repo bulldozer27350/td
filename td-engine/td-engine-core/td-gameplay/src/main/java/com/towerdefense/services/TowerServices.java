@@ -1,6 +1,9 @@
 package com.towerdefense.services;
 
+import java.util.Optional;
+
 import com.towerdefense.domain.GameState;
+import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.intentions.BuildTowerIntention;
 import com.towerdefense.domain.intentions.SellTowerIntention;
 import com.towerdefense.domain.intentions.UpgradeTowerIntention;
@@ -20,7 +23,7 @@ public interface TowerServices {
 	 * @return true si la construction a bien pu être réalisée (la tour sera
 	 *         également ajoutée au GameState), false dans le cas contraire.
 	 */
-	boolean attemptBuildTower(GameState state, BuildTowerIntention intent);
+	Optional<Tower> attemptBuildTower(GameState state, BuildTowerIntention intent);
 	
 	/**
 	 * Vérifie et applique une vente d'une tour dans le jeu.
@@ -31,7 +34,7 @@ public interface TowerServices {
 	 * @return true si la vente a bien pu être réalisée (la tour sera également
 	 *         supprimée du GameState), false dans le cas contraire.
 	 */
-	boolean attemptSellTower(GameState state, SellTowerIntention intent);
+	Optional<Tower> attemptSellTower(GameState state, SellTowerIntention intent);
 
 	/**
 	 * Vérifie et applique une montée de niveau d'une tour dans le jeu.
@@ -43,5 +46,5 @@ public interface TowerServices {
 	 * @return true si la mise à niveau de la tour a été réalisée (le GameState aura
 	 *         été mis à jour), false dans le cas contraire.
 	 */
-	boolean attemptUpgradeTower(GameState state, UpgradeTowerIntention intent);
+	Optional<Tower> attemptUpgradeTower(GameState state, UpgradeTowerIntention intent);
 }

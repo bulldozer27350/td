@@ -5,7 +5,10 @@ import com.towerdefense.engine.api.model.LevelMapDTO;
 import com.towerdefense.engine.api.model.events.EnemyHitEvent;
 import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.engine.api.model.events.EnemyMovedEvent;
+import com.towerdefense.engine.api.model.events.TowerPlacedEvent;
 import com.towerdefense.engine.api.model.events.TowerShotEvent;
+import com.towerdefense.engine.api.model.events.TowerSoldEvent;
+import com.towerdefense.engine.api.model.events.TowerUpgradedEvent;
 
 public interface GameStateObserver {
 
@@ -25,8 +28,10 @@ public interface GameStateObserver {
     
     void onEnemyMoved(EnemyMovedEvent event);
     
-//    void onTowerPlaced(TowerPlacedEvent event);
-//    void onTowerUpgraded(TowerUpgradedEvent event);
-//    void onTowerSold(TowerSoldEvent event);
+    void onTowerPlaced(TowerPlacedEvent event);
+    
+    void onTowerUpgraded(TowerUpgradedEvent event);
+    
+    void onTowerSold(TowerSoldEvent event);
 
 }

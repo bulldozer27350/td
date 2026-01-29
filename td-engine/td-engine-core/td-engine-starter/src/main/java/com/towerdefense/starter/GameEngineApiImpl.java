@@ -83,7 +83,7 @@ public class GameEngineApiImpl implements GameEngineApi {
 
     public void dispatch(GameCommand command) {
         GameCommandHandler handler = handlers.get(command.getClass());
-        handler.handle(command, this.state);
+        handler.handle(command, this.state, this.observers, tickNumber);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class GameEngineApiImpl implements GameEngineApi {
         this.sequencer.tick(this.state, this.tickNumber, this.observers);
         this.tickNumber++;
     }
-
+    
     private void configureLevel(GameConfig gameConfig) {
         this.addTowersConfiguration(gameConfig.towersConfig());
         this.addEnemiesConfiguration(gameConfig.enemiesConfig());
