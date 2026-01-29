@@ -7,7 +7,7 @@ import com.towerdefense.domain.dynamik.level.LevelProgress;
 import com.towerdefense.domain.statik.level.TowerCapacityDefinition;
 
 /**
- * Represents a level scenario in the tower defense game, managing a sequence of attacks.
+ * Represents a rank scenario in the tower defense game, managing a sequence of attacks.
  */
 public class LevelScenario {
 
@@ -16,7 +16,7 @@ public class LevelScenario {
 	private int currentAttack = 0;
 	private List<TowerCapacityDefinition> towerCapacities;
 
-	/** Constructor to initialize level scenario with level ID and list of attacks. 
+	/** Constructor to initialize rank scenario with rank ID and list of attacks. 
 	 * @param towerCapacitiesDef */
 	public LevelScenario(String levelId, List<Attack> attacks, List<TowerCapacityDefinition> towerCapacitiesDef) {
 		this.levelId = levelId;
@@ -24,7 +24,7 @@ public class LevelScenario {
 		this.towerCapacities = towerCapacitiesDef;
 	}
 
-	/** Progress the level scenario by one tick. */
+	/** Progress the rank scenario by one tick. */
 	public void tick(GameState state, int tick) {
 		if (isFinished())
 			return;
@@ -37,17 +37,17 @@ public class LevelScenario {
 		}
 	}
 	
-	/** Check if the level scenario has finished all attacks. */
+	/** Check if the rank scenario has finished all attacks. */
 	public boolean isFinished() {
 		return currentAttack >= attacks.size();
 	}
 
-	/** Get the unique identifier of the level. */
+	/** Get the unique identifier of the rank. */
 	public String levelId() {
 		return levelId;
 	}
 	
-	/** Create a snapshot of the current level progress. */
+	/** Create a snapshot of the current rank progress. */
 	public LevelProgress snapshot() {
 	    return new LevelProgress(
 	        levelId,

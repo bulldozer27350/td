@@ -3,19 +3,19 @@ package com.towerdefense.engine.api.model.configuration;
 public class TowerCapacityConfig {
     
     private String towerTypeId;
-    private int maxLevel;
+    private int maxRank;
     
     // For Jackson
     public TowerCapacityConfig() {}
     
-    public TowerCapacityConfig(String towerTypeId, int maxLevel) {
+    public TowerCapacityConfig(String towerTypeId, int maxRank) {
         this.towerTypeId = towerTypeId;
-        this.maxLevel = maxLevel;
+        this.maxRank = maxRank;
     }
     
     public String getTowerTypeId() { return towerTypeId; }
     public void setTowerTypeId(String towerTypeId) { this.towerTypeId = towerTypeId; }
     
-    public int getMaxLevel() { return maxLevel; }
-    public void setMaxLevel(int maxLevel) { this.maxLevel = maxLevel; }
+    public int getMaxRank() { return maxRank; }
+    public void setMaxRank(int maxRank) { this.maxRank = maxRank; }
 }

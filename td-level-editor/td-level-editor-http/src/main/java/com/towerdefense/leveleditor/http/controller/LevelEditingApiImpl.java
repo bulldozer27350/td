@@ -197,7 +197,7 @@ public class LevelEditingApiImpl extends AbstractEditorController implements Lev
 		if (level == null) {
 			return null;
 		}
-		// Reconstruct a LevelEditorApi from the existing level
+		// Reconstruct a LevelEditorApi from the existing rank
 		return new com.towerdefense.editor.implementation.LevelEditorApiImpl(level);
 	}
 
@@ -211,7 +211,7 @@ public class LevelEditingApiImpl extends AbstractEditorController implements Lev
 		}
 
 		boolean success = levelEditor.addTowerCapacity(addTowerTypeToLevelRequest.getTowerTypeId(),
-				addTowerTypeToLevelRequest.getMaxLevel() != null ? addTowerTypeToLevelRequest.getMaxLevel() : 999
+				addTowerTypeToLevelRequest.getMaxRank() != null ? addTowerTypeToLevelRequest.getMaxRank() : 999
 		// Par défaut, tous les niveaux
 		);
 
@@ -228,7 +228,7 @@ public class LevelEditingApiImpl extends AbstractEditorController implements Lev
 			return ResponseEntity.notFound().build();
 		}
 
-		boolean success = levelEditor.updateTowerCapacity(towerTypeId, request.getMaxLevel());
+		boolean success = levelEditor.updateTowerCapacity(towerTypeId, request.getMaxRank());
 
 		return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
 	}

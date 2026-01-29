@@ -39,7 +39,7 @@ public class TowerDefenseStudioCli {
 	}
 	
 	private void saveDraftLevel(EditorContext editorContext) {
-		System.out.println("Id of level you want to save");
+		System.out.println("Id of rank you want to save");
 		String id = scanner.nextLine();
 		System.out.println("Path of where you want to save it?");
 		String path = scanner.nextLine();
@@ -47,7 +47,7 @@ public class TowerDefenseStudioCli {
 	}
 	
 	private void saveExportableLevel(EditorContext editorContext) {
-		System.out.println("Id of level you want to save");
+		System.out.println("Id of rank you want to save");
 		String id = scanner.nextLine();
 		System.out.println("Path of where you want to save it?");
 		String path = scanner.nextLine();
@@ -55,16 +55,16 @@ public class TowerDefenseStudioCli {
 	}
 
 	private void loadDraftLevel(EditorContext editorContext) {
-		System.out.println("Load an existing draft level.");
-		System.out.println("Path of the existing level ? (String: be careful to escape \\ characters)");
+		System.out.println("Load an existing draft rank.");
+		System.out.println("Path of the existing rank ? (String: be careful to escape \\ characters)");
 		String path = scanner.nextLine();
 		LevelEditorApi levelEditorApi = editorContext.getTowerDefenseApi().loadDraftLevel(path);
 		new LevelEditorCli(scanner).start(levelEditorApi);
 	}
 	
 	private void loadExportableLevel(EditorContext editorContext) {
-		System.out.println("Load an existing exportable level.");
-		System.out.println("Path of the existing level ? (String: be careful to escape \\ characters)");
+		System.out.println("Load an existing exportable rank.");
+		System.out.println("Path of the existing rank ? (String: be careful to escape \\ characters)");
 		String path = scanner.nextLine();
 		LevelEditorApi levelEditorApi = editorContext.getTowerDefenseApi().loadExportableLevel(path);
 		new LevelEditorCli(scanner).start(levelEditorApi);

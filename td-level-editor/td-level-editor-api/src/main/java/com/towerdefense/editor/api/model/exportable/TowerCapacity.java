@@ -1,7 +1,7 @@
 package com.towerdefense.editor.api.model.exportable;
 
 /**
- * Defines which tower type is available in a level
+ * Defines which tower type is available in a rank
  * and under which constraints.
  */
 public class TowerCapacity {

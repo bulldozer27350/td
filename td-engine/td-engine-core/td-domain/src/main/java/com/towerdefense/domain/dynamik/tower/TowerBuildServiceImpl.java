@@ -6,7 +6,7 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.player.PlayerState;
-import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
+import com.towerdefense.domain.statik.tower.TowerRankDefinition;
 import com.towerdefense.domain.statik.tower.TowerType;
 
 @Service
@@ -31,7 +31,7 @@ public class TowerBuildServiceImpl implements TowerBuilderService {
 			return false;
 		}
 
-		TowerLevelDefinition baseLevel = type.level(1);
+		TowerRankDefinition baseLevel = type.rank(1);
 		return player.gold() >= baseLevel.upgradeCost();
 	}
 
@@ -51,7 +51,7 @@ public class TowerBuildServiceImpl implements TowerBuilderService {
 			throw new IllegalStateException("Cannot build tower here");
 		}
 
-		TowerLevelDefinition baseLevel = type.level(1);
+		TowerRankDefinition baseLevel = type.rank(1);
 
 		player.spendGold(baseLevel.upgradeCost());
 

@@ -10,7 +10,7 @@ public class LevelConfigProvider implements DTOProvider<LevelConfig> {
 	@Override
 	public LevelConfig providesDTO() {
 		JsonConfigLoader loader = new JsonConfigLoader();
-		LevelConfig config = loader.load(String.join(File.separator,"config","levels","level-1.json"), LevelConfig.class);
+		LevelConfig config = loader.load(String.join(File.separator,"config","levels","rank-1.json"), LevelConfig.class);
 		return config;
 	}
 }

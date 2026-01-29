@@ -69,7 +69,7 @@ public class GameConfigBuilder {
      return capacities.stream().map(cap -> {
          Map<String, Object> capMap = new HashMap<>();
          capMap.put("towerTypeId", cap.towerTypeId());
-         capMap.put("maxLevel", cap.maxLevel());
+         capMap.put("maxRank", cap.maxRank());
          return capMap;
      }).toList();
  }
@@ -94,16 +94,16 @@ public class GameConfigBuilder {
          Map<String, Object> towerMap = new HashMap<>();
          towerMap.put("id", tower.id());
          towerMap.put("name", tower.name());
-         towerMap.put("levels", tower.levels().stream().map(level -> {
-             Map<String, Object> levelMap = new HashMap<>();
-             levelMap.put("level", level.level());
-             levelMap.put("upgradeCost", level.upgradeCost());
-             levelMap.put("sellValue", level.sellValue());
-             levelMap.put("range", level.range());
-             levelMap.put("damage", level.damage());
-             levelMap.put("reloadSeconds", level.reloadSeconds());
-             levelMap.put("buildTimeTicks", level.buildTimeTicks());
-             return levelMap;
+         towerMap.put("ranks", tower.ranks().stream().map(rank -> {
+             Map<String, Object> rankMap = new HashMap<>();
+             rankMap.put("rank", rank.rank());
+             rankMap.put("upgradeCost", rank.upgradeCost());
+             rankMap.put("sellValue", rank.sellValue());
+             rankMap.put("range", rank.range());
+             rankMap.put("damage", rank.damage());
+             rankMap.put("reloadSeconds", rank.reloadSeconds());
+             rankMap.put("buildTimeTicks", rank.buildTimeTicks());
+             return rankMap;
          }).toList());
          return towerMap;
      }).toList());

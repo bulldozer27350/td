@@ -86,7 +86,7 @@ public class UpgradeAdminService {
                     def.id(),
                     finalName,
                     def.towerTypeId(),
-                    def.towerLevel(),
+                    def.towerRank(),
                     finalCost,
                     finalEffect
                 );

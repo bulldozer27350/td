@@ -142,7 +142,7 @@ paths:
 
   /api/levels/{levelId}/export/draft:
     post:
-      summary: Exporte un niveau en format draft
+      summary: Exporte un niveau au format draft
       tags: [Levels]
       operationId: exportDraftLevel
       parameters:
@@ -163,7 +163,7 @@ paths:
 
   /api/levels/{levelId}/export/exportable:
     post:
-      summary: Exporte un niveau en format exportable (pour le moteur)
+      summary: Exporte un niveau au format exportable (pour le moteur)
       tags: [Levels]
       operationId: exportExportableLevel
       parameters:
@@ -386,7 +386,7 @@ paths:
 
   /api/levels/{levelId}/tower-types:
     post:
-      summary: Ajoute un type de tour avec niveau max
+      summary: Ajoute un type de tour avec rang max
       tags: [Level Editing]
       operationId: addTowerTypeToLevel
       parameters:
@@ -403,11 +403,11 @@ paths:
               type: object
               required: 
                 - towerTypeId
-                - maxLevel
+                - maxRank
               properties:
                 towerTypeId:
                   type: string
-                maxLevel:
+                maxRank:
                   type: integer
                   minimum: 1
       responses:
@@ -416,7 +416,7 @@ paths:
 
   /api/levels/{levelId}/tower-types/{towerTypeId}:
     patch:
-      summary: Met à jour le niveau max d'un type de tour
+      summary: Met à jour le rang max d'un type de tour
       tags: [Level Editing]
       operationId: updateTowerCapacity
       parameters:
@@ -437,14 +437,14 @@ paths:
             schema:
               type: object
               required:
-                - maxLevel
+                - maxRank
               properties:
-                maxLevel:
+                maxRank:
                   type: integer
                   minimum: 1
       responses:
         '200':
-          description: Niveau max mis à jour
+          description: Rang max mis à jour
     
     delete:
       summary: Retire un type de tour du niveau
@@ -563,7 +563,7 @@ paths:
 
   /api/enemies/{enemyTypeId}/export/draft:
     post:
-      summary: Exporte un type d'ennemi en format draft
+      summary: Exporte un type d'ennemi au format draft
       tags: [Enemies]
       operationId: exportDraftEnemyType
       parameters:
@@ -584,7 +584,7 @@ paths:
 
   /api/enemies/{enemyTypeId}/export/exportable:
     post:
-      summary: Exporte un type d'ennemi en format exportable
+      summary: Exporte un type d'ennemi au format exportable
       tags: [Enemies]
       operationId: exportExportableEnemyType
       parameters:
@@ -701,7 +701,7 @@ paths:
 
   /api/towers/{towerTypeId}/export/draft:
     post:
-      summary: Exporte un type de tour en format draft
+      summary: Exporte un type de tour au format draft
       tags: [Towers]
       operationId: exportDraftTowerType
       parameters:
@@ -745,11 +745,11 @@ paths:
   # TOWER EDITING
   # ========================================================================
 
-  /api/towers/{towerTypeId}/levels:
+  /api/towers/{towerTypeId}/ranks:
     post:
-      summary: Ajoute un nouveau niveau à un type de tour
+      summary: Ajoute un nouveau rang à un type de tour
       tags: [Tower Editing]
-      operationId: addTowerLevel
+      operationId: addTowerRank
       parameters:
         - name: towerTypeId
           in: path
@@ -761,30 +761,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EditableTowerLevel'
+              $ref: '#/components/schemas/EditableTowerRank'
       responses:
         '201':
-          description: Niveau de tour ajouté
+          description: Rang de tour ajouté
 
-  /api/towers/{towerTypeId}/levels/{level}:
+  /api/towers/{towerTypeId}/ranks/{rank}:
     delete:
-      summary: Supprime un niveau d'un type de tour
+      summary: Supprime un rang d'un type de tour
       tags: [Tower Editing]
-      operationId: removeTowerLevel
+      operationId: removeTowerRank
       parameters:
         - name: towerTypeId
           in: path
           required: true
           schema:
             type: string
-        - name: level
+        - name: rank
           in: path
           required: true
           schema:
             type: integer
       responses:
         '204':
-          description: Niveau de tour supprimé
+          description: Rang de tour supprimé
   # ========================================================================
   # LEVEL ANALYZER
   # ========================================================================
@@ -944,12 +944,12 @@ components:
       type: object
       required:
         - towerTypeId
-        - maxLevel
+        - maxRank
       properties:
         towerTypeId:
           type: string
           example: "archer"
-        maxLevel:
+        maxRank:
           type: integer
           minimum: 1
           example: 2
@@ -1076,21 +1076,21 @@ components:
       required:
         - id
         - towerType
-        - upgrades
+        - ranks
       properties:
         id:
           type: string
         towerType:
           type: string
-        upgrades:
+        ranks:
           type: array
           items:
-            $ref: '#/components/schemas/EditableTowerLevel'
+            $ref: '#/components/schemas/EditableTowerRank'
 
-    EditableTowerLevel:
+    EditableTowerRank:
       type: object
       required:
-        - level
+        - rank
         - cost
         - range
         - damage
@@ -1098,7 +1098,7 @@ components:
         - sellReward
         - buildTimeTicks
       properties:
-        level:
+        rank:
           type: integer
         cost:
           type: integer

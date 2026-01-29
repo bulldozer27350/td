@@ -39,7 +39,7 @@ public class UpgradesController implements UpgradesApi {
 		upgradeInfo.setCost(towerUpgrade.getCost());
 		upgradeInfo.setId(towerUpgrade.getId());
 		upgradeInfo.setName(towerUpgrade.getName());
-		upgradeInfo.setTowerLevel(towerUpgrade.getTowerLevel());
+		upgradeInfo.setTowerRank(towerUpgrade.getTowerRank());
 		upgradeInfo.setTowerTypeId(towerUpgrade.getTowerTypeId());
 		upgradeInfo.setUnlocked(unlocked);
 		upgradeInfo.setEffect(toUpgradeEffect(towerUpgrade.getEffect()));

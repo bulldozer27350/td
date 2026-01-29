@@ -161,14 +161,14 @@ class GameRenderer {
             
             this.drawIcon(icon, gridX, gridY, this.cellSize * 0.6);
             
-            // Indicateur de niveau (si disponible)
-            if (tower.level) {
+            // Indicateur de rang (si disponible)
+            if (tower.rank) {
                 this.ctx.fillStyle = 'white';
                 this.ctx.font = `bold ${this.cellSize * 0.25}px Arial`;
                 this.ctx.textAlign = 'right';
                 this.ctx.textBaseline = 'top';
                 this.ctx.fillText(
-                    `L${tower.level}`,
+                    `L${tower.rank}`,
                     (gridX + 1) * this.cellSize - 2,
                     gridY * this.cellSize + 2
                 );

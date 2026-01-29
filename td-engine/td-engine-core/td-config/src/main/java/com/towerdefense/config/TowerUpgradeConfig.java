@@ -5,21 +5,21 @@ package com.towerdefense.config;
  */
 public class TowerUpgradeConfig {
 
-	private int level;
+	private int rank;
 	private int cost;
 	private Integer damage; // nullable = pas de changement
 
 	/** Constructor for TowerUpgradeConfig. */
-	public TowerUpgradeConfig(int level, int cost, Integer damage) {
+	public TowerUpgradeConfig(int rank, int cost, Integer damage) {
 		super();
-		this.level = level;
+		this.rank = rank;
 		this.cost = cost;
 		this.damage = damage;
 	}
 
-	/** Get the level of the tower upgrade. */
+	/** Get the rank of the tower upgrade. */
 	public int getLevel() {
-		return level;
+		return rank;
 	}
 
 	/** Get the cost of the tower upgrade. */

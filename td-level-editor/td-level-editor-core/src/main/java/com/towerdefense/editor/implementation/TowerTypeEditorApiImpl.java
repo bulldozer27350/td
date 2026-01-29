@@ -3,7 +3,7 @@ package com.towerdefense.editor.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.towerdefense.editor.api.model.draft.EditableTowerLevel;
+import com.towerdefense.editor.api.model.draft.EditableTowerRank;
 import com.towerdefense.editor.api.model.draft.EditableTowerType;
 import com.towerdefense.editor.api.tower.TowerTypeEditorApi;
 
@@ -21,23 +21,23 @@ public class TowerTypeEditorApiImpl implements TowerTypeEditorApi {
 	}
 
 	@Override
-	public boolean addTowerLevel(int level, int damage, double reloadTime, int cost, double range, int sellReward, int buildTimeTicks) {
-		return current.addUpgrade(new EditableTowerLevel(level, cost, range, damage, reloadTime, sellReward, buildTimeTicks));
+	public boolean addTowerRank(int rank, int damage, double reloadTime, int cost, double range, int sellReward, int buildTimeTicks) {
+		return current.addRank(new EditableTowerRank(rank, cost, range, damage, reloadTime, sellReward, buildTimeTicks));
 	}
 
 	@Override
-	public boolean removeTowerLevel(int level) {
-		return this.current.upgrades().remove(getTowerLevel(level));
+	public boolean removeTowerRank(int rank) {
+		return this.current.ranks().remove(getTowerRank(rank));
 	}
 
 	@Override
-	public EditableTowerLevel getTowerLevel(int level) {
-		return this.current.upgrades().stream().filter(e->e.level() == level).findFirst().orElse(null);
+	public EditableTowerRank getTowerRank(int rank) {
+		return this.current.ranks().stream().filter(e->e.rank() == rank).findFirst().orElse(null);
 	}
 
 	@Override
-	public List<EditableTowerLevel> getAllTowerLevels() {
-		return new ArrayList<>(this.current.upgrades());
+	public List<EditableTowerRank> getAllTowerRanks() {
+		return new ArrayList<>(this.current.ranks());
 	}
 
 }

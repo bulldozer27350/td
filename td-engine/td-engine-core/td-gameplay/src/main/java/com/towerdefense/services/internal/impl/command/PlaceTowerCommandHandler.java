@@ -46,7 +46,7 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
 	    
 	    if (!isTowerAllowedOnLevel(cmd.towerType())) {
 	        throw new IllegalArgumentException(
-	            "Tower type " + cmd.towerType() + " is not allowed on this level"
+	            "Tower type " + cmd.towerType() + " is not allowed on this rank"
 	        );
 	    }
 	    

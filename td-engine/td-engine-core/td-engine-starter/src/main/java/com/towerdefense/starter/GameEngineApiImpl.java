@@ -130,7 +130,7 @@ public class GameEngineApiImpl implements GameEngineApi {
                 gameConfig.levelConfig().getStartingLives()));
 
         Map<String, Integer> towerMaxLevels = levelScenario.getTowerCapacities().stream().collect(
-                Collectors.toMap(TowerCapacityDefinition::getTowerTypeId, TowerCapacityDefinition::getMaxLevel));
+                Collectors.toMap(TowerCapacityDefinition::getTowerTypeId, TowerCapacityDefinition::getMaxRank));
         this.state.setTowerMaxLevels(towerMaxLevels);
 
         this.sequencer.setLevel(levelScenario);

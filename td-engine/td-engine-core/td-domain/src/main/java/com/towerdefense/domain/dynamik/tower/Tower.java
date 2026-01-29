@@ -4,7 +4,7 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
 import com.towerdefense.domain.GameTime;
 import com.towerdefense.domain.Position;
-import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
+import com.towerdefense.domain.statik.tower.TowerRankDefinition;
 import com.towerdefense.domain.statik.tower.TowerType;
 
 /**
@@ -28,7 +28,7 @@ public class Tower implements GameObject {
     private int cooldownRemainingTicks = 0;
 
 	private final TowerType type;
-	private int level = 1;
+	private int rank = 1;
 	private int upgradeRemainingTicks = 0;
 
 	/** Constructeur */
@@ -39,21 +39,21 @@ public class Tower implements GameObject {
 	}
 
 	/** Accesseurs */
-	public int level() {
-		return level;
+	public int rank() {
+		return rank;
 	}
 
 	/** Renvoie les statistiques actuelles de la tour en fonction de son niveau */
-	public TowerLevelDefinition currentStats() {
-		return type.level(level);
+	public TowerRankDefinition currentStats() {
+		return type.rank(rank);
 	}
 
 	/** Améliore la tour d'un niveau */
 	public void upgrade() {
-		if (level >= type.maxLevel()) {
-			throw new IllegalStateException("Max level reached");
+		if (rank >= type.maxRank()) {
+			throw new IllegalStateException("Max rank reached");
 		}
-		level++;
+		rank++;
 	}
 
 	/**
@@ -90,20 +90,20 @@ public class Tower implements GameObject {
 	 * Indique si la tour peut être améliorée.
 	 */
 	public boolean canUpgrade() {
-		return upgradeRemainingTicks == 0 && level < type.maxLevel();
+		return upgradeRemainingTicks == 0 && rank < type.maxRank();
 	}
 
 	/**
 	 * Renvoie la définition du niveau suivant de la tour.
 	 */
-	public TowerLevelDefinition nextLevelDefinition() {
-		return type.level(level + 1);
+	public TowerRankDefinition nextLevelDefinition() {
+		return type.rank(rank + 1);
 	}
 
 	/**
 	 * Démarre l'amélioration de la tour vers le niveau suivant.
 	 */
-	public void startUpgrade(TowerLevelDefinition next) {
+	public void startUpgrade(TowerRankDefinition next) {
 		this.upgradeRemainingTicks = next.buildTimeTicks();
 	}
 

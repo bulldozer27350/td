@@ -33,7 +33,7 @@ public class UpgradeRegistry {
 				ModifierType modifierType = ModifierType.valueOf(def.effect().type());
 				UpgradeEffect effect = new UpgradeEffect(def.effect().stat(), def.effect().modifier(), modifierType);
 
-				TowerUpgrade upgrade = new TowerUpgrade(def.id(), def.name(), def.towerTypeId(), def.towerLevel(),
+				TowerUpgrade upgrade = new TowerUpgrade(def.id(), def.name(), def.towerTypeId(), def.towerRank(),
 						def.cost(), effect);
 
 				upgrades.put(upgrade.getId(), upgrade);
@@ -54,8 +54,8 @@ public class UpgradeRegistry {
 		return upgrades.get(upgradeId);
 	}
 
-	public List<TowerUpgrade> getAvailableUpgrades(String towerType, int level, int playerPoints) {
-		return upgrades.values().stream().filter(u -> u.appliesTo(towerType, level))
+	public List<TowerUpgrade> getAvailableUpgrades(String towerType, int rank, int playerPoints) {
+		return upgrades.values().stream().filter(u -> u.appliesTo(towerType, rank))
 				.filter(u -> u.getCost() <= playerPoints).toList();
 	}
 

@@ -13,7 +13,7 @@ import com.towerdefense.runner.config.loader.JsonConfigLoader;
  * Fabrique de GameEngineApi pour les tests avec pattern Builder.
  *
  * Valeurs par défaut :
- * - levelPath: "levels/level-1.json"
+ * - levelPath: "levels/rank-1.json"
  * - pathsPath: "paths/paths-1.json"
  * - towersPath: "towers/towers.json"
  * - enemiesPath: "enemies/enemies.json"
@@ -40,7 +40,7 @@ public final class TestGameEngineFactory {
     private static final JsonConfigLoader loader = new JsonConfigLoader();
 
     // Valeurs par défaut
-    private String levelPath = "levels/level-1.json";
+    private String levelPath = "levels/rank-1.json";
     private String towersPath = "towers/towers.json";
     private String enemiesPath = "enemies/enemies.json";
     
@@ -70,7 +70,7 @@ public final class TestGameEngineFactory {
 
     public TestGameEngineFactory withLevel(String levelPath) {
         if (levelPath == null || levelPath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Le chemin du level ne peut pas être null ou vide");
+            throw new IllegalArgumentException("Le chemin du rank ne peut pas être null ou vide");
         }
         this.levelPath = levelPath;
         this.directLevelConfig = null; // Reset le mode direct

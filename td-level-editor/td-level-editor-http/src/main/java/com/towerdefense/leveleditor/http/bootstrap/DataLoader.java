@@ -1,4 +1,4 @@
-// td-level-editor-http/src/main/java/com/towerdefense/leveleditor/http/bootstrap/DataLoader.java
+// td-rank-editor-http/src/main/java/com/towerdefense/leveleditor/http/bootstrap/DataLoader.java
 
 package com.towerdefense.leveleditor.http.bootstrap;
 
@@ -144,7 +144,7 @@ public class DataLoader implements CommandLineRunner {
             file -> {
                 try {
                     editorApi.loadDraftLevel(file.getAbsolutePath());
-                    log.debug("  ✓ Draft level chargé: {}", file.getName());
+                    log.debug("  ✓ Draft rank chargé: {}", file.getName());
                     return true;
                 } catch (Exception e) {
                     log.error("  ✗ Erreur lors du chargement de {}: {}", file.getName(), e.getMessage());
@@ -159,7 +159,7 @@ public class DataLoader implements CommandLineRunner {
             file -> {
                 try {
                     editorApi.loadExportableLevel(file.getAbsolutePath());
-                    log.debug("  ✓ Exportable level chargé: {}", file.getName());
+                    log.debug("  ✓ Exportable rank chargé: {}", file.getName());
                     return true;
                 } catch (Exception e) {
                     log.error("  ✗ Erreur lors du chargement de {}: {}", file.getName(), e.getMessage());

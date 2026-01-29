@@ -42,13 +42,13 @@ public class TowerLevelEditorCli {
 	}
 
 	private void removeTowerTypeLevel(TowerTypeEditorApi towerTypeEditorApi) {
-		System.out.println("Tower level you want to delete?");
+		System.out.println("Tower rank you want to delete?");
 		int level = Integer.parseInt(scanner.nextLine());
-		towerTypeEditorApi.removeTowerLevel(level);
+		towerTypeEditorApi.removeTowerRank(level);
 	}
 
 	private void createTowerTypeLevel(TowerTypeEditorApi towerTypeEditorApi) {
-		System.out.println("Tower level you want to create? (integer)");
+		System.out.println("Tower rank you want to create? (integer)");
 		int level = Integer.parseInt(scanner.nextLine());
 		System.out.println("Tower damage? (integer)");
 		int damage = Integer.parseInt(scanner.nextLine());
@@ -62,7 +62,7 @@ public class TowerLevelEditorCli {
 		int sellReward = Integer.parseInt(scanner.nextLine());
 		System.out.println("Construction build time in tricks? (integer)");
 		int buildTime = Integer.parseInt(scanner.nextLine());
-		towerTypeEditorApi.addTowerLevel(level, damage, reloadTime, cost, range, sellReward, buildTime);
+		towerTypeEditorApi.addTowerRank(level, damage, reloadTime, cost, range, sellReward, buildTime);
 	}
 
 }

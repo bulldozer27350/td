@@ -1,7 +1,7 @@
 package com.towerdefense.editor.api.model.draft;
 
-public record EditableTowerLevel(
-    int level,
+public record EditableTowerRank(
+    int rank,
     int cost,
     double range,
     int damage,

@@ -333,7 +333,7 @@ components:
         towerTypeId:
           type: string
           example: "archer"
-        towerLevel:
+        towerRank:
           type: integer
           example: 1
         cost:
@@ -382,7 +382,7 @@ components:
           type: string
         towerTypeId:
           type: string
-        towerLevel:
+        towerRank:
           type: integer
         cost:
           type: integer
@@ -395,7 +395,7 @@ components:
         - id
         - name
         - towerTypeId
-        - towerLevel
+        - towerRank
         - cost
         - effect
       properties:
@@ -405,7 +405,7 @@ components:
           type: string
         towerTypeId:
           type: string
-        towerLevel:
+        towerRank:
           type: integer
         cost:
           type: integer
@@ -478,12 +478,12 @@ components:
       type: object
       required:
         - towerTypeId
-        - maxLevel
+        - maxRank
       properties:
         towerTypeId:
           type: string
           example: "machinegun"
-        maxLevel:
+        maxRank:
           type: integer
           minimum: 1
           example: 3
@@ -556,16 +556,16 @@ components:
           type: string
         name:
           type: string
-        levels:
+        ranks:
           type: array
           items:
-            $ref: '#/components/schemas/TowerLevelConfiguration'
-      required: [id, name, levels]
+            $ref: '#/components/schemas/TowerRankConfiguration'
+      required: [id, name, ranks]
 
-    TowerLevelConfiguration:
+    TowerRankConfiguration:
       type: object
       properties:
-        level:
+        rank:
           type: integer
         upgradeCost:
           type: integer
@@ -582,7 +582,7 @@ components:
         buildTimeTicks:
           type: integer
       required:
-        - level
+        - rank
         - upgradeCost
         - sellValue
         - range

@@ -3,7 +3,7 @@ package com.towerdefense.editor.api.model.exportable;
 import java.util.List;
 
 /**
- * High-level definition of a path used in a level. This definition is
+ * High-rank definition of a path used in a rank. This definition is
  * editor-facing and engine-agnostic.
  */
 public record PathDefinition(String id, List<PositionDefinition> points) {

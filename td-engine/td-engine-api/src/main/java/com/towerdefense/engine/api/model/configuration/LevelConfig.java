@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents the configuration for a level in the tower defense game.
+ * Represents the configuration for a rank in the tower defense game.
  */
 public class LevelConfig {
 
@@ -19,42 +19,42 @@ public class LevelConfig {
 	
     private List<TowerCapacityConfig> towerCapacities = new ArrayList<>();
 
-	/** Get the number of lives for the level. */
+	/** Get the number of lives for the rank. */
 	public int getStartingLives() {
 		return startingLives;
 	}
 
-	/** Set the number of lives for the level. */
+	/** Set the number of lives for the rank. */
 	public void setStartingLives(int startingLives) {
 		this.startingLives = startingLives;
 	}
 
-	/** Get the starting money for the level. */
+	/** Get the starting money for the rank. */
 	public int getStartingMoney() {
 		return startingMoney;
 	}
 
-	/** Set the starting money for the level. */
+	/** Set the starting money for the rank. */
 	public void setStartingMoney(int startingMoney) {
 		this.startingMoney = startingMoney;
 	}
 
-	/** Get the unique identifier of the level. */
+	/** Get the unique identifier of the rank. */
 	public String getId() {
 		return id;
 	}
 
-	/** Get the list of attack configurations for the level. */
+	/** Get the list of attack configurations for the rank. */
 	public List<AttackConfig> getAttacks() {
 		return attacks;
 	}
 
-	/** Set the unique identifier of the level. */
+	/** Set the unique identifier of the rank. */
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	/** Set the list of attack configurations for the level. */
+	/** Set the list of attack configurations for the rank. */
 	public void setAttacks(List<AttackConfig> attacks) {
 		this.attacks = attacks;
 	}

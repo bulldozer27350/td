@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.towerdefense.editor.api.tower.TowerTypeEditorApi;
 import com.towerdefense.leveleditor.http.api.TowerEditingApi;
 import com.towerdefense.leveleditor.http.mapper.tower.EditableTowerTypeMapper;
-import com.towerdefense.leveleditor.http.model.EditableTowerLevel;
+import com.towerdefense.leveleditor.http.model.EditableTowerRank;
 
 import jakarta.validation.Valid;
 
@@ -21,18 +21,18 @@ public class TowerEditingApiImpl extends AbstractEditorController implements Tow
     }
 
     @Override
-    public ResponseEntity<Void> addTowerLevel(String towerTypeId, @Valid EditableTowerLevel editableTowerLevel) {
+    public ResponseEntity<Void> addTowerRank(String towerTypeId, @Valid EditableTowerRank editableTowerRank) {
         TowerTypeEditorApi towerEditor = editorApi().getTowerTypeEditor(towerTypeId);
         
         if (towerEditor == null) {
             return ResponseEntity.notFound().build();
         }
 
-        com.towerdefense.editor.api.model.draft.EditableTowerLevel domainLevel = 
-            mapper.towerLevelToDomain(editableTowerLevel);
+        com.towerdefense.editor.api.model.draft.EditableTowerRank domainLevel = 
+            mapper.towerRankToDomain(editableTowerRank);
         
-        boolean success = towerEditor.addTowerLevel(
-            domainLevel.level(),
+        boolean success = towerEditor.addTowerRank(
+            domainLevel.rank(),
             domainLevel.damage(),
             domainLevel.reloadTime(),
             domainLevel.cost(),
@@ -47,14 +47,14 @@ public class TowerEditingApiImpl extends AbstractEditorController implements Tow
     }
 
     @Override
-    public ResponseEntity<Void> removeTowerLevel(String towerTypeId, Integer level) {
+    public ResponseEntity<Void> removeTowerRank(String towerTypeId, Integer rank) {
         TowerTypeEditorApi towerEditor = editorApi().getTowerTypeEditor(towerTypeId);
         
         if (towerEditor == null) {
             return ResponseEntity.notFound().build();
         }
 
-        boolean success = towerEditor.removeTowerLevel(level);
+        boolean success = towerEditor.removeTowerRank(rank);
         
         return success 
             ? ResponseEntity.noContent().build()

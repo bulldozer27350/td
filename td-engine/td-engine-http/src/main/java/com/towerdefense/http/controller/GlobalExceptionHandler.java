@@ -131,15 +131,15 @@ public class GlobalExceptionHandler {
     /**
      * Gère les exceptions de niveau max atteint (409 Conflict).
      */
-    @ExceptionHandler(TowerMaxLevelReachedException.class)
-    public ResponseEntity<ErrorResponse> handleTowerMaxLevel(TowerMaxLevelReachedException ex) {
+    @ExceptionHandler(TowerMaxRankReachedException.class)
+    public ResponseEntity<ErrorResponse> handleTowerMaxLevel(TowerMaxRankReachedException ex) {
         ErrorResponse error = new ErrorResponse(
             ex.getErrorCode(),
             ex.getMessage(),
             HttpStatus.CONFLICT.value()
         );
         error.addDetail("towerId", ex.getTowerId());
-        error.addDetail("currentLevel", ex.getCurrentLevel());
+        error.addDetail("currentLevel", ex.getCurrentRank());
         
         return ResponseEntity
             .status(HttpStatus.CONFLICT)

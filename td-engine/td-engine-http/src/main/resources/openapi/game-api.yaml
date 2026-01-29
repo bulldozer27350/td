@@ -211,10 +211,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
                 maxLevel:
-                  summary: Max level reached
+                  summary: Max rank reached
                   value:
                     errorCode: "TOWER_MAX_LEVEL"
-                    message: "Tower abc-123 has reached max level 3"
+                    message: "Tower abc-123 has reached max rank 3"
                     status: 409
                     timestamp: "2026-01-10T14:30:00"
                     details:
@@ -499,13 +499,13 @@ components:
         levels:
           type: array
           items:
-            $ref: '#/components/schemas/TowerLevelConfig'
+            $ref: '#/components/schemas/TowerRankConfig'
       required: [id, name, levels]
 
-    TowerLevelConfig:
+    TowerRankConfig:
       type: object
       properties:
-        level:
+        rank:
           type: integer
         upgradeCost:
           type: integer
@@ -522,7 +522,7 @@ components:
         buildTimeTicks:
           type: integer
       required:
-        - level
+        - rank
         - upgradeCost
         - sellValue
         - range

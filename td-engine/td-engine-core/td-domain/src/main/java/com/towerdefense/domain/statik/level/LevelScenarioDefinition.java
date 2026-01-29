@@ -3,7 +3,7 @@ package com.towerdefense.domain.statik.level;
 import java.util.List;
 
 /**
- * Represents the definition of a level scenario in a tower defense game.
+ * Represents the definition of a rank scenario in a tower defense game.
  */
 public class LevelScenarioDefinition {
 
@@ -17,8 +17,8 @@ public class LevelScenarioDefinition {
 	 * Constructs a LevelScenarioDefinition with the specified id and list of attack
 	 * definitions.
 	 *
-	 * @param id      the unique identifier for the level scenario
-	 * @param attacks the list of attack definitions for this level scenario
+	 * @param id      the unique identifier for the rank scenario
+	 * @param attacks the list of attack definitions for this rank scenario
 	 */
 	public LevelScenarioDefinition(String id, List<AttackDefinition> attacks, int startingLives, int startingMoney, List<TowerCapacityDefinition> towerCapacities) {
 		this.id = id;
@@ -29,16 +29,16 @@ public class LevelScenarioDefinition {
 	}
 
 	/**
-	 * Gets the unique identifier for this level scenario.
+	 * Gets the unique identifier for this rank scenario.
 	 * 
-	 * @return the level scenario id
+	 * @return the rank scenario id
 	 */
 	public String getId() {
 		return id;
 	}
 
 	/**
-	 * Gets the list of attack definitions for this level scenario.
+	 * Gets the list of attack definitions for this rank scenario.
 	 * 
 	 * @return the list of attack definitions
 	 */
@@ -47,7 +47,7 @@ public class LevelScenarioDefinition {
 	}
 
 	/**
-	 * Gets the starting lives for this level scenario.
+	 * Gets the starting lives for this rank scenario.
 	 * 
 	 * @return the starting lives
 	 */
@@ -56,7 +56,7 @@ public class LevelScenarioDefinition {
 	}
 
 	/**
-	 * Gets the starting money for this level scenario.
+	 * Gets the starting money for this rank scenario.
 	 * 
 	 * @return the starting money
 	 */

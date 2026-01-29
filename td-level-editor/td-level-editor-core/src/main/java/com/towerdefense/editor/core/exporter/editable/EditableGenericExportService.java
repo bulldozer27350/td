@@ -14,7 +14,7 @@ public class EditableGenericExportService<T> {
 	public void export(T objectToExport) {
 		EditableValidationResult validation = validator.validate(objectToExport);
 		if (!validation.isValid()) {
-			throw new IllegalStateException("Invalid level: " + validation.getErrors());
+			throw new IllegalStateException("Invalid rank: " + validation.getErrors());
 		}
 	}
 	

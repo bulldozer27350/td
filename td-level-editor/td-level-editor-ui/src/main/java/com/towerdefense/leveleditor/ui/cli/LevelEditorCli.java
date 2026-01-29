@@ -53,13 +53,13 @@ public class LevelEditorCli {
 	}
 
 	private void setInitialMoney(LevelEditorApi levelEditorApi) {
-		System.out.println("How much money should be available when starting level? (integer)");
+		System.out.println("How much money should be available when starting rank? (integer)");
 		int money = Integer.parseInt(scanner.nextLine());
 		levelEditorApi.attributeInitialMoney(money);
 	}
 
 	private void setInitialLives(LevelEditorApi levelEditorApi) {
-		System.out.println("How many lives should be available when starting level? (integer)");
+		System.out.println("How many lives should be available when starting rank? (integer)");
 		int lives = Integer.parseInt(scanner.nextLine());
 		levelEditorApi.attributeInitialLives(lives);
 	}
@@ -67,7 +67,7 @@ public class LevelEditorCli {
 	private void addTowerAvailability(LevelEditorApi levelEditorApi) {
 		System.out.println("Tower type id ? (String)");
 		String id = scanner.nextLine();
-		System.out.println("Tower type level ? (integer)");
+		System.out.println("Tower type rank ? (integer)");
 		int level = Integer.parseInt(scanner.nextLine());
 		levelEditorApi.addTowerCapacity(id, level);
 	}

@@ -3,7 +3,7 @@ package com.towerdefense.domain.statik.level;
 import java.util.List;
 
 /**
- * Represents the definition of an attack in a tower defense game level.
+ * Represents the definition of an attack in a tower defense game rank.
  */
 public class AttackDefinition {
 

@@ -218,13 +218,13 @@ class GameEngine {
         const towers = this.gameConfig.towersConfig.towers;
         
         container.innerHTML = towers.map(tower => {
-            const level1 = tower.levels[0];
+            const rank1 = tower.ranks[0];
             return `
                 <div class="tower-option ${this.selectedTowerType === tower.id ? 'selected' : ''}" 
                      onclick="gameEngine.selectTowerType('${tower.id}')">
                     <div class="tower-name">🗼 ${tower.name}</div>
                     <div class="tower-stats">
-                        💰 ${level1.upgradeCost} | ⚔️ ${level1.damage} | 🎯 ${level1.range.toFixed(1)}
+                        💰 ${rank1.upgradeCost} | ⚔️ ${rank1.damage} | 🎯 ${rank1.range.toFixed(1)}
                     </div>
                 </div>
             `;
@@ -330,8 +330,8 @@ class GameEngine {
         
         const towers = this.gameConfig.towersConfig.towers;
         container.innerHTML = towers.map(tower => {
-            const level1 = tower.levels[0];
-            const canAfford = this.gameState.player.currentGold >= level1.upgradeCost;
+            const rank1 = tower.ranks[0];
+            const canAfford = this.gameState.player.currentGold >= rank1.upgradeCost;
             
             return `
                 <div class="tower-option ${!canAfford ? 'disabled' : ''}" 
@@ -339,7 +339,7 @@ class GameEngine {
                      style="margin-bottom: 10px;">
                     <div class="tower-name">🗼 ${tower.name}</div>
                     <div class="tower-stats">
-                        💰 ${level1.upgradeCost} | ⚔️ ${level1.damage} | 🎯 ${level1.range.toFixed(1)}
+                        💰 ${rank1.upgradeCost} | ⚔️ ${rank1.damage} | 🎯 ${rank1.range.toFixed(1)}
                     </div>
                     ${!canAfford ? '<div style="color: red; font-size: 0.8em;">Fonds insuffisants</div>' : ''}
                 </div>

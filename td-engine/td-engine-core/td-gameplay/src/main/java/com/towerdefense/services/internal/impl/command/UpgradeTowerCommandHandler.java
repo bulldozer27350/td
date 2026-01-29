@@ -34,12 +34,12 @@ public class UpgradeTowerCommandHandler implements GameCommandHandler<UpgradeTow
 			Optional<Tower> oTower = towerServices.attemptUpgradeTower(state, intention);
 			if (oTower.isPresent()) {
 			    Tower upgradedTower = oTower.get();
-			    upgradedTower.currentStats().level();
-			    System.out.println("[Tick " + tick + "]Sending event : Tower " + t.id().value() + " upgraded to level "
-			              + upgradedTower.currentStats().level());
+			    upgradedTower.currentStats().rank();
+			    System.out.println("[Tick " + tick + "]Sending event : Tower " + t.id().value() + " upgraded to rank "
+			              + upgradedTower.currentStats().rank());
                 observers.forEach(observer -> observer.onTowerUpgraded(new TowerUpgradedEvent(
                         t.id().value(), 
-                        upgradedTower.currentStats().level(), 
+                        upgradedTower.currentStats().rank(), 
                         tick)));
             }
 		} else {

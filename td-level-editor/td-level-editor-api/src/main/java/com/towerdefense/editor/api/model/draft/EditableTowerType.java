@@ -7,7 +7,7 @@ public class EditableTowerType {
 
 	private String id;
     private String towerType;
-    private List<EditableTowerLevel> upgrades = new ArrayList<>();
+    private List<EditableTowerRank> ranks = new ArrayList<>();
 
     public EditableTowerType() {
 	}
@@ -17,20 +17,20 @@ public class EditableTowerType {
     	this.towerType = towerType;
     }
 
-    public boolean addUpgrade(EditableTowerLevel upgrade) {
-        return upgrades.add(upgrade);
+    public boolean addRank(EditableTowerRank rank) {
+        return ranks.add(rank);
     }
 
     public String towerType() { return towerType; }
     public String id() { return id; }
-    public List<EditableTowerLevel> upgrades() { return upgrades; }
+    public List<EditableTowerRank> ranks() { return ranks; }
 
     //////////////////////////////
     /// For Jackson usage only ///
     //////////////////////////////
     
-	public void setUpgrades(List<EditableTowerLevel> upgrades) {
-		this.upgrades = upgrades;
+	public void setRanks(List<EditableTowerRank> ranks) {
+		this.ranks = ranks;
 	}
 
 	public String getId() {
@@ -49,8 +49,8 @@ public class EditableTowerType {
 		this.towerType = towerType;
 	}
 
-	public List<EditableTowerLevel> getUpgrades() {
-		return upgrades;
+	public List<EditableTowerRank> getRanks() {
+		return ranks;
 	}
 	
 	

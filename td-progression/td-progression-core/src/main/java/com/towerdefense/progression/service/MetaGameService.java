@@ -158,9 +158,9 @@ public class MetaGameService {
         System.out.println("[META] Towers with upgrades:");
         for (TowerTypeData tower : towers) {
             System.out.println("  " + tower.name() + " (" + tower.id() + "):");
-            for (var level : tower.levels()) {
-                System.out.printf("    Level %d: damage=%d, range=%.2f, reload=%.2fs%n",
-                    level.level(), level.damage(), level.range(), level.reloadSeconds());
+            for (var rank : tower.ranks()) {
+                System.out.printf("    Rank %d: damage=%d, range=%.2f, reload=%.2fs%n",
+                    rank.rank(), rank.damage(), rank.range(), rank.reloadSeconds());
             }
         }
     }

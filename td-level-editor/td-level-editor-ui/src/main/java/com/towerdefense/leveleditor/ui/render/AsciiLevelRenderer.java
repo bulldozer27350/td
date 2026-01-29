@@ -40,7 +40,7 @@ public class AsciiLevelRenderer {
 		}
 
 //        // 3. Capacités de tours
-//        for (EditableTowerType capacity : level.getTowerCapacities()) {
+//        for (EditableTowerType capacity : rank.getTowerCapacities()) {
 //            for (PositionDefinition p : capacity.allowedPositions()) {
 //                grid[p.y()][p.x()] = 'T';
 //            }

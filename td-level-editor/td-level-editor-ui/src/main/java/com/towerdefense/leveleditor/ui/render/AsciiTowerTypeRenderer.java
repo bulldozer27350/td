@@ -2,7 +2,7 @@ package com.towerdefense.leveleditor.ui.render;
 
 import java.util.List;
 
-import com.towerdefense.editor.api.model.draft.EditableTowerLevel;
+import com.towerdefense.editor.api.model.draft.EditableTowerRank;
 import com.towerdefense.editor.api.model.draft.EditableTowerType;
 
 public final class AsciiTowerTypeRenderer {
@@ -17,9 +17,9 @@ public final class AsciiTowerTypeRenderer {
                     "Lvl", "Cost", "Sell", "Damage", "Range", "B Time", "Rate"));
             sb.append("----+------+------+--------+-------+--------+-----\n");
 
-            for (EditableTowerLevel level : tower.upgrades()) {
+            for (EditableTowerRank level : tower.ranks()) {
                 sb.append(String.format("%-3d | %-4d | %-4d | %-6d | %-3.3f | %-6d | %-4.2f\n",
-                        level.level(),
+                        level.rank(),
                         level.cost(),
                         level.sellReward(),
                         level.damage(),

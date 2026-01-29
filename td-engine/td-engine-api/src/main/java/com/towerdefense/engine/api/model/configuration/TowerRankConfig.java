@@ -1,11 +1,11 @@
 package com.towerdefense.engine.api.model.configuration;
 
 /**
- * Represents the configuration for a tower level in the tower defense game.
+ * Represents the configuration for a tower rank in the tower defense game.
  */
-public class TowerLevelConfig {
+public class TowerRankConfig {
 
-	private int level;
+	private int rank;
 	private int upgradeCost;
 	private int sellValue;
 	private double range;
@@ -14,12 +14,12 @@ public class TowerLevelConfig {
 	private int buildTimeTicks;
 
 	// For serialization
-	private TowerLevelConfig() {
+	private TowerRankConfig() {
 	}
 	
-	public TowerLevelConfig(int level, int upgradeCost, int sellValue, double range, int damage, double reloadSeconds,
+	public TowerRankConfig(int rank, int upgradeCost, int sellValue, double range, int damage, double reloadSeconds,
 			int buildTimeTicks) {
-		this.level = level;
+		this.rank = rank;
 		this.upgradeCost = upgradeCost;
 		this.sellValue = sellValue;
 		this.range = range;
@@ -28,9 +28,9 @@ public class TowerLevelConfig {
 		this.buildTimeTicks = buildTimeTicks;
 	}
 
-	/** Get the level of the tower. */
-	public int getLevel() {
-		return level;
+	/** Get the rank of the tower. */
+	public int getRank() {
+		return rank;
 	}
 
 	/** Get the upgrade cost of the tower. */

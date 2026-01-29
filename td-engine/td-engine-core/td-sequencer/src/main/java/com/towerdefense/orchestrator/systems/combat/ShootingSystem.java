@@ -64,7 +64,7 @@ public class ShootingSystem implements GameSystem {
      * Crée un projectile tiré par une tour.
      */
     private Projectile createProjectile(Tower tower, EntityId targetId) {
-        // TODO: Rendre configurable via TowerLevelDefinition
+        // TODO: Rendre configurable via TowerRankDefinition
         double projectileSpeed = 16.0;
 
         return new Projectile(EntityId.random(), tower.position(), projectileSpeed, tower.damage(), targetId, tower.id());

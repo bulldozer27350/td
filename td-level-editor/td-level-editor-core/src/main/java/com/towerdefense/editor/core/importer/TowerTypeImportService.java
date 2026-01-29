@@ -1,8 +1,8 @@
 package com.towerdefense.editor.core.importer;
 
-import com.towerdefense.editor.api.model.draft.EditableTowerLevel;
+import com.towerdefense.editor.api.model.draft.EditableTowerRank;
 import com.towerdefense.editor.api.model.draft.EditableTowerType;
-import com.towerdefense.engine.api.model.configuration.TowerLevelConfig;
+import com.towerdefense.engine.api.model.configuration.TowerRankConfig;
 import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
 
 /**
@@ -14,14 +14,14 @@ public class TowerTypeImportService {
 
 	public EditableTowerType importLevel(TowerTypeConfig config) {
 		EditableTowerType editableTowerType = new EditableTowerType(config.getId(), config.getId());
-		for (TowerLevelConfig towerLevelConfig : config.getLevels()) {
-			editableTowerType.upgrades().add(importTowerLevel(towerLevelConfig));
+		for (TowerRankConfig towerLevelConfig : config.getRanks()) {
+			editableTowerType.ranks().add(importTowerLevel(towerLevelConfig));
 		}
 		return editableTowerType;
 	}
 
-	private EditableTowerLevel importTowerLevel(TowerLevelConfig towerLevelConfig) {
-		return new EditableTowerLevel(towerLevelConfig.getLevel(),
+	private EditableTowerRank importTowerLevel(TowerRankConfig towerLevelConfig) {
+		return new EditableTowerRank(towerLevelConfig.getRank(),
 				towerLevelConfig.getUpgradeCost(), towerLevelConfig.getRange(), towerLevelConfig.getDamage(),
 				towerLevelConfig.getReloadSeconds(), towerLevelConfig.getSellValue(), towerLevelConfig.getBuildTimeTicks());
 	}

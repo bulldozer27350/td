@@ -6,5 +6,5 @@ import java.util.List;
 public record TowerTypeData(
     String id,
     String name,
-    List<TowerLevel> levels
+    List<TowerRank> ranks
 ) {}

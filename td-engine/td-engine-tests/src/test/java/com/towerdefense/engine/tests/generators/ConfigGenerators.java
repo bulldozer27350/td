@@ -11,7 +11,7 @@ import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.PathConfig;
 import com.towerdefense.engine.api.model.configuration.PointConfig;
-import com.towerdefense.engine.api.model.configuration.TowerLevelConfig;
+import com.towerdefense.engine.api.model.configuration.TowerRankConfig;
 import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
 import com.towerdefense.engine.api.model.configuration.WaveConfig;
@@ -102,7 +102,7 @@ public class ConfigGenerators {
 	}
 
 	@Provide
-	public Arbitrary<TowerLevelConfig> towerLevels() {
+	public Arbitrary<TowerRankConfig> towerRanks() {
 		return Combinators
 				.combine(Arbitraries.integers().between(1, 5),
 						Arbitraries.integers().between(MIN_TOWER_COST, MAX_TOWER_COST),
@@ -111,38 +111,38 @@ public class ConfigGenerators {
 						Arbitraries.integers().between(MIN_TOWER_DAMAGE, MAX_TOWER_DAMAGE),
 						Arbitraries.doubles().between(MIN_RELOAD_TIME, MAX_RELOAD_TIME),
 						Arbitraries.integers().between(MIN_BUILD_TIME, MAX_BUILD_TIME))
-				.as((level, cost, sell, range, damage, reload, buildTime) -> {
+				.as((rank, cost, sell, range, damage, reload, buildTime) -> {
 					int sellValue = Math.min(sell, cost - 1);
 
-					return new TowerLevelConfig(level, cost, sellValue, range, damage, reload, buildTime);
+					return new TowerRankConfig(rank, cost, sellValue, range, damage, reload, buildTime);
 				});
 	}
 
 	@Provide
 	public Arbitrary<TowerTypeConfig> towerTypes() {
-		return Combinators.combine(towerTypeIds(), Arbitraries.integers().between(1, 3)).flatAs((id, levelCount) -> {
-			return towerLevels().list().ofSize(levelCount).map(levelsList -> {
+		return Combinators.combine(towerTypeIds(), Arbitraries.integers().between(1, 3)).flatAs((id, rankCount) -> {
+			return towerRanks().list().ofSize(rankCount).map(ranksList -> {
 				TowerTypeConfig config = new TowerTypeConfig();
 				config.setId(id);
 				config.setName("Tower " + id);
 
 				// Crée des niveaux avec coûts croissants
-				List<TowerLevelConfig> sortedLevels = new ArrayList<>();
+				List<TowerRankConfig> sortedRanks = new ArrayList<>();
 				int previousCost = MIN_TOWER_COST;
-				int level = 1;
+				int rank = 1;
 
-				for (TowerLevelConfig originalLevel : levelsList) {
-					int newCost = Math.max(previousCost + 10, originalLevel.getUpgradeCost());
+				for (TowerRankConfig originalRank : ranksList) {
+					int newCost = Math.max(previousCost + 10, originalRank.getUpgradeCost());
 					int sellValue = (int) (newCost * 0.7);
 
-					sortedLevels.add(new TowerLevelConfig(level++, newCost, sellValue, originalLevel.getRange(),
-							originalLevel.getDamage(), originalLevel.getReloadSeconds(),
-							originalLevel.getBuildTimeTicks()));
+					sortedRanks.add(new TowerRankConfig(rank++, newCost, sellValue, originalRank.getRange(),
+							originalRank.getDamage(), originalRank.getReloadSeconds(),
+							originalRank.getBuildTimeTicks()));
 
 					previousCost = newCost;
 				}
 
-				config.setLevels(sortedLevels);
+				config.setRanks(sortedRanks);
 				return config;
 			});
 		});

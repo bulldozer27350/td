@@ -4,27 +4,27 @@ import java.util.List;
 
 /**
  * Represents a type of tower in the tower defense game. Each tower type has a
- * name and multiple levels defined by TowerLevelDefinition.
+ * name and multiple ranks defined by TowerRankDefinition.
  */
 public class TowerType {
 
 	private final String name;
-	private final List<TowerLevelDefinition> levels;
+	private final List<TowerRankDefinition> ranks;
 
-	/** Constructor to initialize tower type with given name and levels. */
-	public TowerType(String name, List<TowerLevelDefinition> levels) {
+	/** Constructor to initialize tower type with given name and ranks. */
+	public TowerType(String name, List<TowerRankDefinition> levels) {
 		this.name = name;
-		this.levels = List.copyOf(levels);
+		this.ranks = List.copyOf(levels);
 	}
 
-	/** Get the definition of a specific tower level. */
-	public TowerLevelDefinition level(int level) {
-		return levels.get(level - 1);
+	/** Get the definition of a specific tower rank. */
+	public TowerRankDefinition rank(int rank) {
+		return ranks.get(rank - 1);
 	}
 
-	/** Get the maximum level available for this tower type. */
-	public int maxLevel() {
-		return levels.size();
+	/** Get the maximum rank available for this tower type. */
+	public int maxRank() {
+		return ranks.size();
 	}
 
 	/** Get the name of the tower type. */

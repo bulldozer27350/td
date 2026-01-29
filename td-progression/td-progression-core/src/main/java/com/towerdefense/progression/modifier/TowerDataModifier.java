@@ -8,7 +8,7 @@ import java.util.Set;
 import com.towerdefense.progression.domain.upgrade.TowerUpgrade;
 import com.towerdefense.progression.domain.upgrade.UpgradeEffect;
 import com.towerdefense.progression.domain.upgrade.UpgradeRegistry;
-import com.towerdefense.progression.model.TowerLevel;
+import com.towerdefense.progression.model.TowerRank;
 import com.towerdefense.progression.model.TowerTypeData;
 
 public class TowerDataModifier {
@@ -20,33 +20,33 @@ public class TowerDataModifier {
 
 	// Applique les upgrades débloqués sur les données de tour
 	public TowerTypeData applyUpgrades(TowerTypeData originalTowerType, Set<String> unlockedUpgradeIds) {
-		List<TowerLevel> modifiedLevels = new ArrayList<>();
+		List<TowerRank> modifiedRanks = new ArrayList<>();
 
-		for (TowerLevel level : originalTowerType.levels()) {
-			TowerLevel modified = applyUpgradesToLevel(originalTowerType.id(), level, unlockedUpgradeIds);
-			modifiedLevels.add(modified);
+		for (TowerRank rank : originalTowerType.ranks()) {
+			TowerRank modified = applyUpgradesToRank(originalTowerType.id(), rank, unlockedUpgradeIds);
+			modifiedRanks.add(modified);
 		}
 
-		return new TowerTypeData(originalTowerType.id(), originalTowerType.name(), modifiedLevels);
+		return new TowerTypeData(originalTowerType.id(), originalTowerType.name(), modifiedRanks);
 	}
 
-	private TowerLevel applyUpgradesToLevel(String towerTypeId, TowerLevel level, Set<String> unlockedUpgradeIds) {
+	private TowerRank applyUpgradesToRank(String towerTypeId, TowerRank towerRank, Set<String> unlockedUpgradeIds) {
 
-		// Récupérer tous les upgrades applicables à ce niveau de tour
+		// Récupérer tous les upgrades applicables à ce rang de tour
 		List<TowerUpgrade> applicableUpgrades = unlockedUpgradeIds.stream()
 				// Transformation des TowerUpgrade correspondant à l'identifiant fourni
 				.map(upgradeRegistry::getUpgrade)
 				//
 				.filter(Objects::nonNull)
 				// qui puisse s'appliquer au bon type de tour et au bon niveau
-				.filter(upgrade -> upgrade.appliesTo(towerTypeId, level.level()))
+				.filter(upgrade -> upgrade.appliesTo(towerTypeId, towerRank.rank()))
 				//
 				.toList();
 
 		// Appliquer chaque upgrade
-		double damage = level.damage();
-		double range = level.range();
-		double reloadSeconds = level.reloadSeconds();
+		double damage = towerRank.damage();
+		double range = towerRank.range();
+		double reloadSeconds = towerRank.reloadSeconds();
 
 		for (TowerUpgrade upgrade : applicableUpgrades) {
 			UpgradeEffect effect = upgrade.getEffect();
@@ -58,7 +58,7 @@ public class TowerDataModifier {
 			}
 		}
 
-		return new TowerLevel(level.level(), level.upgradeCost(), level.sellValue(), range, (int) Math.round(damage),
-				reloadSeconds, level.buildTimeTicks());
+		return new TowerRank(towerRank.rank(), towerRank.upgradeCost(), towerRank.sellValue(), range, (int) Math.round(damage),
+				reloadSeconds, towerRank.buildTimeTicks());
 	}
 }

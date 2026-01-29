@@ -67,9 +67,9 @@ public class LevelAnalyzer {
         
         // Coût minimum : une tour niveau 1
         int minTowerCost = towerTypeRegistry.values().stream()
-            .flatMap(t -> t.upgrades().stream())
-            .filter(u -> u.level() == 1)
-            .mapToInt(EditableTowerLevel::cost)
+            .flatMap(t -> t.ranks().stream())
+            .filter(u -> u.rank() == 1)
+            .mapToInt(EditableTowerRank::cost)
             .min()
             .orElse(100);
         
@@ -137,8 +137,8 @@ public class LevelAnalyzer {
         		.map(TowerCapacity::getTowerTypeId)
             .map(towerTypeRegistry::get)
             .filter(Objects::nonNull)
-            .flatMap(t -> t.upgrades().stream())
-            .mapToDouble(EditableTowerLevel::range)
+            .flatMap(t -> t.ranks().stream())
+            .mapToDouble(EditableTowerRank::range)
             .max()
             .orElse(0.0);
         

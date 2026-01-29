@@ -23,7 +23,7 @@ import com.towerdefense.progression.http.model.PathConfiguration;
 import com.towerdefense.progression.http.model.PlayerProgressResponse;
 import com.towerdefense.progression.http.model.PointConfiguration;
 import com.towerdefense.progression.http.model.TowerCapacityConfiguration;
-import com.towerdefense.progression.http.model.TowerLevelConfiguration;
+import com.towerdefense.progression.http.model.TowerRankConfiguration;
 import com.towerdefense.progression.http.model.TowerTypeConfiguration;
 import com.towerdefense.progression.http.model.TowersConfiguration;
 import com.towerdefense.progression.http.model.WaveConfiguration;
@@ -33,7 +33,7 @@ import com.towerdefense.progression.model.LevelData;
 import com.towerdefense.progression.model.LevelPath;
 import com.towerdefense.progression.model.Point;
 import com.towerdefense.progression.model.TowerCapacity;
-import com.towerdefense.progression.model.TowerLevel;
+import com.towerdefense.progression.model.TowerRank;
 import com.towerdefense.progression.model.TowerTypeData;
 import com.towerdefense.progression.model.Wave;
 import com.towerdefense.progression.service.MetaGameService;
@@ -103,11 +103,11 @@ public class PlayerController implements PlayerApi {
     }
     
     private TowerTypeConfiguration toHttp(TowerTypeData t) {
-        return new TowerTypeConfiguration(t.id(), t.name(), t.levels().stream().map(tl->toHttp(tl)).toList());
+        return new TowerTypeConfiguration(t.id(), t.name(), t.ranks().stream().map(tl->toHttp(tl)).toList());
     }
 
-    private TowerLevelConfiguration toHttp(TowerLevel tl) {
-        return new TowerLevelConfiguration(tl.level(), tl.upgradeCost(), tl.sellValue(), tl.range(), tl.damage(), tl.reloadSeconds(), tl.buildTimeTicks());
+    private TowerRankConfiguration toHttp(TowerRank tl) {
+        return new TowerRankConfiguration(tl.rank(), tl.upgradeCost(), tl.sellValue(), tl.range(), tl.damage(), tl.reloadSeconds(), tl.buildTimeTicks());
     }
 
     private LevelConfiguration toHttp(LevelData level) {
@@ -119,7 +119,7 @@ public class PlayerController implements PlayerApi {
     }
 
     private TowerCapacityConfiguration toHttp(TowerCapacity t) {
-        return new TowerCapacityConfiguration(t.towerTypeId(), t.maxLevel());
+        return new TowerCapacityConfiguration(t.towerTypeId(), t.maxRank());
     }
 
     private @Valid AttackConfiguration toHttp(Attack attack) {

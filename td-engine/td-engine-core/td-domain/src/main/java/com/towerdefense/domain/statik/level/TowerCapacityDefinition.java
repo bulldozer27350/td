@@ -3,13 +3,13 @@ package com.towerdefense.domain.statik.level;
 public class TowerCapacityDefinition {
     
     private final String towerTypeId;
-    private final int maxLevel;
+    private final int maxRank;
     
-    public TowerCapacityDefinition(String towerTypeId, int maxLevel) {
+    public TowerCapacityDefinition(String towerTypeId, int maxRank) {
         this.towerTypeId = towerTypeId;
-        this.maxLevel = maxLevel;
+        this.maxRank = maxRank;
     }
     
     public String getTowerTypeId() { return towerTypeId; }
-    public int getMaxLevel() { return maxLevel; }
+    public int getMaxRank() { return maxRank; }
 }

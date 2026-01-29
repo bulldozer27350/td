@@ -23,7 +23,7 @@ public class LevelScenarioDefinitionMapper {
 	 */
 	public static LevelScenarioDefinition toDomain(LevelConfig cfg) {
 	    List<TowerCapacityDefinition> capacities = cfg.getTowerCapacities().stream()
-	        .map(tc -> new TowerCapacityDefinition(tc.getTowerTypeId(), tc.getMaxLevel()))
+	        .map(tc -> new TowerCapacityDefinition(tc.getTowerTypeId(), tc.getMaxRank()))
 	        .toList();
 	    
 	    LevelScenarioDefinition levelScenarioDefinition = new LevelScenarioDefinition(

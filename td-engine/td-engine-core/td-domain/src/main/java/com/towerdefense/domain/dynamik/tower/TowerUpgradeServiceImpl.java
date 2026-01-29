@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.player.PlayerState;
-import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
+import com.towerdefense.domain.statik.tower.TowerRankDefinition;
 
 @Service
 /**
@@ -26,11 +26,11 @@ public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 	        return false;
 
 	    int maxLevelAllowed = state.getTowerMaxLevel(tower.type().name());
-	    if (tower.level() >= maxLevelAllowed) {
+	    if (tower.rank() >= maxLevelAllowed) {
 	        return false;
 	    }
 
-	    TowerLevelDefinition next = tower.nextLevelDefinition();
+	    TowerRankDefinition next = tower.nextLevelDefinition();
 	    return player.gold() >= next.upgradeCost();
 	}
 
@@ -47,7 +47,7 @@ public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 			throw new IllegalStateException("Upgrade not allowed");
 		}
 
-		TowerLevelDefinition next = tower.nextLevelDefinition();
+		TowerRankDefinition next = tower.nextLevelDefinition();
 
 		player.spendGold(next.upgradeCost());
 		tower.startUpgrade(next);

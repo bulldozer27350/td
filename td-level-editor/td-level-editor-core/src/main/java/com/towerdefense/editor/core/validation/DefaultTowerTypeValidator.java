@@ -5,7 +5,7 @@ import com.towerdefense.editor.api.model.draft.EditableTowerType;
 public class DefaultTowerTypeValidator implements TowerTypeValidator {
 
     @Override
-    public ValidationResult validate(EditableTowerType level) {
+    public ValidationResult validate(EditableTowerType towerType) {
         ValidationResult result = new ValidationResult();
 
 

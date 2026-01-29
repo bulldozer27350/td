@@ -3,7 +3,7 @@ package com.towerdefense.domain.dynamik.tower;
 import org.springframework.stereotype.Service;
 
 import com.towerdefense.domain.player.PlayerState;
-import com.towerdefense.domain.statik.tower.TowerLevelDefinition;
+import com.towerdefense.domain.statik.tower.TowerRankDefinition;
 
 @Service
 /**
@@ -37,7 +37,7 @@ public class TowerSellServiceImpl implements TowerSellService {
 			throw new IllegalStateException("Sell not allowed");
 		}
 
-		TowerLevelDefinition current = tower.currentStats();
+		TowerRankDefinition current = tower.currentStats();
 
 		player.earnGold(current.sellValue());
 	}

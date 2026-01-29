@@ -115,7 +115,7 @@ public class Sequencer {
 	/**
 	 * Définit le niveau à gérer.
 	 * 
-	 * @param level le scénario du niveau
+	 * @param rank le scénario du niveau
 	 */
 	public void setLevel(LevelScenario level) {
 		levelProgressionSystem.setLevel(level);

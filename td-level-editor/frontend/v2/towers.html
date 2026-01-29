@@ -15,7 +15,7 @@
             <div>
                 <h1 class="text-2xl font-bold">🏗️ TD Studio</h1>
                 <p class="text-sm text-blue-200"></p>
-                <a href="levels.html" class="hover:underline">🗺️ Niveaux</a>
+                <a href="levels.html" class="hover:underline">🗺️ Rangx</a>
                 <a href="enemies.html" class="hover:underline">👾 Ennemis</a>
                 <a href="towers.html" class="font-bold underline">🗼 Tours</a>
             </div>
@@ -69,16 +69,16 @@
         </div>
     </div>
 
-    <!-- Modal de gestion des niveaux de tour -->
-    <div id="levelsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Modal de gestion des rangx de tour -->
+    <div id="ranksModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-2xl font-bold mb-4" id="modalTitle">Gérer les niveaux</h3>
+            <h3 class="text-2xl font-bold mb-4" id="modalTitle">Gérer les rangx</h3>
             
-            <!-- Formulaire d'ajout de niveau -->
+            <!-- Formulaire d'ajout de rang -->
             <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h4 class="font-semibold mb-3">➕ Ajouter un niveau</h4>
-                <form id="addLevelForm" class="grid md:grid-cols-4 gap-3">
-                    <input type="number" id="level" placeholder="Niveau" min="1" 
+                <h4 class="font-semibold mb-3">➕ Ajouter un rang</h4>
+                <form id="addRankForm" class="grid md:grid-cols-4 gap-3">
+                    <input type="number" id="rank" placeholder="Rang" min="1" 
                            class="border rounded px-3 py-2" required>
                     <input type="number" id="cost" placeholder="Coût" min="0" 
                            class="border rounded px-3 py-2" required>
@@ -99,9 +99,9 @@
                 </form>
             </div>
 
-            <!-- Liste des niveaux existants -->
+            <!-- Liste des rangx existants -->
             <div class="mb-4">
-                <h4 class="font-semibold mb-3">📋 Niveaux configurés</h4>
+                <h4 class="font-semibold mb-3">📋 Rangx configurés</h4>
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse text-sm">
                         <thead>
@@ -116,10 +116,10 @@
                                 <th class="p-2 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="levelsTableBody">
+                        <tbody id="ranksTableBody">
                             <tr>
                                 <td colspan="8" class="text-center py-4 text-gray-500">
-                                    Aucun niveau configuré
+                                    Aucun rang configuré
                                 </td>
                             </tr>
                         </tbody>
@@ -128,7 +128,7 @@
             </div>
 
             <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeLevelsModal()" 
+                <button onclick="closeRanksModal()" 
                         class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                     Fermer
                 </button>
@@ -361,12 +361,12 @@
             }
 
             container.innerHTML = filtered.map(tower => {
-                const levels = tower.upgrades || [];
-                const avgDamage = levels.length > 0 
-                    ? Math.round(levels.reduce((sum, l) => sum + l.damage, 0) / levels.length) 
+                const ranks = tower.upgrades || [];
+                const avgDamage = ranks.length > 0 
+                    ? Math.round(ranks.reduce((sum, l) => sum + l.damage, 0) / ranks.length) 
                     : 0;
-                const avgRange = levels.length > 0 
-                    ? (levels.reduce((sum, l) => sum + l.range, 0) / levels.length).toFixed(1) 
+                const avgRange = ranks.length > 0 
+                    ? (ranks.reduce((sum, l) => sum + l.range, 0) / ranks.length).toFixed(1) 
                     : 0;
 
                 return `
@@ -378,8 +378,8 @@
                                 
                                 <div class="grid grid-cols-3 gap-3 text-sm mb-3">
                                     <div class="bg-green-50 p-2 rounded">
-                                        <span class="text-gray-600">Niveaux:</span>
-                                        <span class="font-semibold ml-1">${levels.length}</span>
+                                        <span class="text-gray-600">Rangx:</span>
+                                        <span class="font-semibold ml-1">${ranks.length}</span>
                                     </div>
                                     <div class="bg-red-50 p-2 rounded">
                                         <span class="text-gray-600">Dégâts moy.:</span>
@@ -391,19 +391,19 @@
                                     </div>
                                 </div>
 
-                                ${levels.length > 0 ? `
+                                ${ranks.length > 0 ? `
                                     <div class="text-sm text-gray-600">
-                                        <span class="font-medium">Niveau max:</span>
-                                        Dégâts ${levels[levels.length-1].damage}, 
-                                        Portée ${levels[levels.length-1].range}, 
-                                        Coût ${levels[levels.length-1].cost}
+                                        <span class="font-medium">Rang max:</span>
+                                        Dégâts ${ranks[ranks.length-1].damage}, 
+                                        Portée ${ranks[ranks.length-1].range}, 
+                                        Coût ${ranks[ranks.length-1].cost}
                                     </div>
-                                ` : '<div class="text-sm text-gray-500 italic">Aucun niveau configuré</div>'}
+                                ` : '<div class="text-sm text-gray-500 italic">Aucun rang configuré</div>'}
                             </div>
                             <div class="flex flex-col gap-2 ml-4">
-                                <button onclick="manageLevels('${tower.id}')" 
+                                <button onclick="manageRanks('${tower.id}')" 
                                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
-                                    ⚙️ Niveaux
+                                    ⚙️ Rangx
                                 </button>
                                 <button onclick="showExportModal('${tower.id}')" 
                                         class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors flex items-center gap-2 whitespace-nowrap">
@@ -463,8 +463,8 @@
             }
         });
 
-        // Gérer les niveaux d'une tour
-        async function manageLevels(towerId) {
+        // Gérer les rangx d'une tour
+        async function manageRanks(towerId) {
             currentTowerId = towerId;
             
             // Charger les détails de la tour
@@ -472,39 +472,39 @@
                 const response = await fetch(`${API_URL}/towers/${towerId}`);
                 const tower = await response.json();
                 
-                document.getElementById('modalTitle').textContent = `Niveaux de: ${tower.id}`;
-                displayLevels(tower.upgrades || []);
-                document.getElementById('levelsModal').classList.remove('hidden');
+                document.getElementById('modalTitle').textContent = `Rangs de: ${tower.id}`;
+                displayRanks(tower.upgrades || []);
+                document.getElementById('ranksModal').classList.remove('hidden');
             } catch (error) {
                 showNotification('❌ Erreur de chargement', 'error');
             }
         }
 
-        // Afficher les niveaux dans le modal
-        function displayLevels(levels) {
-            const tbody = document.getElementById('levelsTableBody');
+        // Afficher les rangs dans le modal
+        function displayRanks(ranks) {
+            const tbody = document.getElementById('ranksTableBody');
             
-            if (levels.length === 0) {
+            if (ranks.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="8" class="text-center py-4 text-gray-500">
-                            Aucun niveau configuré
+                            Aucun rang configuré
                         </td>
                     </tr>`;
                 return;
             }
 
-            tbody.innerHTML = levels.map(level => `
+            tbody.innerHTML = ranks.map(rank => `
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="p-2 font-bold">${level.level}</td>
-                    <td class="p-2 text-center">${level.cost}</td>
-                    <td class="p-2 text-center">${level.damage}</td>
-                    <td class="p-2 text-center">${level.range}</td>
-                    <td class="p-2 text-center">${level.reloadTime}s</td>
-                    <td class="p-2 text-center">${level.sellReward}</td>
-                    <td class="p-2 text-center">${level.buildTimeTicks}</td>
+                    <td class="p-2 font-bold">${rank.rank}</td>
+                    <td class="p-2 text-center">${rank.cost}</td>
+                    <td class="p-2 text-center">${rank.damage}</td>
+                    <td class="p-2 text-center">${rank.range}</td>
+                    <td class="p-2 text-center">${rank.reloadTime}s</td>
+                    <td class="p-2 text-center">${rank.sellReward}</td>
+                    <td class="p-2 text-center">${rank.buildTimeTicks}</td>
                     <td class="p-2 text-center">
-                        <button onclick="deleteTowerLevel(${level.level})" 
+                        <button onclick="deleteTowerRank(${rank.rank})" 
                                 class="text-red-500 hover:text-red-700 text-sm">
                             🗑️
                         </button>
@@ -513,12 +513,12 @@
             `).join('');
         }
 
-        // Ajouter un niveau de tour
-        document.getElementById('addLevelForm').addEventListener('submit', async (e) => {
+        // Ajouter un rang de tour
+        document.getElementById('addRankForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const levelData = {
-                level: parseInt(document.getElementById('level').value),
+            const rankData = {
+                rank: parseInt(document.getElementById('rank').value),
                 cost: parseInt(document.getElementById('cost').value),
                 range: parseFloat(document.getElementById('range').value),
                 damage: parseInt(document.getElementById('damage').value),
@@ -528,20 +528,20 @@
             };
 
             try {
-                const response = await fetch(`${API_URL}/towers/${currentTowerId}/levels`, {
+                const response = await fetch(`${API_URL}/towers/${currentTowerId}/ranks`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(levelData)
+                    body: JSON.stringify(rankData)
                 });
 
                 if (response.ok) {
                     e.target.reset();
-                    showNotification('✅ Niveau ajouté !', 'success');
+                    showNotification('✅ Rang ajouté !', 'success');
                     
                     // Recharger les détails
                     const towerResponse = await fetch(`${API_URL}/towers/${currentTowerId}`);
                     const tower = await towerResponse.json();
-                    displayLevels(tower.upgrades || []);
+                    displayRanks(tower.upgrades || []);
                     await loadTowers();
                 } else {
                     showNotification('❌ Erreur d\'ajout', 'error');
@@ -552,22 +552,22 @@
             }
         });
 
-        // Supprimer un niveau de tour
-        async function deleteTowerLevel(level) {
-            if (!confirm(`Supprimer le niveau ${level} ?`)) return;
+        // Supprimer un rang de tour
+        async function deleteTowerRank(rank) {
+            if (!confirm(`Supprimer le rang ${rank} ?`)) return;
 
             try {
-                const response = await fetch(`${API_URL}/towers/${currentTowerId}/levels/${level}`, {
+                const response = await fetch(`${API_URL}/towers/${currentTowerId}/ranks/${rank}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
-                    showNotification('✅ Niveau supprimé', 'success');
+                    showNotification('✅ Rang supprimé', 'success');
                     
                     // Recharger les détails
                     const towerResponse = await fetch(`${API_URL}/towers/${currentTowerId}`);
                     const tower = await towerResponse.json();
-                    displayLevels(tower.upgrades || []);
+                    displayRanks(tower.upgrades || []);
                     await loadTowers();
                 } else {
                     showNotification('❌ Erreur de suppression', 'error');
@@ -578,8 +578,8 @@
             }
         }
 
-        function closeLevelsModal() {
-            document.getElementById('levelsModal').classList.add('hidden');
+        function closeRanksModal() {
+            document.getElementById('ranksModal').classList.add('hidden');
             currentTowerId = null;
         }
 

@@ -22,7 +22,7 @@ public class DataLoader {
     }
     
     public List<LevelData> loadLevels() throws IOException {
-        Path levelsDir = dataDirectory.resolve("levels");
+        Path levelsDir = dataDirectory.resolve("ranks");
         return loadJsonFiles(levelsDir, LevelData.class);
     }
     

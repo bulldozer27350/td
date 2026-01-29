@@ -2,18 +2,18 @@ package com.towerdefense.editor.api.tower;
 
 import java.util.List;
 
-import com.towerdefense.editor.api.model.draft.EditableTowerLevel;
+import com.towerdefense.editor.api.model.draft.EditableTowerRank;
 import com.towerdefense.editor.api.model.draft.EditableTowerType;
 
 public interface TowerTypeEditorApi {
 	EditableTowerType getCurrentTowerType();
 	
-	boolean addTowerLevel(int level, int damage, double reloadTime, int cost, double range, int sellReward, int buildTimeTicks);
+	boolean addTowerRank(int rank, int damage, double reloadTime, int cost, double range, int sellReward, int buildTimeTicks);
 	
-	boolean removeTowerLevel(int level);
+	boolean removeTowerRank(int rank);
 	
-	EditableTowerLevel getTowerLevel(int level);
+	EditableTowerRank getTowerRank(int rank);
 	
-	List<EditableTowerLevel> getAllTowerLevels();
+	List<EditableTowerRank> getAllTowerRanks();
 	
 }

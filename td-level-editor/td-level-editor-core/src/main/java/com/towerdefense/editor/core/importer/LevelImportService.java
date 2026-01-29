@@ -46,7 +46,7 @@ public class LevelImportService {
 
 	private void importTowerCapacities(LevelConfig config, EditableLevel level) {
         for (TowerCapacityConfig towerCapacityConfig : config.getTowerCapacities()) {
-            TowerCapacity towerCapacity = new TowerCapacity(towerCapacityConfig.getTowerTypeId(), towerCapacityConfig.getMaxLevel());
+            TowerCapacity towerCapacity = new TowerCapacity(towerCapacityConfig.getTowerTypeId(), towerCapacityConfig.getMaxRank());
             level.getTowerCapacities().add(towerCapacity);
         }
     }

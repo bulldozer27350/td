@@ -27,7 +27,7 @@ public class LevelExportService {
 	public LevelConfig export(EditableLevel level) {
 		ValidationResult validation = validator.validate(level);
 		if (!validation.isValid()) {
-			throw new IllegalStateException("Invalid level: " + validation.getErrors());
+			throw new IllegalStateException("Invalid rank: " + validation.getErrors());
 		}
 		LevelConfig levelConfig = new LevelConfig();
 		List<AttackConfig> attacks = level.getAttacks().stream().map(this::mapAttack).toList();

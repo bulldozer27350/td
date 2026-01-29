@@ -14,7 +14,7 @@ import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.MapDimensions;
 import com.towerdefense.engine.api.model.configuration.PathConfig;
 import com.towerdefense.engine.api.model.configuration.PointConfig;
-import com.towerdefense.engine.api.model.configuration.TowerLevelConfig;
+import com.towerdefense.engine.api.model.configuration.TowerRankConfig;
 import com.towerdefense.engine.api.model.configuration.TowerTypeConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
 import com.towerdefense.engine.api.model.configuration.WaveConfig;
@@ -146,7 +146,7 @@ public class GameConfigMapper {
         TowerTypeConfig tower = new TowerTypeConfig();
         tower.setId(dto.getId());
         tower.setName(dto.getName());
-        tower.setLevels(
+        tower.setRanks(
                 dto.getLevels().stream()
                         .map(this::toBusiness)
                         .collect(Collectors.toList())
@@ -154,9 +154,9 @@ public class GameConfigMapper {
         return tower;
     }
 
-    private TowerLevelConfig toBusiness(com.towerdefense.http.model.TowerLevelConfig dto) {
-        return new TowerLevelConfig(
-                dto.getLevel(),
+    private TowerRankConfig toBusiness(com.towerdefense.http.model.TowerRankConfig dto) {
+        return new TowerRankConfig(
+                dto.getRank(),
                 dto.getUpgradeCost(),
                 dto.getSellValue(),
                 dto.getRange(),

@@ -10,7 +10,7 @@ public class TowerTypeConfig {
 
     private String id;
     private String name;
-    private List<TowerLevelConfig> levels = new ArrayList<TowerLevelConfig>();
+    private List<TowerRankConfig> ranks = new ArrayList<TowerRankConfig>();
 
     /** Get the unique identifier of the tower type. */
     public String getId() { return id; }
@@ -27,11 +27,11 @@ public class TowerTypeConfig {
 		this.name = name;
 	}
 
-	/** Get the list of tower level configurations. */
-    public List<TowerLevelConfig> getLevels() { return levels; }
+	/** Get the list of tower rank configurations. */
+    public List<TowerRankConfig> getRanks() { return ranks; }
 
-	public void setLevels(List<TowerLevelConfig> levels) {
-		this.levels = levels;
+	public void setRanks(List<TowerRankConfig> ranks) {
+		this.ranks = ranks;
 	}
     
     
