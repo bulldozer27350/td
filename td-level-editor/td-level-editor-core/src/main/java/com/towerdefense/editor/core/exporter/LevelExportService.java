@@ -33,7 +33,7 @@ public class LevelExportService {
 		List<AttackConfig> attacks = level.getAttacks().stream().map(this::mapAttack).toList();
 		
 		List<TowerCapacityConfig> towerCapacities = level.getTowerCapacities().stream()
-			    .map(tc -> new TowerCapacityConfig(tc.getTowerTypeId(), tc.getMaxLevel()))
+			    .map(tc -> new TowerCapacityConfig(tc.getTowerTypeId(), tc.getMaxRank()))
 			    .collect(Collectors.toList());
 		
 		List<PathConfig> paths = level.getPaths().stream().map(this::mapPath).toList();

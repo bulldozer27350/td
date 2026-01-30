@@ -210,7 +210,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                maxLevel:
+                maxRank:
                   summary: Max rank reached
                   value:
                     errorCode: "TOWER_MAX_LEVEL"
@@ -399,12 +399,12 @@ components:
       type: object
       required:
         - towerTypeId
-        - maxLevel
+        - maxRank
       properties:
         towerTypeId:
           type: string
           example: "machinegun"
-        maxLevel:
+        maxRank:
           type: integer
           minimum: 1
           example: 3
@@ -496,11 +496,11 @@ components:
           type: string
         name:
           type: string
-        levels:
+        ranks:
           type: array
           items:
             $ref: '#/components/schemas/TowerRankConfig'
-      required: [id, name, levels]
+      required: [id, name, ranks]
 
     TowerRankConfig:
       type: object

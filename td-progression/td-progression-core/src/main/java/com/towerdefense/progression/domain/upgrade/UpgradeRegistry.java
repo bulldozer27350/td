@@ -33,7 +33,7 @@ public class UpgradeRegistry {
 				ModifierType modifierType = ModifierType.valueOf(def.effect().type());
 				UpgradeEffect effect = new UpgradeEffect(def.effect().stat(), def.effect().modifier(), modifierType);
 
-				TowerUpgrade upgrade = new TowerUpgrade(def.id(), def.name(), def.towerTypeId(), def.towerRank(),
+				TowerUpgrade upgrade = new TowerUpgrade(def.id(), def.name(), def.towerTypeId(), def.towerName(), def.towerRank(),
 						def.cost(), effect);
 
 				upgrades.put(upgrade.getId(), upgrade);

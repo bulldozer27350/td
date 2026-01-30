@@ -15,7 +15,7 @@
             <div>
                 <h1 class="text-2xl font-bold">🏗️ TD Studio</h1>
                 <p class="text-sm text-blue-200"></p>
-                <a href="levels.html" class="hover:underline">🗺️ Rangx</a>
+                <a href="levels.html" class="hover:underline">🗺️ Niveaux</a>
                 <a href="enemies.html" class="hover:underline">👾 Ennemis</a>
                 <a href="towers.html" class="font-bold underline">🗼 Tours</a>
             </div>
@@ -69,10 +69,10 @@
         </div>
     </div>
 
-    <!-- Modal de gestion des rangx de tour -->
+    <!-- Modal de gestion des rangs de tour -->
     <div id="ranksModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-2xl font-bold mb-4" id="modalTitle">Gérer les rangx</h3>
+            <h3 class="text-2xl font-bold mb-4" id="modalTitle">Gérer les rangs</h3>
             
             <!-- Formulaire d'ajout de rang -->
             <div class="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -99,9 +99,9 @@
                 </form>
             </div>
 
-            <!-- Liste des rangx existants -->
+            <!-- Liste des rangs existants -->
             <div class="mb-4">
-                <h4 class="font-semibold mb-3">📋 Rangx configurés</h4>
+                <h4 class="font-semibold mb-3">📋 Rangs configurés</h4>
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse text-sm">
                         <thead>
@@ -361,7 +361,7 @@
             }
 
             container.innerHTML = filtered.map(tower => {
-                const ranks = tower.upgrades || [];
+                const ranks = tower.ranks || [];
                 const avgDamage = ranks.length > 0 
                     ? Math.round(ranks.reduce((sum, l) => sum + l.damage, 0) / ranks.length) 
                     : 0;
@@ -378,7 +378,7 @@
                                 
                                 <div class="grid grid-cols-3 gap-3 text-sm mb-3">
                                     <div class="bg-green-50 p-2 rounded">
-                                        <span class="text-gray-600">Rangx:</span>
+                                        <span class="text-gray-600">Rangs:</span>
                                         <span class="font-semibold ml-1">${ranks.length}</span>
                                     </div>
                                     <div class="bg-red-50 p-2 rounded">
@@ -403,7 +403,7 @@
                             <div class="flex flex-col gap-2 ml-4">
                                 <button onclick="manageRanks('${tower.id}')" 
                                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center gap-2 whitespace-nowrap">
-                                    ⚙️ Rangx
+                                    ⚙️ Rangs
                                 </button>
                                 <button onclick="showExportModal('${tower.id}')" 
                                         class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors flex items-center gap-2 whitespace-nowrap">
@@ -463,7 +463,7 @@
             }
         });
 
-        // Gérer les rangx d'une tour
+        // Gérer les rangs d'une tour
         async function manageRanks(towerId) {
             currentTowerId = towerId;
             
@@ -473,7 +473,7 @@
                 const tower = await response.json();
                 
                 document.getElementById('modalTitle').textContent = `Rangs de: ${tower.id}`;
-                displayRanks(tower.upgrades || []);
+                displayRanks(tower.ranks || []);
                 document.getElementById('ranksModal').classList.remove('hidden');
             } catch (error) {
                 showNotification('❌ Erreur de chargement', 'error');
@@ -541,7 +541,7 @@
                     // Recharger les détails
                     const towerResponse = await fetch(`${API_URL}/towers/${currentTowerId}`);
                     const tower = await towerResponse.json();
-                    displayRanks(tower.upgrades || []);
+                    displayRanks(tower.ranks || []);
                     await loadTowers();
                 } else {
                     showNotification('❌ Erreur d\'ajout', 'error');
@@ -567,7 +567,7 @@
                     // Recharger les détails
                     const towerResponse = await fetch(`${API_URL}/towers/${currentTowerId}`);
                     const tower = await towerResponse.json();
-                    displayRanks(tower.upgrades || []);
+                    displayRanks(tower.ranks || []);
                     await loadTowers();
                 } else {
                     showNotification('❌ Erreur de suppression', 'error');

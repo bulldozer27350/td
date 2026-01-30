@@ -29,7 +29,7 @@ public interface LevelEditorApi {
 	boolean removeAttack(String attackId);
 	
 	
-	boolean addTowerCapacity(String towerTypeId, int maxLevel);
+	boolean addTowerCapacity(String towerTypeId, int maxRank);
 	
 	boolean removeTowerCapacity(String towerTypeId);
 	

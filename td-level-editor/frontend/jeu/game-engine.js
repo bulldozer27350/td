@@ -65,9 +65,11 @@ class GameEngine {
 
         gameEvents.on('enemy-killed', (data) => {
             console.log(`💀 ${Date.now()} enemy-killed - ID: ${data.enemyId}`);
-            this.markEnemyAsDead(data.enemyId);
-            // Render pour faire disparaître l'ennemi
-            this.renderer.render(this.gameState);
+            // Retarder la suppression visuelle pour laisser le temps aux traits de s'afficher
+            setTimeout(() => {
+                this.markEnemyAsDead(data.enemyId);
+                this.renderer.render(this.gameState);
+            }, 100);
         });
 
         gameEvents.on('game-won', () => this.onGameOver());

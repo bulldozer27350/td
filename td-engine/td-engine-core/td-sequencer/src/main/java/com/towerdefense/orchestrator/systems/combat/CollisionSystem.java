@@ -54,14 +54,6 @@ public class CollisionSystem implements GameSystem {
                                 target.health().current(), new PositionDTO(tower.position().x(), tower.position().y()),
                                 new PositionDTO(target.position().x(), target.position().y()), tick)));
 
-                if (target.health().isDead()) {
-                    System.out.println("[Tick " + tick + "]Sending event : Enemy " + target.id().value()
-                            + " killed. Bounty: " + target.bounty());
-                    observers.forEach(observer -> observer
-                            .onEnemyKilled(new EnemyKilledEvent(target.id().value(), target.bounty(), tick)));
-                    state.removeEnemy(target.id());
-                }
-
                 // Marque le projectile pour suppression
                 projectilesToRemove.add(projectile.id());
             }

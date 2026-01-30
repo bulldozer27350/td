@@ -120,7 +120,7 @@ class GameManager {
             if (!acc[upgrade.towerTypeId]) {
                 acc[upgrade.towerTypeId] = [];
             }
-            acc[upgrade.towerTypeId].push(upgrade);
+            acc[upgrade.towerName].push(upgrade);
             return acc;
         }, {});
         
@@ -138,7 +138,7 @@ class GameManager {
                                     ${isUnlocked ? '✅' : '⭐'} ${upgrade.name}
                                 </div>
                                 <div class="upgrade-desc">
-                                    Niveau ${upgrade.towerLevel} - ${upgrade.effect.stat}: ${upgrade.effect.modifier > 0 ? '+' : ''}${upgrade.effect.modifier} (${upgrade.effect.type})
+                                    Rang ${upgrade.towerRank} - ${upgrade.effect.stat}: ${upgrade.effect.modifier > 0 ? '+' : ''}${upgrade.effect.modifier} 
                                 </div>
                             </div>
                             ${!isUnlocked ? `

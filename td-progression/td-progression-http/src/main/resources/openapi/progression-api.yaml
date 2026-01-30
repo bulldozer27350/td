@@ -382,6 +382,8 @@ components:
           type: string
         towerTypeId:
           type: string
+        towerName:
+          type: string
         towerRank:
           type: integer
         cost:
@@ -395,6 +397,7 @@ components:
         - id
         - name
         - towerTypeId
+        - towerName
         - towerRank
         - cost
         - effect
@@ -404,6 +407,8 @@ components:
         name:
           type: string
         towerTypeId:
+          type: string
+        towerName:
           type: string
         towerRank:
           type: integer

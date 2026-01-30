@@ -44,7 +44,6 @@ public class GameConfigMapper {
         for (com.towerdefense.http.model.@Valid PathConfig pathConfig : dto.getPaths()) {
             paths.add(this.toBusiness(pathConfig));
         }
-//        dto.getPaths().stream().map(p->paths.add(this.toBusiness(p)));
         config.setPaths(paths);
         config.setAttacks(
                 dto.getAttacks().stream()
@@ -65,7 +64,7 @@ public class GameConfigMapper {
             com.towerdefense.http.model.TowerCapacityConfig dto) {
         return new com.towerdefense.engine.api.model.configuration.TowerCapacityConfig(
             dto.getTowerTypeId(),
-            dto.getMaxLevel()
+            dto.getMaxRank()
         );
     }
 
@@ -147,7 +146,7 @@ public class GameConfigMapper {
         tower.setId(dto.getId());
         tower.setName(dto.getName());
         tower.setRanks(
-                dto.getLevels().stream()
+                dto.getRanks().stream()
                         .map(this::toBusiness)
                         .collect(Collectors.toList())
         );

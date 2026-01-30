@@ -68,6 +68,8 @@ class GameRenderer {
     // ========================================================================
     
     render(gameState) {
+        console.log(`🎨 Render called - Enemies alive: ${gameState.enemies.filter(e => e.isAlive).length}`);
+    
         // Effacer le canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -147,7 +149,6 @@ class GameRenderer {
     
     drawTowers(towers) {
         towers.forEach(tower => {
-            console.log('dessine moi une tour ');
             const gridX = Math.floor(tower.position.x);
             const gridY = Math.floor(tower.position.y);
             
@@ -232,7 +233,7 @@ class GameRenderer {
         // Dessiner les traits actifs et supprimer les expirés
         this.shotLines = this.shotLines.filter(shot => {
             const age = now - shot.timestamp;
-            if (!shot.enemy || shot.enemy.currentHp <= 0 || shot.enemy.isAlive === false) {
+            if (!shot.enemy) {
                 return false;
             }
             if (age > shot.duration) {

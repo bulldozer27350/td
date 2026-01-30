@@ -53,7 +53,7 @@ public class LevelEditorApiImpl implements LevelEditorApi {
     }
 
     @Override
-    public boolean addTowerCapacity(String towerTypeId, int maxLevel) {
+    public boolean addTowerCapacity(String towerTypeId, int maxRank) {
         // Vérifier que le type de tour n'existe pas déjà
         boolean exists = currentLevel.getTowerCapacities().stream()
             .anyMatch(tc -> tc.getTowerTypeId().equalsIgnoreCase(towerTypeId));
@@ -62,7 +62,7 @@ public class LevelEditorApiImpl implements LevelEditorApi {
             return false;
         }
         
-        return currentLevel.getTowerCapacities().add(new TowerCapacity(towerTypeId, maxLevel));
+        return currentLevel.getTowerCapacities().add(new TowerCapacity(towerTypeId, maxRank));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class LevelEditorApiImpl implements LevelEditorApi {
             return false;
         }
         
-        capacity.setMaxLevel(newMaxLevel);
+        capacity.setMaxRank(newMaxLevel);
         return true;
     }
 

@@ -64,6 +64,7 @@ public class UpgradePersistenceService {
             upgrade.getId(),
             upgrade.getName(),
             upgrade.getTowerTypeId(),
+            upgrade.getTowerName(),
             upgrade.getTowerRank(),
             upgrade.getCost(),
             effect
@@ -85,6 +86,7 @@ public class UpgradePersistenceService {
             def.id(),
             def.name(),
             def.towerTypeId(),
+            def.towerName(),
             def.towerRank(),
             def.cost(),
             effect

@@ -1,5 +1,3 @@
-// td-rank-editor-http/src/main/java/com/towerdefense/leveleditor/http/bootstrap/DataLoader.java
-
 package com.towerdefense.leveleditor.http.bootstrap;
 
 import java.io.File;

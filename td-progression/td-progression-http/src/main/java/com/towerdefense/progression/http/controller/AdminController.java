@@ -56,6 +56,7 @@ public class AdminController implements AdminApi {
                     request.getId(),
                     request.getName(),
                     request.getTowerTypeId(),
+                    request.getTowerName(),
                     request.getTowerRank(),
                     request.getCost(),
                     effect
@@ -162,6 +163,7 @@ public class AdminController implements AdminApi {
         upgrade.setCost(def.cost());
         upgrade.setName(def.name());
         upgrade.setTowerRank(def.towerRank());
+        upgrade.setTowerName(def.towerName());
         upgrade.setTowerTypeId(def.towerTypeId());
         
         return upgrade;

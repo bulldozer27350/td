@@ -1,0 +1,15 @@
+{
+  "upgrades" : [ {
+    "id" : "tour_1_level1_degat+10",
+    "name" : "Augmenter les dégats",
+    "towerTypeId" : "tour_1",
+	"towerName" : "Mitrailleuse",
+    "towerRank" : 1,
+    "cost" : 3,
+    "effect" : {
+      "stat" : "damage",
+      "modifier" : 10.0,
+      "type" : "ADD"
+    }
+  } ]
+}

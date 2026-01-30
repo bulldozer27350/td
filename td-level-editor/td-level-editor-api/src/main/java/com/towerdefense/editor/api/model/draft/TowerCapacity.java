@@ -3,27 +3,27 @@ package com.towerdefense.editor.api.model.draft;
 public class TowerCapacity {
     
     private String towerTypeId;
-    private int maxLevel;
+    private int maxRank;
     
     // For Jackson serialization
     public TowerCapacity() {}
     
-    public TowerCapacity(String towerTypeId, int maxLevel) {
+    public TowerCapacity(String towerTypeId, int maxRank) {
         if (towerTypeId == null || towerTypeId.isBlank()) {
             throw new IllegalArgumentException("towerTypeId must not be null or blank");
         }
-        if (maxLevel < 1) {
-            throw new IllegalArgumentException("maxLevel must be >= 1");
+        if (maxRank < 1) {
+            throw new IllegalArgumentException("maxRank must be >= 1");
         }
         this.towerTypeId = towerTypeId;
-        this.maxLevel = maxLevel;
+        this.maxRank = maxRank;
     }
     
     public String getTowerTypeId() { return towerTypeId; }
     public void setTowerTypeId(String towerTypeId) { this.towerTypeId = towerTypeId; }
     
-    public int getMaxLevel() { return maxLevel; }
-    public void setMaxLevel(int maxLevel) { this.maxLevel = maxLevel; }
+    public int getMaxRank() { return maxRank; }
+    public void setMaxRank(int maxRank) { this.maxRank = maxRank; }
     
     @Override
     public boolean equals(Object o) {

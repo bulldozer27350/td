@@ -1,0 +1,13 @@
+{
+  "id" : "tour_1",
+  "name" : "Mitrailleuse",
+  "ranks" : [ {
+    "rank" : 1,
+    "upgradeCost" : 100,
+    "sellValue" : 75,
+    "range" : 10.0,
+    "damage" : 20,
+    "reloadSeconds" : 0.8,
+    "buildTimeTicks" : 3
+  } ]
+}

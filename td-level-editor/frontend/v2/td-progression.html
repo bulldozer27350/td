@@ -76,7 +76,7 @@
                 <select id="towerLevelSelect"
                         class="border rounded-lg px-4 py-2"
                         required>
-                    <option value="">-- Niveau de tour --</option>
+                    <option value="">-- Rang de tour --</option>
                 </select>
 
                 <select id="statSelect"
@@ -306,7 +306,7 @@ function renderUpgrade(upgrade) {
                 ⭐ ${upgrade.name}
             </div>
             <div class="text-xs text-gray-600 mt-1">
-                ${upgrade.towerTypeId} – Niveau ${upgrade.towerLevel}
+                ${upgrade.towerName} – Rang ${upgrade.towerRank}
             </div>
             <div class="mt-2 text-sm">
                 ${upgrade.effect.stat} ${symbol}${upgrade.effect.modifier}

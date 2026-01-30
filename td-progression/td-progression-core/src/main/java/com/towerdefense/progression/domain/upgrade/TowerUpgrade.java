@@ -5,11 +5,12 @@ public class TowerUpgrade {
  private final String id;
  private final String name;
  private final String towerTypeId;  // ex: "archer"
+ private final String towerName;    // ex: "Archer Tower"
  private final int towerRank;      // ex: 2 (pour archer niveau 2)
  private final int cost;            // coût en points d'upgrade
  private final UpgradeEffect effect;
  
- public TowerUpgrade(String id, String name, String towerTypeId, int towerRank, 
+ public TowerUpgrade(String id, String name, String towerTypeId, String towerName, int towerRank, 
                      int cost, UpgradeEffect effect) {
      this.id = id;
      this.name = name;
@@ -17,6 +18,7 @@ public class TowerUpgrade {
      this.towerRank = towerRank;
      this.cost = cost;
      this.effect = effect;
+     this.towerName = towerName;
  }
  
  // Vérifie si cet upgrade s'applique à ce niveau de tour
@@ -31,4 +33,5 @@ public class TowerUpgrade {
  public int getTowerRank() { return towerRank; }
  public int getCost() { return cost; }
  public UpgradeEffect getEffect() { return effect; }
+ public String getTowerName() { return towerName; }
 }

@@ -416,10 +416,13 @@
                     
                     if (cell === 'I') { color = '#4ade80'; text = 'I'; textColor = '#000'; }
                     else if (cell === 'O') { color = '#f87171'; text = 'O'; textColor = '#000'; }
-                    else if (cell === 'P') { color = '#fbbf24'; text = '→'; textColor = '#000'; }
+                    else if (cell === '→') { color = '#fbbf24'; text = '→'; textColor = '#000'; }
+                    else if (cell === '↑') { color = '#fbbf24'; text = '↑'; textColor = '#000'; }
+                    else if (cell === '↓') { color = '#fbbf24'; text = '↓'; textColor = '#000'; }
+                    else if (cell === '←') { color = '#fbbf24'; text = '←'; textColor = '#000'; }
                     else if (cell === 'S') { color = '#10b981'; text = '●'; textColor = '#fff'; } // Point de départ en cours
                     else if (cell === 'C') { color = '#fbbf24'; text = '●'; textColor = '#fff'; } // Chemin en cours
-                    
+
                     grid += `<div 
                         data-x="${x}" 
                         data-y="${y}"
@@ -442,17 +445,25 @@
         function drawPathSegment(cells, from, to) {
             if (from.x === to.x) {
                 // Vertical
+                let char = '↑';
+                if (from.y < to.y) {
+                    char = '↓';
+                }
                 const start = Math.min(from.y, to.y);
                 const end = Math.max(from.y, to.y);
                 for (let y = start; y <= end; y++) {
-                    cells[y][from.x] = 'P';
+                    cells[y][from.x] = char;
                 }
             } else if (from.y === to.y) {
                 // Horizontal
+                let char = '←';
+                if (from.x < to.x) {
+                    char = '→';
+                }
                 const start = Math.min(from.x, to.x);
                 const end = Math.max(from.x, to.x);
                 for (let x = start; x <= end; x++) {
-                    cells[from.y][x] = 'P';
+                    cells[from.y][x] = char;
                 }
             }
         }
@@ -507,25 +518,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        }
-
-        // Afficher les tours
-        function displayTowers() {
-            const container = document.getElementById('towersList');
-            if (!currentLevel.towerCapacityIds || currentLevel.towerCapacityIds.length === 0) {
-                container.innerHTML = '<div class="text-gray-500 text-sm">Aucune tour</div>';
-                return;
-            }
-
-            container.innerHTML = currentLevel.towerCapacityIds.map(id => `
-                <div class="p-2 bg-green-50 rounded border border-green-200 flex justify-between items-center group hover:bg-green-100 transition-colors">
-                    <span class="text-sm font-medium">${id}</span>
-                    <button onclick="removeTower('${id}')" 
-                            class="text-red-500 hover:text-red-700 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                        🗑️
-                    </button>
                 </div>
             `).join('');
         }
@@ -753,7 +745,7 @@ Exemple: 0,5;10,5;10,10"></textarea>
                         <select id="towerTypeId" class="w-full border rounded px-3 py-2">
                             ${towers.map(t => `
                                 <option value="${t.id}">
-                                    ${t.id} (${t.upgrades.length} rangs disponibles)
+                                    ${t.id} (${t.ranks.length} rangs disponibles)
                                 </option>
                             `).join('')}
                         </select>

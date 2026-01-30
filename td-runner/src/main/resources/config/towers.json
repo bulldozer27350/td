@@ -3,10 +3,10 @@
 	{
 		"id": "machinegun",
 		"name": "machinegun",
-		"levels": 
+		"ranks": 
 		[
 			{
-				"level": 0,
+				"rank": 0,
 				"upgradeCost": 100,
 				"sellValue": 75,
 				"range": 3.5,
@@ -15,7 +15,7 @@
 				"buildTimeTicks": 2
 			},
 			{
-				"level": 1,
+				"rank": 1,
 				"upgradeCost": 100,
 				"sellValue": 150,
 				"range": 5.5,
@@ -24,7 +24,7 @@
 				"buildTimeTicks": 3
 			},
 			{
-				"level": 2,
+				"rank": 2,
 				"upgradeCost": 100,
 				"sellValue": 225,
 				"range": 7.5,
@@ -37,9 +37,9 @@
 	{
 		"id": "shotgun",
 		"name": "shotgun",
-		"levels": [
+		"ranks": [
 			{
-				"level": 0,
+				"rank": 0,
 				"upgradeCost": 200,
 				"sellValue": 150,
 				"range": 2,
@@ -48,7 +48,7 @@
 				"buildTimeTicks": 2
 			},
 			{
-				"level": 1,
+				"rank": 1,
 				"upgradeCost": 200,
 				"sellValue": 300,
 				"range": 3.0,
@@ -57,7 +57,7 @@
 				"buildTimeTicks": 2
 			},
 			{
-				"level": 2,
+				"rank": 2,
 				"upgradeCost": 200,
 				"sellValue": 450,
 				"range": 4,

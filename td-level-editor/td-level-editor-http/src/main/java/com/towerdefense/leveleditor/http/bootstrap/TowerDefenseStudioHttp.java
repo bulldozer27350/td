@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
 		"com.towerdefense.leveleditor", 
+		"com.towerdefense.leveleditor.http.bootstrap", 
 		"com.towerdefense.editor.core.configuration"})
 public class TowerDefenseStudioHttp {
 	public static void main(String[] args) {

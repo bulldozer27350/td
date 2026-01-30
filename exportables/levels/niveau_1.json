@@ -1,0 +1,101 @@
+{
+  "id" : "niveau_1",
+  "attacks" : [ {
+    "waves" : [ {
+      "id" : "premier_niveau_attack1_wave1",
+      "startTick" : 5,
+      "spawnInterval" : 10,
+      "count" : 20,
+      "enemyType" : "monstre_1",
+      "pathId" : "premier_niveau_chemin1"
+    }, {
+      "id" : "premier_niveau_attack1_wave2",
+      "startTick" : 20,
+      "spawnInterval" : 15,
+      "count" : 10,
+      "enemyType" : "monstre_1",
+      "pathId" : "premier_niveau_chemin1"
+    } ],
+    "id" : "premier_niveau_attack1"
+  } ],
+  "startingLives" : 10,
+  "startingMoney" : 300,
+  "map" : {
+    "width" : 12,
+    "height" : 12
+  },
+  "paths" : [ {
+    "id" : "premier_niveau_chemin1",
+    "points" : [ {
+      "x" : 0,
+      "y" : 8
+    }, {
+      "x" : 4,
+      "y" : 8
+    }, {
+      "x" : 4,
+      "y" : 2
+    }, {
+      "x" : 5,
+      "y" : 2
+    }, {
+      "x" : 6,
+      "y" : 2
+    }, {
+      "x" : 7,
+      "y" : 2
+    }, {
+      "x" : 7,
+      "y" : 3
+    }, {
+      "x" : 7,
+      "y" : 4
+    }, {
+      "x" : 7,
+      "y" : 5
+    }, {
+      "x" : 7,
+      "y" : 6
+    }, {
+      "x" : 7,
+      "y" : 7
+    }, {
+      "x" : 7,
+      "y" : 8
+    }, {
+      "x" : 7,
+      "y" : 9
+    }, {
+      "x" : 7,
+      "y" : 10
+    }, {
+      "x" : 7,
+      "y" : 11
+    }, {
+      "x" : 6,
+      "y" : 11
+    }, {
+      "x" : 5,
+      "y" : 11
+    }, {
+      "x" : 4,
+      "y" : 11
+    }, {
+      "x" : 3,
+      "y" : 11
+    }, {
+      "x" : 2,
+      "y" : 11
+    }, {
+      "x" : 1,
+      "y" : 11
+    }, {
+      "x" : 0,
+      "y" : 11
+    } ]
+  } ],
+  "towerCapacities" : [ {
+    "towerTypeId" : "tour_1",
+    "maxRank" : 1
+  } ]
+}
