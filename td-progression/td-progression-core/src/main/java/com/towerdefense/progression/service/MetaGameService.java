@@ -17,6 +17,7 @@ import com.towerdefense.progression.integration.GameConfigBuilder;
 import com.towerdefense.progression.loader.DataLoader;
 import com.towerdefense.progression.model.EnemyTypeData;
 import com.towerdefense.progression.model.LevelData;
+import com.towerdefense.progression.model.TowerCapacity;
 import com.towerdefense.progression.model.TowerTypeData;
 import com.towerdefense.progression.modifier.TowerDataModifier;
 
@@ -88,6 +89,7 @@ public class MetaGameService {
         // Appliquer les upgrades sur les tours
         List<TowerTypeData> modifiedTowers = towers.values().stream()
             .map(tower -> towerModifier.applyUpgrades(tower, playerProgress.getUnlockedUpgrades()))
+            .filter(t->level.towerCapacities().stream().map(TowerCapacity::towerTypeId).toList().contains(t.id()))
             .toList();
         
         List<EnemyTypeData> enemyList = new ArrayList<>(enemies.values());
