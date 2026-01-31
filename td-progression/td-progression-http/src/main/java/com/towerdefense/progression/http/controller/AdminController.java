@@ -3,12 +3,14 @@ package com.towerdefense.progression.http.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.http.api.AdminApi;
+import com.towerdefense.progression.http.config.ReloadableBeansManager;
 import com.towerdefense.progression.http.model.CreateUpgradeRequest;
 import com.towerdefense.progression.http.model.ReloadUpgrades200Response;
 import com.towerdefense.progression.http.model.UpdateUpgradeRequest;
@@ -16,23 +18,19 @@ import com.towerdefense.progression.http.model.UpgradeDefinition;
 import com.towerdefense.progression.http.model.UpgradeEffect;
 import com.towerdefense.progression.http.model.UpgradeEffect.TypeEnum;
 import com.towerdefense.progression.model.EffectDefinition;
-import com.towerdefense.progression.service.UpgradeAdminService;
 
 import jakarta.validation.Valid;
 
 @RestController
 public class AdminController implements AdminApi {
 
-    private final UpgradeAdminService upgradeAdminService;
-    
-    public AdminController(UpgradeAdminService upgradeAdminService) {
-        this.upgradeAdminService = upgradeAdminService;
-    }
+    @Autowired
+    private ReloadableBeansManager beansManager;
     
     @Override
     public ResponseEntity<List<com.towerdefense.progression.http.model.UpgradeDefinition>> listAllUpgrades() {
         List<com.towerdefense.progression.model.UpgradeDefinition> definitions = 
-            upgradeAdminService.getAllUpgradeDefinitions();
+                beansManager.getUpgradeAdminService().getAllUpgradeDefinitions();
         
         List<UpgradeDefinition> dtos = definitions.stream()
             .map(this::toHttpEntity)
@@ -64,7 +62,7 @@ public class AdminController implements AdminApi {
             
             // Créer l'upgrade
             com.towerdefense.progression.model.UpgradeDefinition created = 
-                upgradeAdminService.createUpgrade(newUpgrade);
+                    this.beansManager.getUpgradeAdminService().createUpgrade(newUpgrade);
             
             return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -96,7 +94,7 @@ public class AdminController implements AdminApi {
             }
             
             // Mettre à jour
-            var updated = upgradeAdminService.updateUpgrade(
+            var updated = this.beansManager.getUpgradeAdminService().updateUpgrade(
                 upgradeId,
                 request.getName(),
                 request.getCost(),
@@ -118,7 +116,7 @@ public class AdminController implements AdminApi {
     @Override
     public ResponseEntity<Void> deleteUpgrade(@PathVariable("upgradeId") String upgradeId) {
         try {
-            boolean deleted = upgradeAdminService.deleteUpgrade(upgradeId);
+            boolean deleted = this.beansManager.getUpgradeAdminService().deleteUpgrade(upgradeId);
             
             if (!deleted) {
                 return ResponseEntity.notFound().build();
@@ -135,7 +133,7 @@ public class AdminController implements AdminApi {
     @Override
     public ResponseEntity<ReloadUpgrades200Response> reloadUpgrades() {
         try {
-            int count = upgradeAdminService.reloadUpgrades();
+            int count = this.beansManager.getUpgradeAdminService().reloadUpgrades();
             
             ReloadUpgrades200Response response = new ReloadUpgrades200Response();
             response.setCount(count);

@@ -3,30 +3,28 @@ package com.towerdefense.progression.http.controller;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.domain.upgrade.TowerUpgrade;
-import com.towerdefense.progression.http.model.UpgradeEffect;
 import com.towerdefense.progression.http.api.UpgradesApi;
+import com.towerdefense.progression.http.config.ReloadableBeansManager;
 import com.towerdefense.progression.http.model.PurchaseUpgradeResponse;
+import com.towerdefense.progression.http.model.UpgradeEffect;
 import com.towerdefense.progression.http.model.UpgradeInfo;
-import com.towerdefense.progression.service.MetaGameService;
 
 @RestController
 public class UpgradesController implements UpgradesApi {
 
-	private final MetaGameService metaGameService;
-
-	public UpgradesController(MetaGameService metaGameService) {
-		this.metaGameService = metaGameService;
-	}
-
+    @Autowired
+    private ReloadableBeansManager beansManager;
+    
 	@Override
 	public ResponseEntity<List<UpgradeInfo>> getAllUpgrades() {
-		List<TowerUpgrade> upgrades = metaGameService.getAllUpgrades();
-		Set<String> unlockedIds = metaGameService.getPlayerProgress().getUnlockedUpgrades();
+		List<TowerUpgrade> upgrades = this.beansManager.getMetaGameService().getAllUpgrades();
+		Set<String> unlockedIds = this.beansManager.getMetaGameService().getPlayerProgress().getUnlockedUpgrades();
 
 		List<UpgradeInfo> dtos = upgrades.stream()
 				.map(up -> toUpgradeInfo(up, unlockedIds.contains(up.getId())))
@@ -60,9 +58,9 @@ public class UpgradesController implements UpgradesApi {
 
     @Override
 	public ResponseEntity<List<UpgradeInfo>> getUpgradesForTower(@PathVariable("towerTypeId") String towerTypeId) {
-		var unlockedIds = metaGameService.getPlayerProgress().getUnlockedUpgrades();
+		var unlockedIds = this.beansManager.getMetaGameService().getPlayerProgress().getUnlockedUpgrades();
 		
-		var dtos = metaGameService.getAllUpgrades().stream().filter(u -> u.getTowerTypeId().equals(towerTypeId))
+		var dtos = this.beansManager.getMetaGameService().getAllUpgrades().stream().filter(u -> u.getTowerTypeId().equals(towerTypeId))
 				.map(u->toUpgradeInfo(u, unlockedIds.contains(u.getId())))
 				.toList();
 
@@ -72,8 +70,8 @@ public class UpgradesController implements UpgradesApi {
 
 	@Override
 	public ResponseEntity<PurchaseUpgradeResponse> purchaseUpgrade(@PathVariable("upgradeId") String upgradeId) {
-		boolean success = metaGameService.purchaseUpgrade(upgradeId);
-        int remaining = metaGameService.getPlayerProgress().getUpgradePoints();
+		boolean success = this.beansManager.getMetaGameService().purchaseUpgrade(upgradeId);
+        int remaining = this.beansManager.getMetaGameService().getPlayerProgress().getUpgradePoints();
         
         if (!success) {
             PurchaseUpgradeResponse purchaseUpgradeResponse = new PurchaseUpgradeResponse();

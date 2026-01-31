@@ -3,6 +3,7 @@ package com.towerdefense.progression.http.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.towerdefense.progression.domain.game.GameConfig;
 import com.towerdefense.progression.http.api.PlayerApi;
+import com.towerdefense.progression.http.config.ReloadableBeansManager;
 import com.towerdefense.progression.http.model.AttackConfiguration;
 import com.towerdefense.progression.http.model.AvailableLevel;
 import com.towerdefense.progression.http.model.EnemiesConfiguration;
@@ -36,22 +38,18 @@ import com.towerdefense.progression.model.TowerCapacity;
 import com.towerdefense.progression.model.TowerRank;
 import com.towerdefense.progression.model.TowerTypeData;
 import com.towerdefense.progression.model.Wave;
-import com.towerdefense.progression.service.MetaGameService;
 
 import jakarta.validation.Valid;
 
 @RestController
 public class PlayerController implements PlayerApi {
 
-    private final MetaGameService metaGameService;
-
-    public PlayerController(MetaGameService metaGameService) {
-        this.metaGameService = metaGameService;
-    }
+    @Autowired
+    private ReloadableBeansManager beansManager;
 
     @Override
     public ResponseEntity<PlayerProgressResponse> getPlayerProgress() {
-        var progress = metaGameService.getPlayerProgress();
+        var progress = this.beansManager.getMetaGameService().getPlayerProgress();
         PlayerProgressResponse response = new PlayerProgressResponse();
 
         response.setCompletedLevels(progress.getCompletedLevelIds().size());
@@ -63,7 +61,7 @@ public class PlayerController implements PlayerApi {
 
     @Override
     public ResponseEntity<List<AvailableLevel>> getAvailableLevels() {
-        List<com.towerdefense.progression.service.AvailableLevel> levels = metaGameService.getAvailableLevels();
+        List<com.towerdefense.progression.service.AvailableLevel> levels = this.beansManager.getMetaGameService().getAvailableLevels();
         List<AvailableLevel> dtos = levels.stream().map(l -> {
             AvailableLevel level = new AvailableLevel();
             level.setId(l.id());
@@ -79,7 +77,7 @@ public class PlayerController implements PlayerApi {
     @Override
     public ResponseEntity<GameConfiguration> prepareLevel(@PathVariable("levelId") String levelId) {
         try {
-            GameConfig config = metaGameService.prepareLevel(levelId);
+            GameConfig config = this.beansManager.getMetaGameService().prepareLevel(levelId);
             GameConfiguration gameConfig = new GameConfiguration();
             gameConfig.setLevelConfig(toHttp(config.level()));
             gameConfig.setTowersConfig(toTowersHttp(config.towers()));
@@ -143,9 +141,9 @@ public class PlayerController implements PlayerApi {
     public ResponseEntity<LevelCompletionResponse> completeLevel(@PathVariable("levelId") String levelId,
             @RequestBody LevelCompletionRequest request) {
 
-        int previousPoints = metaGameService.getPlayerProgress().getUpgradePoints();
-        metaGameService.onLevelComplete(levelId, request.getStars());
-        int newPoints = metaGameService.getPlayerProgress().getUpgradePoints();
+        int previousPoints = this.beansManager.getMetaGameService().getPlayerProgress().getUpgradePoints();
+        this.beansManager.getMetaGameService().onLevelComplete(levelId, request.getStars());
+        int newPoints = this.beansManager.getMetaGameService().getPlayerProgress().getUpgradePoints();
         int earned = newPoints - previousPoints;
 
         LevelCompletionResponse response = new LevelCompletionResponse();
