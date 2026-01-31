@@ -123,14 +123,37 @@ class GameRenderer {
         this.paths.forEach(path => {
             this.ctx.fillStyle = this.colors.path;
             
-            path.points.forEach(point => {
+            for (let i = 0; i < path.points.length - 1; i++) {
+                const start = path.points[i];
+                const end = path.points[i + 1];
+
+                const dx = Math.sign(end.x - start.x);
+                const dy = Math.sign(end.y - start.y);
+
+                let x = start.x;
+                let y = start.y;
+
+                // Inclure le point de départ
                 this.ctx.fillRect(
-                    point.x * this.cellSize,
-                    point.y * this.cellSize,
+                    x * this.cellSize,
+                    y * this.cellSize,
                     this.cellSize,
                     this.cellSize
                 );
-            });
+
+                // Avancer jusqu'au point suivant
+                while (x !== end.x || y !== end.y) {
+                    x += dx;
+                    y += dy;
+
+                    this.ctx.fillRect(
+                        x * this.cellSize,
+                        y * this.cellSize,
+                        this.cellSize,
+                        this.cellSize
+                    );
+                }
+            }
             
             // Marquer entrée et sortie
             if (path.points.length > 0) {
