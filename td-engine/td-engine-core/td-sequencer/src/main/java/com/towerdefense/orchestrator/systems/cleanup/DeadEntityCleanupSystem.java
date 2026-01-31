@@ -1,5 +1,6 @@
 package com.towerdefense.orchestrator.systems.cleanup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -24,19 +25,23 @@ public class DeadEntityCleanupSystem implements GameSystem {
     
     @Override
     public void process(GameState state, int tick, List<GameStateObserver> observers) {
+        List<Enemy> toRemoveList = new ArrayList<Enemy>();
+        
         // Supprime les ennemis morts ou arrivés
         for (Enemy target : state.enemies()) {
+            if (target.health().isDead() || target.isAtEnd()) {
+                System.out.println("[Tick " + tick + "]Removing enemy " + target.id().value()
+                        + (target.health().isDead() ? " (killed)" : " (reached end)"));
+                toRemoveList.add(target);
+            }
             if (target.health().isDead()) {
                 System.out.println("[Tick " + tick + "]Sending event : Enemy " + target.id().value()
                         + " killed. Bounty: " + target.bounty());
                 observers.forEach(observer -> observer
                         .onEnemyKilled(new EnemyKilledEvent(target.id().value(), target.bounty(), tick)));
-                state.removeEnemy(target.id());
-            }
-            else if (target.isAtEnd()) {
-                state.removeEnemy(target.id());
             }
         }
+        toRemoveList.forEach(e->state.enemies().remove(e));
     }
     
     @Override
