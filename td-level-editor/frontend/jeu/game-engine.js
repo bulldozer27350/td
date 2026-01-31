@@ -293,6 +293,10 @@ class GameEngine {
         
         const gridPos = this.renderer.screenToGrid(event.clientX, event.clientY);
         
+        this.isPaused = true;
+        const btn = document.getElementById('pause-btn');
+        btn.textContent = this.isPaused ? '▶️ Reprendre' : '⏸️ Pause';
+
         // Vérifier si on clique sur une tour existante
         const clickedTower = this.gameState.towers.find(tower => 
             Math.floor(tower.position.x) === gridPos.x && 
@@ -353,6 +357,9 @@ class GameEngine {
     
     closeBuildModal() {
         document.getElementById('build-tower-modal').classList.remove('active');
+        this.isPaused = false;
+        const btn = document.getElementById('pause-btn');
+        btn.textContent = this.isPaused ? '▶️ Reprendre' : '⏸️ Pause';
     }
     
     async buildTower(towerType, x, y) {
