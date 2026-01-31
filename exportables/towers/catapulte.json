@@ -1,0 +1,33 @@
+{
+  "id": "catapulte",
+  "name": "Catapulte",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 250,
+      "sellValue": 185,
+      "range": 3.0,
+      "damage": 80,
+      "reloadSeconds": 3.0,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 500,
+      "sellValue": 560,
+      "range": 3.5,
+      "damage": 140,
+      "reloadSeconds": 2.7,
+      "buildTimeTicks": 5
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 750,
+      "sellValue": 1120,
+      "range": 4.0,
+      "damage": 220,
+      "reloadSeconds": 2.5,
+      "buildTimeTicks": 6
+    }
+  ]
+}

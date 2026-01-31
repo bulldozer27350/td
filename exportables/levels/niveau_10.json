@@ -1,0 +1,77 @@
+{
+  "id": "niveau_10",
+  "attacks": [
+    {
+      "id": "niveau_10_attack1",
+      "waves": [
+        {
+          "id": "niveau_10_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 8,
+          "count": 20,
+          "enemyType": "goblin",
+          "pathId": "niveau_10_chemin1"
+        },
+        {
+          "id": "niveau_10_attack1_wave2",
+          "startTick": 220,
+          "spawnInterval": 8,
+          "count": 15,
+          "enemyType": "bandit",
+          "pathId": "niveau_10_chemin1"
+        },
+        {
+          "id": "niveau_10_attack1_wave3",
+          "startTick": 390,
+          "spawnInterval": 8,
+          "count": 10,
+          "enemyType": "soldat",
+          "pathId": "niveau_10_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 12,
+  "startingMoney": 350,
+  "map": {
+    "width": 15,
+    "height": 15
+  },
+  "paths": [
+    {
+      "id": "niveau_10_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 7
+        },
+        {
+          "x": 7,
+          "y": 7
+        },
+        {
+          "x": 7,
+          "y": 14
+        },
+        {
+          "x": 14,
+          "y": 14
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "canon",
+      "maxRank": 2
+    }
+  ]
+}

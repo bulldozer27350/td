@@ -1,0 +1,33 @@
+{
+  "id": "lance_flammes",
+  "name": "Lance-Flammes",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 180,
+      "sellValue": 135,
+      "range": 2.0,
+      "damage": 30,
+      "reloadSeconds": 1.0,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 360,
+      "sellValue": 405,
+      "range": 2.5,
+      "damage": 50,
+      "reloadSeconds": 0.9,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 540,
+      "sellValue": 810,
+      "range": 3.0,
+      "damage": 80,
+      "reloadSeconds": 0.8,
+      "buildTimeTicks": 5
+    }
+  ]
+}

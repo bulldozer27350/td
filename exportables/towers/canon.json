@@ -1,0 +1,33 @@
+{
+  "id": "canon",
+  "name": "Canon",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 150,
+      "sellValue": 110,
+      "range": 2.5,
+      "damage": 25,
+      "reloadSeconds": 2.0,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 300,
+      "sellValue": 335,
+      "range": 3.0,
+      "damage": 40,
+      "reloadSeconds": 1.8,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 450,
+      "sellValue": 670,
+      "range": 3.5,
+      "damage": 65,
+      "reloadSeconds": 1.5,
+      "buildTimeTicks": 5
+    }
+  ]
+}

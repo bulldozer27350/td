@@ -1,0 +1,65 @@
+{
+  "id": "niveau_04",
+  "attacks": [
+    {
+      "id": "niveau_4_attack1",
+      "waves": [
+        {
+          "id": "niveau_4_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 8,
+          "count": 15,
+          "enemyType": "goblin",
+          "pathId": "niveau_4_chemin1"
+        },
+        {
+          "id": "niveau_4_attack1_wave2",
+          "startTick": 180,
+          "spawnInterval": 8,
+          "count": 10,
+          "enemyType": "bandit",
+          "pathId": "niveau_4_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 15,
+  "startingMoney": 300,
+  "map": {
+    "width": 12,
+    "height": 12
+  },
+  "paths": [
+    {
+      "id": "niveau_4_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 6
+        },
+        {
+          "x": 6,
+          "y": 6
+        },
+        {
+          "x": 6,
+          "y": 11
+        },
+        {
+          "x": 11,
+          "y": 11
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 1
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 1
+    }
+  ]
+}

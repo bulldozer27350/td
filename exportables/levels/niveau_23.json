@@ -1,0 +1,125 @@
+{
+  "id": "niveau_23",
+  "attacks": [
+    {
+      "id": "niveau_23_attack1",
+      "waves": [
+        {
+          "id": "niveau_23_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 5,
+          "count": 42,
+          "enemyType": "orc",
+          "pathId": "niveau_23_chemin1"
+        },
+        {
+          "id": "niveau_23_attack1_wave2",
+          "startTick": 270,
+          "spawnInterval": 5,
+          "count": 36,
+          "enemyType": "chevalier",
+          "pathId": "niveau_23_chemin1"
+        },
+        {
+          "id": "niveau_23_attack1_wave3",
+          "startTick": 500,
+          "spawnInterval": 5,
+          "count": 30,
+          "enemyType": "golem",
+          "pathId": "niveau_23_chemin1"
+        },
+        {
+          "id": "niveau_23_attack1_wave4",
+          "startTick": 700,
+          "spawnInterval": 5,
+          "count": 24,
+          "enemyType": "cavalier",
+          "pathId": "niveau_23_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 8,
+  "startingMoney": 800,
+  "map": {
+    "width": 26,
+    "height": 26
+  },
+  "paths": [
+    {
+      "id": "niveau_23_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 6,
+          "y": 2
+        },
+        {
+          "x": 6,
+          "y": 23
+        },
+        {
+          "x": 12,
+          "y": 23
+        },
+        {
+          "x": 12,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 23
+        },
+        {
+          "x": 25,
+          "y": 23
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "canon",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "sniper",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "catapulte",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mage_glace",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "poison",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "baliste",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "lance_flammes",
+      "maxRank": 3
+    }
+  ]
+}

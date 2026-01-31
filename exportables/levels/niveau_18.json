@@ -1,0 +1,109 @@
+{
+  "id": "niveau_18",
+  "attacks": [
+    {
+      "id": "niveau_18_attack1",
+      "waves": [
+        {
+          "id": "niveau_18_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 6,
+          "count": 30,
+          "enemyType": "soldat",
+          "pathId": "niveau_18_chemin1"
+        },
+        {
+          "id": "niveau_18_attack1_wave2",
+          "startTick": 240,
+          "spawnInterval": 6,
+          "count": 25,
+          "enemyType": "orc",
+          "pathId": "niveau_18_chemin1"
+        },
+        {
+          "id": "niveau_18_attack1_wave3",
+          "startTick": 440,
+          "spawnInterval": 6,
+          "count": 20,
+          "enemyType": "chevalier",
+          "pathId": "niveau_18_chemin1"
+        },
+        {
+          "id": "niveau_18_attack1_wave4",
+          "startTick": 610,
+          "spawnInterval": 6,
+          "count": 15,
+          "enemyType": "cavalier",
+          "pathId": "niveau_18_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 10,
+  "startingMoney": 600,
+  "map": {
+    "width": 22,
+    "height": 22
+  },
+  "paths": [
+    {
+      "id": "niveau_18_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 7,
+          "y": 2
+        },
+        {
+          "x": 7,
+          "y": 11
+        },
+        {
+          "x": 14,
+          "y": 11
+        },
+        {
+          "x": 14,
+          "y": 20
+        },
+        {
+          "x": 21,
+          "y": 20
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "canon",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "sniper",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mage_glace",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "poison",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "baliste",
+      "maxRank": 3
+    }
+  ]
+}

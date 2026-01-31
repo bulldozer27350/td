@@ -1,0 +1,93 @@
+{
+  "id": "niveau_14",
+  "attacks": [
+    {
+      "id": "niveau_14_attack1",
+      "waves": [
+        {
+          "id": "niveau_14_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 6,
+          "count": 25,
+          "enemyType": "bandit",
+          "pathId": "niveau_14_chemin1"
+        },
+        {
+          "id": "niveau_14_attack1_wave2",
+          "startTick": 210,
+          "spawnInterval": 6,
+          "count": 20,
+          "enemyType": "soldat",
+          "pathId": "niveau_14_chemin1"
+        },
+        {
+          "id": "niveau_14_attack1_wave3",
+          "startTick": 380,
+          "spawnInterval": 6,
+          "count": 15,
+          "enemyType": "orc",
+          "pathId": "niveau_14_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 10,
+  "startingMoney": 450,
+  "map": {
+    "width": 18,
+    "height": 18
+  },
+  "paths": [
+    {
+      "id": "niveau_14_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 6,
+          "y": 2
+        },
+        {
+          "x": 6,
+          "y": 9
+        },
+        {
+          "x": 12,
+          "y": 9
+        },
+        {
+          "x": 12,
+          "y": 16
+        },
+        {
+          "x": 17,
+          "y": 16
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "canon",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "sniper",
+      "maxRank": 2
+    },
+    {
+      "towerTypeId": "mage_glace",
+      "maxRank": 2
+    }
+  ]
+}

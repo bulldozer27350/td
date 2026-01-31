@@ -1,0 +1,33 @@
+{
+  "id": "tesla",
+  "name": "Tesla",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 220,
+      "sellValue": 165,
+      "range": 3.5,
+      "damage": 35,
+      "reloadSeconds": 1.8,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 440,
+      "sellValue": 495,
+      "range": 4.0,
+      "damage": 60,
+      "reloadSeconds": 1.6,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 660,
+      "sellValue": 990,
+      "range": 4.5,
+      "damage": 95,
+      "reloadSeconds": 1.4,
+      "buildTimeTicks": 5
+    }
+  ]
+}

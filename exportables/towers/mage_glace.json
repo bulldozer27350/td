@@ -1,0 +1,33 @@
+{
+  "id": "mage_glace",
+  "name": "Mage de Glace",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 140,
+      "sellValue": 105,
+      "range": 3.0,
+      "damage": 12,
+      "reloadSeconds": 1.5,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 280,
+      "sellValue": 315,
+      "range": 3.5,
+      "damage": 20,
+      "reloadSeconds": 1.3,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 420,
+      "sellValue": 630,
+      "range": 4.0,
+      "damage": 32,
+      "reloadSeconds": 1.0,
+      "buildTimeTicks": 5
+    }
+  ]
+}

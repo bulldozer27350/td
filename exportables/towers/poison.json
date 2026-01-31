@@ -1,0 +1,33 @@
+{
+  "id": "poison",
+  "name": "Tour de Poison",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 160,
+      "sellValue": 120,
+      "range": 3.5,
+      "damage": 20,
+      "reloadSeconds": 2.0,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 320,
+      "sellValue": 360,
+      "range": 4.0,
+      "damage": 35,
+      "reloadSeconds": 1.8,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 480,
+      "sellValue": 720,
+      "range": 4.5,
+      "damage": 55,
+      "reloadSeconds": 1.5,
+      "buildTimeTicks": 5
+    }
+  ]
+}

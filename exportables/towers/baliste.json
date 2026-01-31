@@ -1,0 +1,33 @@
+{
+  "id": "baliste",
+  "name": "Baliste",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 200,
+      "sellValue": 150,
+      "range": 4.0,
+      "damage": 60,
+      "reloadSeconds": 2.2,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 400,
+      "sellValue": 450,
+      "range": 4.5,
+      "damage": 100,
+      "reloadSeconds": 2.0,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 600,
+      "sellValue": 900,
+      "range": 5.0,
+      "damage": 160,
+      "reloadSeconds": 1.8,
+      "buildTimeTicks": 5
+    }
+  ]
+}

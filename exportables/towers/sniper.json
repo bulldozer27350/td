@@ -1,0 +1,33 @@
+{
+  "id": "sniper",
+  "name": "Sniper",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 180,
+      "sellValue": 135,
+      "range": 5.0,
+      "damage": 50,
+      "reloadSeconds": 2.5,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 360,
+      "sellValue": 405,
+      "range": 6.0,
+      "damage": 85,
+      "reloadSeconds": 2.2,
+      "buildTimeTicks": 4
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 540,
+      "sellValue": 810,
+      "range": 7.0,
+      "damage": 130,
+      "reloadSeconds": 2.0,
+      "buildTimeTicks": 5
+    }
+  ]
+}

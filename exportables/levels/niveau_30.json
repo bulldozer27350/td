@@ -1,0 +1,137 @@
+{
+  "id": "niveau_30",
+  "attacks": [
+    {
+      "id": "niveau_30_attack1",
+      "waves": [
+        {
+          "id": "niveau_30_attack1_wave1",
+          "startTick": 10,
+          "spawnInterval": 5,
+          "count": 48,
+          "enemyType": "golem",
+          "pathId": "niveau_30_chemin1"
+        },
+        {
+          "id": "niveau_30_attack1_wave2",
+          "startTick": 300,
+          "spawnInterval": 5,
+          "count": 42,
+          "enemyType": "troll",
+          "pathId": "niveau_30_chemin1"
+        },
+        {
+          "id": "niveau_30_attack1_wave3",
+          "startTick": 560,
+          "spawnInterval": 5,
+          "count": 36,
+          "enemyType": "geant",
+          "pathId": "niveau_30_chemin1"
+        },
+        {
+          "id": "niveau_30_attack1_wave4",
+          "startTick": 790,
+          "spawnInterval": 5,
+          "count": 30,
+          "enemyType": "fantome",
+          "pathId": "niveau_30_chemin1"
+        },
+        {
+          "id": "niveau_30_attack1_wave5",
+          "startTick": 990,
+          "spawnInterval": 5,
+          "count": 24,
+          "enemyType": "elementaire",
+          "pathId": "niveau_30_chemin1"
+        }
+      ]
+    }
+  ],
+  "startingLives": 8,
+  "startingMoney": 1400,
+  "map": {
+    "width": 30,
+    "height": 30
+  },
+  "paths": [
+    {
+      "id": "niveau_30_chemin1",
+      "points": [
+        {
+          "x": 0,
+          "y": 2
+        },
+        {
+          "x": 7,
+          "y": 2
+        },
+        {
+          "x": 7,
+          "y": 27
+        },
+        {
+          "x": 14,
+          "y": 27
+        },
+        {
+          "x": 14,
+          "y": 2
+        },
+        {
+          "x": 21,
+          "y": 2
+        },
+        {
+          "x": 21,
+          "y": 27
+        },
+        {
+          "x": 29,
+          "y": 27
+        }
+      ]
+    }
+  ],
+  "towerCapacities": [
+    {
+      "towerTypeId": "archer",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mitrailleuse",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "canon",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "sniper",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "catapulte",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "mage_glace",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "poison",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "baliste",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "lance_flammes",
+      "maxRank": 3
+    },
+    {
+      "towerTypeId": "tesla",
+      "maxRank": 3
+    }
+  ]
+}

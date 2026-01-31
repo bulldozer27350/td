@@ -1,0 +1,33 @@
+{
+  "id": "mitrailleuse",
+  "name": "Mitrailleuse",
+  "ranks": [
+    {
+      "rank": 1,
+      "upgradeCost": 120,
+      "sellValue": 90,
+      "range": 2.5,
+      "damage": 8,
+      "reloadSeconds": 0.3,
+      "buildTimeTicks": 2
+    },
+    {
+      "rank": 2,
+      "upgradeCost": 240,
+      "sellValue": 270,
+      "range": 3.0,
+      "damage": 14,
+      "reloadSeconds": 0.25,
+      "buildTimeTicks": 3
+    },
+    {
+      "rank": 3,
+      "upgradeCost": 360,
+      "sellValue": 540,
+      "range": 3.5,
+      "damage": 22,
+      "reloadSeconds": 0.2,
+      "buildTimeTicks": 4
+    }
+  ]
+}
