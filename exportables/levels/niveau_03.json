@@ -24,7 +24,7 @@
     }
   ],
   "startingLives": 15,
-  "startingMoney": 300,
+  "startingMoney": 400,
   "map": {
     "width": 12,
     "height": 12

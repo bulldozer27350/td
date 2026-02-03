@@ -11,7 +11,12 @@
           "count": 15,
           "enemyType": "goblin",
           "pathId": "niveau_2_chemin1"
-        },
+        }
+      ]
+    },
+    {
+      "id": "niveau_2_attack1",
+      "waves": [
         {
           "id": "niveau_2_attack1_wave2",
           "startTick": 180,
@@ -24,7 +29,7 @@
     }
   ],
   "startingLives": 15,
-  "startingMoney": 450,
+  "startingMoney": 300,
   "map": {
     "width": 12,
     "height": 12
