@@ -3,7 +3,7 @@ package com.towerdefense.domain;
 /**
  * Represents a position in a 2D space with x and y coordinates.
  */
-public record Position(double x, double y) {
+public record Position(double x, double y) implements GameObject {
 
 	/**
 	 * Calculates the Euclidean distance between this position and another position.
@@ -16,4 +16,9 @@ public record Position(double x, double y) {
 		double dy = other.y - y;
 		return Math.sqrt(dx * dx + dy * dy);
 	}
+
+    @Override
+    public Position position() {
+        return this;
+    }
 }

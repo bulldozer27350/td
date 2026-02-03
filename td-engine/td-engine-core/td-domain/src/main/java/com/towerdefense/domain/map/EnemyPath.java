@@ -1,5 +1,6 @@
 package com.towerdefense.domain.map;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.towerdefense.domain.Position;
@@ -24,7 +25,7 @@ public class EnemyPath {
 		if (waypoints == null || waypoints.isEmpty()) {
 			throw new IllegalArgumentException("Path must contain at least one waypoint");
 		}
-		this.waypoints = List.copyOf(waypoints);
+		this.waypoints = new ArrayList<Position>(waypoints);
 	}
 
 	/**
@@ -69,5 +70,34 @@ public class EnemyPath {
 	
 	public List<Position> getWay() {
 		return waypoints;
+	}
+	
+	public void setWaypoints(List<Position> newWaypoints) {
+        this.waypoints.clear();
+        this.waypoints.addAll(newWaypoints);
+        this.cachedTotalLength = null; // Invalidate cached length
+    }
+	
+	/**
+	 * Calcule la longueur totale du chemin.
+	 * La longueur est mise en cache lors du premier appel.
+	 * 
+	 * @return longueur totale en unités
+	 */
+	private Double cachedTotalLength = null;
+	
+	public double totalLength() {
+	    if (cachedTotalLength == null) {
+	        double total = 0.0;
+	        for (int i = 0; i < waypoints.size() - 1; i++) {
+	            Position p1 = waypoints.get(i);
+	            Position p2 = waypoints.get(i + 1);
+	            double dx = p2.x() - p1.x();
+	            double dy = p2.y() - p1.y();
+	            total += Math.sqrt(dx * dx + dy * dy);
+	        }
+	        cachedTotalLength = total;
+	    }
+	    return cachedTotalLength;
 	}
 }

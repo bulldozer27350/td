@@ -7,6 +7,7 @@ import java.util.Map;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.dynamik.level.LevelProgress;
 import com.towerdefense.domain.dynamik.tower.Tower;
+import com.towerdefense.domain.map.EnemyPath;
 import com.towerdefense.domain.player.PlayerState;
 import com.towerdefense.domain.projectile.Projectile;
 
@@ -26,6 +27,7 @@ public class GameState {
     private PlayerState player;
     
     private Map<String, Integer> towerMaxRanks = new HashMap<>();
+    private Map<String, EnemyPath> enemyPaths = new HashMap<>();
 
     public void setTowerMaxRanks(Map<String, Integer> maxRanks) {
         this.towerMaxRanks = maxRanks;
@@ -158,6 +160,15 @@ public class GameState {
                 return e;
             }
         }
+        
+        for (EnemyPath path : enemyPaths.values()) {
+            for (int i = 0; i < path.size(); i++) {
+                Position waypoint = path.waypoint(i);
+                if (pos.equals(waypoint)) {
+                    return pos;
+                }
+            }
+        }
 
         // Projectiles (position arrondie)
         for (Projectile p : projectilesMap.values()) {
@@ -189,5 +200,9 @@ public class GameState {
         builder.append("\n");
         builder.append("}");
         return builder.toString();
+    }
+
+    public void setEnemyPaths(Map<String, EnemyPath> enemyPaths) {
+        this.enemyPaths = enemyPaths;
     }
 }

@@ -11,6 +11,7 @@ import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.Position;
 import com.towerdefense.domain.dynamik.tower.Tower;
 import com.towerdefense.domain.intentions.BuildTowerIntention;
+import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.domain.statik.level.LevelScenarioDefinition;
 import com.towerdefense.domain.statik.tower.TowerType;
 import com.towerdefense.engine.api.GameStateObserver;
@@ -38,6 +39,11 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
 	@Override
 	public void handle(PlaceTowerCommand cmd, GameState state, List<GameStateObserver> observers, int tick) {
 	    TowerType towerType;
+	    if (!positionFree(state, cmd.x(), cmd.y())) {
+            throw new IllegalArgumentException(
+                "Cannot place tower at position (" + cmd.x() + ", " + cmd.y() + "): position is not free"
+            );
+        }
 	    try {
 	        towerType = this.context.towerTypeRegistry().get(cmd.towerType());
 	    } catch (UnknownTowerTypeException e) {
@@ -63,7 +69,13 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
 	    }
 	}
 
-	private static TowerDTO toDTO(Tower tower) {
+	private boolean positionFree(GameState state, int x, int y) {
+	    // Vérifie si la position est libre (pas de tour ou d'ennemi)
+	    // Il est permis de construire sur une place occupée par un projectile
+	    return state.objectAt(new Position(x, y)) == null || state.objectAt(new Position(x, y)) instanceof Projectile;
+    }
+
+    private static TowerDTO toDTO(Tower tower) {
         // Détermine l'état de la tour
         String state;
         if (tower.isUnderBuilding()) {

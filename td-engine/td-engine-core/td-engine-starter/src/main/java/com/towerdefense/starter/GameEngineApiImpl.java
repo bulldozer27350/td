@@ -93,6 +93,7 @@ public class GameEngineApiImpl implements GameEngineApi {
         this.configureGameMap();
         this.state.setLevelProgress(new LevelProgress(gameConfig.levelConfig().getId(), 0));
         this.state.setState(StateEnum.IN_PROGRESS);
+        this.state.setEnemyPaths(this.context.enemyPaths());
         this.tickNumber = 0;
     }
 
@@ -131,7 +132,7 @@ public class GameEngineApiImpl implements GameEngineApi {
 
         Map<String, Integer> towerMaxLevels = levelScenario.getTowerCapacities().stream().collect(
                 Collectors.toMap(TowerCapacityDefinition::getTowerTypeId, TowerCapacityDefinition::getMaxRank));
-        this.state.setTowerMaxLevels(towerMaxLevels);
+        this.state.setTowerMaxRanks(towerMaxLevels);
 
         this.sequencer.setLevel(levelScenario);
     }
@@ -155,6 +156,32 @@ public class GameEngineApiImpl implements GameEngineApi {
     private void addPathsConfiguration(List<PathConfig> pathsConfig) {
         if (pathsConfig != null && !pathsConfig.isEmpty()) {
             List<EnemyPath> path = pathsConfig.stream().map(EnemyPathMapper::toDomain).toList();
+            
+            // Complete path from distant consecutive points
+            path.forEach(p -> {
+                List<Position> waypoints = p.getWay();
+                List<Position> completeWaypoints = new ArrayList<>();
+                for (int i = 0; i < waypoints.size() - 1; i++) {
+                    Position start = waypoints.get(i);
+                    Position end = waypoints.get(i + 1);
+                    completeWaypoints.add(start);
+                    int dx = Integer.signum((int)end.x() - (int)start.x());
+                    int dy = Integer.signum((int)end.y() - (int)start.y());
+                    int x = (int)start.x();
+                    int y = (int)start.y();
+                    while (x != end.x() || y != end.y()) {
+                        if (x != end.x()) {
+                            x += dx;
+                        }
+                        if (y != end.y()) {
+                            y += dy;
+                        }
+                        completeWaypoints.add(new Position(x, y));
+                    }
+                }
+                p.setWaypoints(completeWaypoints);
+            });
+            
             Map<String, EnemyPath> pathMap = new HashMap<>();
             path.forEach(p -> pathMap.put(p.getIdentifier(), p));
             this.context.setEnemyPaths(pathMap);
