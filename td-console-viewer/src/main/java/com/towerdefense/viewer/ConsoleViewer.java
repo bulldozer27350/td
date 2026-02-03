@@ -35,7 +35,7 @@ public class ConsoleViewer implements GameStateObserver {
 	}
 
 	@Override
-	public void onGameLoose() {
+	public void onGameLoose(GameStateDTO state) {
 		System.out.println("Partie écouhée");
 	}
 
