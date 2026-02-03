@@ -25,7 +25,7 @@ public class TowerUpgradeServiceImpl implements TowerUpgradeService {
 	    if (!tower.canUpgrade())
 	        return false;
 
-	    int maxLevelAllowed = state.getTowerMaxLevel(tower.type().name());
+	    int maxLevelAllowed = state.getTowerMaxRank(tower.type().name());
 	    if (tower.rank() >= maxLevelAllowed) {
 	        return false;
 	    }

@@ -25,14 +25,14 @@ public class GameState {
     private StateEnum state;
     private PlayerState player;
     
-    private Map<String, Integer> towerMaxLevels = new HashMap<>();
+    private Map<String, Integer> towerMaxRanks = new HashMap<>();
 
-    public void setTowerMaxLevels(Map<String, Integer> maxLevels) {
-        this.towerMaxLevels = maxLevels;
+    public void setTowerMaxRanks(Map<String, Integer> maxRanks) {
+        this.towerMaxRanks = maxRanks;
     }
 
-    public int getTowerMaxLevel(String towerTypeId) {
-        return towerMaxLevels.getOrDefault(towerTypeId, 999); // Par défaut : tous les niveaux
+    public int getTowerMaxRank(String towerTypeId) {
+        return towerMaxRanks.getOrDefault(towerTypeId, 999); // Par défaut : tous les rangs
     }
 
     public Collection<Tower> towers() {

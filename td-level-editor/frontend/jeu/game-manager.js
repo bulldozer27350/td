@@ -120,7 +120,7 @@ class GameManager {
             if (!acc[upgrade.towerTypeId]) {
                 acc[upgrade.towerTypeId] = [];
             }
-            acc[upgrade.towerName].push(upgrade);
+            acc[upgrade.towerTypeId].push(upgrade);
             return acc;
         }, {});
         
