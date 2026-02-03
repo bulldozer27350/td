@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,14 +78,20 @@ public class GameEventsController implements GameStateObserver {
                 emitter.send(SseEmitter.event()
                     .name(eventType)
                     .data(data));
-            } catch (IOException e) {
+            } catch (Exception e) {
+                System.out.println("Removing dead SSE emitter for clientId=" + clientId + " : " + e);
                 emitters.remove(clientId);
+                emitter.complete();
             }
         });
         
         System.out.println("Active emitters after send: " + emitters.size());
     }
 
+    @Scheduled(fixedRate = 5000)
+    public void heartbeat() {
+        sendEventToAll("ping", "ping");
+    }
 
     @Override
     public void onEnemyHit(EnemyHitEvent event) {
@@ -136,6 +143,8 @@ public class GameEventsController implements GameStateObserver {
     @Override
     public void onGameWon(GameStateDTO state) {
         sendEventToAll("game-won", state);
+        emitters.values().forEach(SseEmitter::complete);
+        emitters.clear();
     }
 
     @Override

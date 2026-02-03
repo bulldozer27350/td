@@ -28,7 +28,7 @@ class GameEventsHandler {
             }
             
             console.log('🔌 Creating new SSE connection');
-            const clientId = "frontend-123"; // UUID, playerId, etc.
+            const clientId = crypto.randomUUID(); // UUID, playerId, etc.
             this.eventSource = new EventSource(`http://localhost:8080/game/events?clientId=${clientId}`);
             
             // Événements du jeu
@@ -110,6 +110,10 @@ class GameEventsHandler {
                 // Tenter une reconnexion
                 this._attemptReconnect();
             };
+
+            this.eventSource.addEventListener('ping', () => {
+                // rien à faire, juste maintenir la connexion
+            });
             
         } catch (error) {
             console.error('Failed to create SSE connection:', error);
@@ -155,10 +159,9 @@ class GameEventsHandler {
     disconnect() {
         // NE PAS fermer la connexion SSE ! Juste vider les listeners
         console.log('⚠️ disconnect() called - clearing listeners only (keeping SSE open)');
-        this.removeAllListeners();
+        this.forceDisconnect();
     }
     
-    // Nouvelle méthode pour vraiment fermer la connexion (à appeler au déchargement de la page)
     forceDisconnect() {
         console.log('🔌 Force disconnect - closing SSE connection');
         this.isConnected = false;
