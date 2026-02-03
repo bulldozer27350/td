@@ -35,8 +35,6 @@ class GameEngine {
     
         gameEvents.on('tower-shot', (data) => {
             console.log(`🔫 ${Date.now()} tower-shot`);
-            //this.renderer.addShotLine(data);
-            // addShotLine fait déjà son propre render
         });
 
         gameEvents.on('enemy-moved', (data) => {
@@ -58,6 +56,26 @@ class GameEngine {
                 });
             }
 
+            // Jouer le son correspondant au type de tour
+            const towerType = data.tower.towerType || 'default';
+            switch(towerType.toLowerCase()) {
+                case 'archer':
+                    soundManager.playArrowShot();
+                    break;
+                case 'cannon':
+                    soundManager.playCannonShot();
+                    break;
+                case 'laser':
+                    soundManager.playLaserShot();
+                    break;
+                case 'machinegun':
+                case 'mitrailleuse':
+                    soundManager.playMachineGunShot();
+                    break;
+                default:
+                    soundManager.playDefaultShot();
+            }
+
             this.updateEnemyHealth(data);
             // Render pour afficher la vie mise à jour
             this.renderer.render(this.gameState);
@@ -72,8 +90,12 @@ class GameEngine {
             }, 100);
         });
 
-        gameEvents.on('game-won', () => this.onGameOver());
-        gameEvents.on('game-lost', () => this.onGameOver());
+        gameEvents.on('game-won', (data) => {
+            this.onGameOver(data);
+        });
+        gameEvents.on('game-lost', (data) => {
+            this.onGameOver(data)
+        });
     }
 
     async startGame(levelId, gameConfig) {
@@ -283,9 +305,24 @@ class GameEngine {
     // ========================================================================
     
     setupEventListeners() {
+        // Événements de clic (déjà existants)
         this.canvas.addEventListener('click', (e) => this.onCanvasClick(e));
         this.canvas.addEventListener('mousemove', (e) => this.onCanvasHover(e));
         this.canvas.addEventListener('mouseleave', () => this.onCanvasLeave());
+        
+        // Nouveaux événements pour zoom et pan
+        this.canvas.addEventListener('wheel', (e) => this.renderer.handleWheel(e), { passive: false });
+        this.canvas.addEventListener('mousedown', (e) => this.renderer.handleMouseDown(e));
+        this.canvas.addEventListener('mousemove', (e) => this.renderer.handleMouseMove(e));
+        this.canvas.addEventListener('mouseup', (e) => this.renderer.handleMouseUp(e));
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault()); // Bloquer le menu contextuel
+        
+        // Touche pour réinitialiser la vue (optionnel)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                this.renderer.resetView();
+            }
+        });
     }
     
     onCanvasClick(event) {
@@ -454,9 +491,11 @@ class GameEngine {
     // FIN DE PARTIE
     // ========================================================================
     
-    onGameOver() {
+    async onGameOver(state) {
         this.stopGame();
-        
+
+        this.gameState = state;
+
         const lives = this.gameState.player.currentLives;
         const won = lives > 0;
         

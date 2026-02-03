@@ -78,6 +78,15 @@
                         <option value="50">⚡⚡ Très rapide (4x)</option>
                     </select>
                     <button onclick="gameManager.quitGame()" class="btn btn-small btn-danger">🚪 Quitter</button>
+                    <button onclick="gameEngine.renderer.resetView()" class="btn btn-small">🔄 Reset Vue</button>
+                    <button onclick="gameEngine.renderer.zoom = Math.min(gameEngine.renderer.maxZoom, gameEngine.renderer.zoom * 1.2); gameEngine.renderer.cellSize = gameEngine.renderer.initialCellSize * gameEngine.renderer.zoom; gameEngine.renderer.render(gameEngine.gameState);" class="btn btn-small">🔍 Zoom +</button>
+                    <button onclick="gameEngine.renderer.zoom = Math.max(gameEngine.renderer.minZoom, gameEngine.renderer.zoom * 0.8); gameEngine.renderer.cellSize = gameEngine.renderer.initialCellSize * gameEngine.renderer.zoom; gameEngine.renderer.render(gameEngine.gameState);" class="btn btn-small">🔍 Zoom -</button>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>🔊</span>
+                        <input type="range" min="0" max="100" value="30" 
+                            onchange="soundManager.setVolume(this.value / 100)"
+                            style="width: 80px;">
+                    </div>
                 </div>
             </div>
 
@@ -136,6 +145,7 @@
         </div>
     </div>
 
+    <script src="sound-manager.js"></script>
     <script src="api-client.js"></script>
     <script src="game-events.js"></script>
     <script src="game-renderer.js"></script>

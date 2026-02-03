@@ -13,8 +13,9 @@ import com.towerdefense.domain.projectile.Projectile;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.engine.api.model.EnemyDTO;
 import com.towerdefense.engine.api.model.PositionDTO;
+import com.towerdefense.engine.api.model.TowerDTO;
+import com.towerdefense.engine.api.model.TowerStateEnum;
 import com.towerdefense.engine.api.model.events.EnemyHitEvent;
-import com.towerdefense.engine.api.model.events.EnemyKilledEvent;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
@@ -49,10 +50,10 @@ public class CollisionSystem implements GameSystem {
                 System.out.println("[Tick " + tick + "]Sending event : Projectile " + projectile.id().value()
                         + " hit Enemy " + target.id().value() + " for " + projectile.damage()
                         + " damage. Enemy health: " + target.health().current());
-                observers.forEach(observer -> observer
-                        .onEnemyHit(new EnemyHitEvent(toEnemyDTO(target), projectile.id().value(), projectile.damage(),
-                                target.health().current(), new PositionDTO(tower.position().x(), tower.position().y()),
-                                new PositionDTO(target.position().x(), target.position().y()), tick)));
+                observers.forEach(observer -> observer.onEnemyHit(new EnemyHitEvent(toEnemyDTO(target),
+                        projectile.id().value(), toDTO(tower), projectile.damage(),
+                        target.health().current(), new PositionDTO(tower.position().x(), tower.position().y()),
+                        new PositionDTO(target.position().x(), target.position().y()), tick)));
 
                 // Marque le projectile pour suppression
                 projectilesToRemove.add(projectile.id());
@@ -61,6 +62,22 @@ public class CollisionSystem implements GameSystem {
 
         // Supprime les projectiles qui ont touché
         projectilesToRemove.forEach(state::removeProjectile);
+    }
+    
+    private static TowerDTO toDTO(Tower tower) {
+        // Détermine l'état de la tour
+        String state;
+        if (tower.isUnderBuilding()) {
+            state = "BUILDING";
+        } else if (!tower.isReady()) {
+            state = "RELOADING";
+        } else {
+            state = "READY";
+        }
+
+        return new TowerDTO(tower.id().value().toString(), new PositionDTO(tower.position().x(), tower.position().y()),
+                tower.type().name(), 
+                TowerStateEnum.valueOf(state));
     }
 
     private EnemyDTO toEnemyDTO(Enemy enemy) {
