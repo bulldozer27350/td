@@ -49,7 +49,7 @@ public class GameController implements DefaultApi {
 
     @Override
     public ResponseEntity<Void> tick() {
-        gameRuntime.tick();
+        this.gameRuntime.tick();
         return ResponseEntity.noContent().build();
     }
 

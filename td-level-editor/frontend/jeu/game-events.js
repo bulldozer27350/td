@@ -83,8 +83,9 @@ class GameEventsHandler {
                 this.emit('game-won', data);
             });
             
-            this.eventSource.addEventListener('game-lost', () => {
-                this.emit('game-lost');
+            this.eventSource.addEventListener('game-lost', (event) => {
+                const data = JSON.parse(event.data);
+                this.emit('game-lost', data);
             });
             
             // Gestion de la connexion réussie

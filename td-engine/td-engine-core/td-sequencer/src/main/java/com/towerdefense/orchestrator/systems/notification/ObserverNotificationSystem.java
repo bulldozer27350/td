@@ -51,7 +51,7 @@ public class ObserverNotificationSystem implements GameSystem {
             );
         } else {
             observers.forEach(observer -> 
-                observer.onGameLoose()
+                observer.onGameLoose(GameStateMapper.toDTO(state))
             );
         }
     }

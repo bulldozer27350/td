@@ -139,7 +139,9 @@ public class GameEventsController implements GameStateObserver {
     }
 
     @Override
-    public void onGameLoose() {
-        sendEventToAll("game-lost", null);
+    public void onGameLoose(GameStateDTO state) {
+        sendEventToAll("game-lost", state);
+        emitters.values().forEach(SseEmitter::complete);
+        emitters.clear();
     }
 }

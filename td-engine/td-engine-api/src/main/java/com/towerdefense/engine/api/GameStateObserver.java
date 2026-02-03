@@ -18,7 +18,7 @@ public interface GameStateObserver {
 
 	void onGameWon(GameStateDTO state);
 
-	void onGameLoose();
+	void onGameLoose(GameStateDTO state);
 	
 	void onTowerShot(TowerShotEvent event);
 	
