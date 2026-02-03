@@ -19,106 +19,128 @@ import com.towerdefense.domain.map.EnemyPath;
  * can reach its next position, with what movement speed, etc...
  */
 public class Enemy implements GameObject {
-	private final EntityId id;
-	private Position position;
-	private final Health health;
-	/** Vitesse de déplacement en cases par tick */
-	private final double speedPerTick;
-	private final EnemyPath path;
-	private int waypointIndex;
-	private int bounty;
+    private final EntityId id;
+    private Position position;
+    private final Health health;
+    /** Vitesse de déplacement en cases par tick */
+    private final double speedPerTick;
+    private final EnemyPath path;
+    private int waypointIndex;
+    private int bounty;
+    /** Distance parcourue depuis le début du chemin (en unités) */
+    private double distanceTraveled;
 
-	/** Constructs an Enemy with the specified parameters. */
-	public Enemy(EntityId id, EnemyPath path, int hp, double speedCasesPerSecond, int bounty) {
-		this.id = id;
-		this.path = path;
-		this.position = path.startPosition();
-		this.health = new Health(hp);
+    /** Constructs an Enemy with the specified parameters. */
+    public Enemy(EntityId id, EnemyPath path, int hp, double speedCasesPerSecond, int bounty) {
+        this.id = id;
+        this.path = path;
+        this.position = path.startPosition();
+        this.health = new Health(hp);
         this.speedPerTick = GameTime.casesPerSecondToCasesPerTick(speedCasesPerSecond);
-		this.bounty = bounty;
-	}
+        this.bounty = bounty;
+        this.distanceTraveled = 0.0; // Initialiser à 0 au spawn
+    }
 
-	/** Getters for the Enemy properties */
-	public EntityId id() {
-		return this.id;
-	}
-	/** Get the current position of the enemy. */
-	public Position position() {
-		return this.position;
-	}
+    /** Getters for the Enemy properties */
+    public EntityId id() {
+        return this.id;
+    }
 
-	/** Get the health of the enemy. */
-	public Health health() {
-		return this.health;
-	}
+    /** Get the current position of the enemy. */
+    public Position position() {
+        return this.position;
+    }
 
-	/**
-     * ✅ NOUVEAU : Retourne la vitesse en cases/seconde (pour affichage)
+    /** Get the health of the enemy. */
+    public Health health() {
+        return this.health;
+    }
+
+    /**
+     * Retourne la vitesse en cases/seconde (pour affichage)
      */
     public double speedCasesPerSecond() {
         return speedPerTick * GameTime.getTicksPerSecond();
     }
-    
+
     /**
-     * ✅ NOUVEAU : Retourne la vitesse en cases/tick (pour la logique)
+     * Retourne la vitesse en cases/tick (pour la logique)
      */
     public double speedPerTick() {
         return speedPerTick;
     }
-	
-	/** Get the bounty awarded for defeating the enemy. */
-	public int bounty() {
-		return bounty;
-	}
 
-	/**
-	 * Permet de savoir comment il peut atteindre sa prochaine destination (next est
-	 * un point cible sur le chemin, pas nécessairement le prochain mouvement : next
-	 * peut s'atteindre en plusieurs mouvements qui seront a priori tous dans la
-	 * même direction)
-	 * 
-	 * Sa capacité à atteindre next est reliée à sa vitesse de déplacement, au fait
-	 * qu'il soit encore en vie ou non, à la distance qui le sépare de next, etc ...
-	 * 
-	 * @param next La position cible à atteindre
-	 */
-	private void moveTowards(Position next) {
+    /** Get the bounty awarded for defeating the enemy. */
+    public int bounty() {
+        return bounty;
+    }
+
+    /**
+     * Retourne la distance parcourue sur le chemin depuis le spawn. Utilisé pour
+     * les stratégies de ciblage.
+     * 
+     * @return distance en unités
+     */
+    public double distanceTraveled() {
+        return distanceTraveled;
+    }
+
+    /**
+     * Retourne le chemin que suit cet ennemi.
+     * 
+     * @return le chemin
+     */
+    public EnemyPath path() {
+        return path;
+    }
+
+    /**
+     * Permet de savoir comment il peut atteindre sa prochaine destination (next est
+     * un point cible sur le chemin, pas nécessairement le prochain mouvement : next
+     * peut s'atteindre en plusieurs mouvements qui seront a priori tous dans la
+     * même direction)
+     * 
+     * Sa capacité à atteindre next est reliée à sa vitesse de déplacement, au fait
+     * qu'il soit encore en vie ou non, à la distance qui le sépare de next, etc ...
+     * 
+     * @param next La position cible à atteindre
+     */
+    private void moveTowards(Position next) {
         double dx = next.x() - this.position.x();
         double dy = next.y() - this.position.y();
         double dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist == 0) return;
+        if (dist == 0)
+            return;
 
-        // ❌ ANCIEN : double move = Math.min(this.speed, dist);
-        // ✅ NOUVEAU : Utilise la vitesse par tick
+        // Utilise la vitesse par tick
         double move = Math.min(this.speedPerTick, dist);
-        
-        this.position = new Position(
-            this.position.x() + dx / dist * move,
-            this.position.y() + dy / dist * move
-        );
+
+        // Incrémenter la distance parcourue
+        this.distanceTraveled += move;
+        this.position = new Position(this.position.x() + dx / dist * move, this.position.y() + dy / dist * move);
     }
 
-	/**
-	 * Gère l'action suivante. Ici, il ne s'agit pour un ennemi que d'avancer vers
-	 * la prochaine direction.
-	 */
-	public void tick() {
-		if (!this.health.isDead() && !this.isAtEnd()) {
-			Position target = this.path.waypoint(this.waypointIndex);
-			this.moveTowards(target);
+    /**
+     * Gère l'action suivante. Ici, il ne s'agit pour un ennemi que d'avancer vers
+     * la prochaine direction.
+     */
+    public void tick() {
+        if (!this.health.isDead() && !this.isAtEnd()) {
+            Position target = this.path.waypoint(this.waypointIndex);
+            this.moveTowards(target);
 
-			if (this.position.equals(target)) {
-				this.waypointIndex++;
-			}
-		}
-	}
+            if (this.position.equals(target)) {
+                this.waypointIndex++;
+            }
+        }
+    }
 
-	/** Vérifie si l'ennemi a atteint la fin de son chemin. */
-	public boolean isAtEnd() {
-		return this.waypointIndex >= this.path.size();
-	}
+    /** Vérifie si l'ennemi a atteint la fin de son chemin. */
+    public boolean isAtEnd() {
+        return this.waypointIndex >= this.path.size();
+    }
 
-	@Override
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getName());
@@ -128,12 +150,12 @@ public class Enemy implements GameObject {
         builder.append(position);
         builder.append(", health:");
         builder.append(health);
-        // ❌ ANCIEN : builder.append(", speed:"); builder.append(speed);
-        // ✅ NOUVEAU :
         builder.append(", speedPerTick:");
         builder.append(speedPerTick);
         builder.append(", speedCasesPerSec:");
         builder.append(speedCasesPerSecond());
+        builder.append(", distanceTraveled:");
+        builder.append(distanceTraveled);
         builder.append("}");
         return builder.toString();
     }
