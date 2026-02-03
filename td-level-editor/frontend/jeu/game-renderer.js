@@ -12,6 +12,17 @@ class GameRenderer {
         this.paths = [];
         this.hoveredCell = null;
         this.shotLines = [];
+        // Gestion du zoom et du pan
+        this.zoom = 1.0;
+        this.minZoom = 1.0;
+        this.maxZoom = 4.0;
+        this.panX = 0;
+        this.panY = 0;
+        this.isDragging = false;
+        this.dragStartX = 0;
+        this.dragStartY = 0;
+        this.lastMouseX = 0;
+        this.lastMouseY = 0;
         
         // Icônes pour les entités
         this.icons = {
@@ -58,9 +69,27 @@ class GameRenderer {
         const cellSizeByWidth = maxWidth / mapWidth;
         const cellSizeByHeight = maxHeight / mapHeight;
         this.cellSize = Math.min(cellSizeByWidth, cellSizeByHeight, 50);
+
+        // Sauvegarder les dimensions initiales pour le zoom
+        this.initialCellSize = this.cellSize;
+        this.canvasWidth = this.gridWidth * this.cellSize;
+        this.canvasHeight = this.gridHeight * this.cellSize;
+
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
         
         this.canvas.width = this.gridWidth * this.cellSize;
         this.canvas.height = this.gridHeight * this.cellSize;
+    }
+
+    applyTransform() {
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset
+        this.ctx.translate(this.panX, this.panY);
+        this.ctx.scale(this.zoom, this.zoom);
+    }
+
+    resetTransform() {
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     
     // ========================================================================
@@ -69,9 +98,16 @@ class GameRenderer {
     
     render(gameState) {
         console.log(`🎨 Render called - Enemies alive: ${gameState.enemies.filter(e => e.isAlive).length}`);
-    
-        // Effacer le canvas
+
+        // Effacer le canvas AVANT la transformation
+        this.resetTransform();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Appliquer le zoom et le pan
+        this.applyTransform();
+        
+        // Dessiner la grille
+        this.drawGrid();
         
         // Dessiner la grille
         this.drawGrid();
@@ -312,6 +348,87 @@ class GameRenderer {
             this.ctx.fill();
         });
     }
+
+    // ========================================================================
+    // ZOOM ET PAN
+    // ========================================================================
+
+    handleWheel(event) {
+        event.preventDefault();
+        
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        // Position de la souris dans le monde du jeu (avant zoom)
+        const worldX = (mouseX - this.panX) / this.zoom;
+        const worldY = (mouseY - this.panY) / this.zoom;
+        
+        // Calculer le nouveau zoom
+        const zoomDelta = event.deltaY > 0 ? 0.9 : 1.1;
+        const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom * zoomDelta));
+        
+        // Ajuster le pan pour que le zoom soit centré sur la souris
+        this.panX = mouseX - worldX * newZoom;
+        this.panY = mouseY - worldY * newZoom;
+        
+        this.zoom = newZoom;
+        this.cellSize = this.initialCellSize * this.zoom;
+        
+        // Redessiner
+        if (gameEngine.gameState) {
+            this.render(gameEngine.gameState);
+        }
+    }
+
+    handleMouseDown(event) {
+        // Clic molette ou clic droit pour drag
+        if (event.button === 1 || event.button === 2) {
+            event.preventDefault();
+            this.isDragging = true;
+            this.dragStartX = event.clientX;
+            this.dragStartY = event.clientY;
+            this.canvas.style.cursor = 'grabbing';
+        }
+    }
+
+    handleMouseMove(event) {
+        this.lastMouseX = event.clientX;
+        this.lastMouseY = event.clientY;
+        
+        if (this.isDragging) {
+            const dx = event.clientX - this.dragStartX;
+            const dy = event.clientY - this.dragStartY;
+            
+            this.panX += dx;
+            this.panY += dy;
+            
+            this.dragStartX = event.clientX;
+            this.dragStartY = event.clientY;
+            
+            // Redessiner
+            if (gameEngine.gameState) {
+                this.render(gameEngine.gameState);
+            }
+        }
+    }
+
+    handleMouseUp(event) {
+        if (event.button === 1 || event.button === 2) {
+            this.isDragging = false;
+            this.canvas.style.cursor = 'default';
+        }
+    }
+
+    resetView() {
+        this.zoom = 1.0;
+        this.panX = 0;
+        this.panY = 0;
+        this.cellSize = this.initialCellSize;
+        if (gameEngine.gameState) {
+            this.render(gameEngine.gameState);
+        }
+    }
     
     // ========================================================================
     // UTILITAIRES
@@ -359,12 +476,16 @@ class GameRenderer {
     
     screenToGrid(screenX, screenY) {
         const rect = this.canvas.getBoundingClientRect();
-        const x = screenX - rect.left;
-        const y = screenY - rect.top;
+        const canvasX = screenX - rect.left;
+        const canvasY = screenY - rect.top;
+        
+        // Transformer les coordonnées écran en coordonnées monde
+        const worldX = (canvasX - this.panX) / this.zoom;
+        const worldY = (canvasY - this.panY) / this.zoom;
         
         return {
-            x: Math.floor(x / this.cellSize),
-            y: Math.floor(y / this.cellSize)
+            x: Math.floor(worldX / this.initialCellSize),
+            y: Math.floor(worldY / this.initialCellSize)
         };
     }
     
