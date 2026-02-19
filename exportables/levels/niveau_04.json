@@ -11,9 +11,13 @@
           "count": 15,
           "enemyType": "goblin",
           "pathId": "niveau_4_chemin1"
-        },
+        }
+      ]
+    },{
+      "id": "niveau_4_attack2",
+      "waves": [
         {
-          "id": "niveau_4_attack1_wave2",
+          "id": "niveau_4_attack2_wave1",
           "startTick": 180,
           "spawnInterval": 8,
           "count": 10,
