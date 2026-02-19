@@ -1,15 +1,1434 @@
 {
-  "upgrades" : [ {
-    "id" : "tour_1_level1_degat+10",
-    "name" : "Augmenter les dégats",
-    "towerTypeId" : "tour_1",
-	"towerName" : "Mitrailleuse",
-    "towerRank" : 1,
-    "cost" : 3,
-    "effect" : {
-      "stat" : "damage",
-      "modifier" : 10.0,
-      "type" : "ADD"
+  "upgrades": [
+    {
+      "id": "archer_rank1_damage_1",
+      "name": "Flèches Affûtées I",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 3.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank1_damage_2",
+      "name": "Flèches Affûtées II",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 4.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank1_range_1",
+      "name": "Visée Longue Distance",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank1_reload_1",
+      "name": "Tir Rapide",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.15,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank2_damage_1",
+      "name": "Flèches Perforantes I",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 5.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank2_damage_2",
+      "name": "Flèches Perforantes II",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 7.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank2_range_1",
+      "name": "Arc Composite",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank2_reload_1",
+      "name": "Carquois Amélioré",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.12,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank3_damage_1",
+      "name": "Flèches Explosives",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 8.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank3_range_1",
+      "name": "Lunette de Visée",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "archer_rank3_reload_1",
+      "name": "Maître Archer",
+      "towerTypeId": "archer",
+      "towerName": "Archer",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.1,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank1_damage_1",
+      "name": "Balles Renforcées I",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 2.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank1_damage_2",
+      "name": "Balles Renforcées II",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 2.5,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank1_range_1",
+      "name": "Canon Rallongé",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank1_reload_1",
+      "name": "Mécanisme Amélioré",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.03,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank2_damage_1",
+      "name": "Balles Perforantes I",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 3.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank2_damage_2",
+      "name": "Balles Perforantes II",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 4.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank2_range_1",
+      "name": "Stabilisateur",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank2_reload_1",
+      "name": "Refroidissement Rapide",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.02,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank3_damage_1",
+      "name": "Balles Explosives",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 5.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank3_range_1",
+      "name": "Visée Assistée",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mitrailleuse_rank3_reload_1",
+      "name": "Gatling Ultime",
+      "towerTypeId": "mitrailleuse",
+      "towerName": "Mitrailleuse",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.015,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank1_damage_1",
+      "name": "Poudre Améliorée I",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 5.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank1_damage_2",
+      "name": "Poudre Améliorée II",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 7.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank1_range_1",
+      "name": "Tube Allongé",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank1_reload_1",
+      "name": "Rechargement Rapide",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank2_damage_1",
+      "name": "Obus Explosifs I",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 8.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank2_damage_2",
+      "name": "Obus Explosifs II",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 10.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank2_range_1",
+      "name": "Trajectoire Optimisée",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank2_reload_1",
+      "name": "Chargeur Automatique",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.25,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank3_damage_1",
+      "name": "Obus à Fragmentation",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 13.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank3_range_1",
+      "name": "Visée Balistique",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.5,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "canon_rank3_reload_1",
+      "name": "Canon d'Assaut",
+      "towerTypeId": "canon",
+      "towerName": "Canon",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.2,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank1_damage_1",
+      "name": "Carreaux Lourds I",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 12.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank1_damage_2",
+      "name": "Carreaux Lourds II",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 15.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank1_range_1",
+      "name": "Tension Augmentée",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank1_reload_1",
+      "name": "Mécanisme Huilé",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank2_damage_1",
+      "name": "Carreaux Perforants I",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 18.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank2_damage_2",
+      "name": "Carreaux Perforants II",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 2,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 22.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank2_range_1",
+      "name": "Baliste de Siège",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank2_reload_1",
+      "name": "Câbles d'Acier",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.25,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank3_damage_1",
+      "name": "Carreaux Explosifs",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 3,
+      "cost": 7,
+      "effect": {
+        "stat": "damage",
+        "modifier": 30.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank3_range_1",
+      "name": "Portée Maximum",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.5,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "baliste_rank3_reload_1",
+      "name": "Scorpion Rapide",
+      "towerTypeId": "baliste",
+      "towerName": "Baliste",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank1_damage_1",
+      "name": "Boulets Massifs I",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 15.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank1_damage_2",
+      "name": "Boulets Massifs II",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 20.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank1_range_1",
+      "name": "Contrepoids Optimisé",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank1_reload_1",
+      "name": "Équipe de Rechargement",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank2_damage_1",
+      "name": "Projectiles Incendiaires I",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 25.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank2_damage_2",
+      "name": "Projectiles Incendiaires II",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 2,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 30.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank2_range_1",
+      "name": "Trébuchet",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank2_reload_1",
+      "name": "Système de Poulies",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.35,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank3_damage_1",
+      "name": "Bombes Dévastatrices",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 3,
+      "cost": 7,
+      "effect": {
+        "stat": "damage",
+        "modifier": 40.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank3_range_1",
+      "name": "Trajectoire Parfaite",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.5,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "catapulte_rank3_reload_1",
+      "name": "Artillerie Lourde",
+      "towerTypeId": "catapulte",
+      "towerName": "Catapulte",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank1_damage_1",
+      "name": "Carburant Enrichi I",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 6.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank1_damage_2",
+      "name": "Carburant Enrichi II",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 8.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank1_range_1",
+      "name": "Buse Améliorée",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank1_reload_1",
+      "name": "Réservoir Pressurisé",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.15,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank2_damage_1",
+      "name": "Napalm I",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 10.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank2_damage_2",
+      "name": "Napalm II",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 12.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank2_range_1",
+      "name": "Jet Longue Portée",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank2_reload_1",
+      "name": "Pompe Haute Performance",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.12,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank3_damage_1",
+      "name": "Inferno",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 15.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank3_range_1",
+      "name": "Projection Maximale",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "lance_flammes_rank3_reload_1",
+      "name": "Torche Infernale",
+      "towerTypeId": "lance_flammes",
+      "towerName": "Lance-Flammes",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.1,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank1_damage_1",
+      "name": "Cristaux de Givre I",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 3.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank1_damage_2",
+      "name": "Cristaux de Givre II",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 4.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank1_range_1",
+      "name": "Portée Magique",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank1_reload_1",
+      "name": "Incantation Rapide",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.2,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank2_damage_1",
+      "name": "Blizzard I",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 4.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank2_damage_2",
+      "name": "Blizzard II",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 5.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank2_range_1",
+      "name": "Aura Glaciale",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank2_reload_1",
+      "name": "Méditation Glacée",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.18,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank3_damage_1",
+      "name": "Âge de Glace",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 6.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank3_range_1",
+      "name": "Maître Cryomancien",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "mage_glace_rank3_reload_1",
+      "name": "Gel Instantané",
+      "towerTypeId": "mage_glace",
+      "towerName": "Mage de Glace",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.15,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank1_damage_1",
+      "name": "Toxines Concentrées I",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 1,
+      "cost": 2,
+      "effect": {
+        "stat": "damage",
+        "modifier": 4.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank1_damage_2",
+      "name": "Toxines Concentrées II",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 6.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank1_range_1",
+      "name": "Vapeurs Toxiques",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank1_reload_1",
+      "name": "Vaporisateur Amélioré",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank2_damage_1",
+      "name": "Venin Mortel I",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 7.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank2_damage_2",
+      "name": "Venin Mortel II",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 9.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank2_range_1",
+      "name": "Nuage Toxique",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank2_reload_1",
+      "name": "Alchimie Rapide",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 2,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.25,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank3_damage_1",
+      "name": "Peste Noire",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 11.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank3_range_1",
+      "name": "Contamination Étendue",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "poison_rank3_reload_1",
+      "name": "Empoisonnement Continu",
+      "towerTypeId": "poison",
+      "towerName": "Tour de Poison",
+      "towerRank": 3,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.2,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank1_damage_1",
+      "name": "Balles Haute Vélocité I",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 10.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank1_damage_2",
+      "name": "Balles Haute Vélocité II",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 13.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank1_range_1",
+      "name": "Lunette Longue Portée",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.5,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank1_reload_1",
+      "name": "Chargeur Rapide",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.35,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank2_damage_1",
+      "name": "Balles Anti-Matériel I",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 16.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank2_damage_2",
+      "name": "Balles Anti-Matériel II",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 2,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 20.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank2_range_1",
+      "name": "Visée Thermique",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.6,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank2_reload_1",
+      "name": "Tireur d'Élite",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank3_damage_1",
+      "name": "Balles Explosives",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 3,
+      "cost": 7,
+      "effect": {
+        "stat": "damage",
+        "modifier": 25.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank3_range_1",
+      "name": "Portée Illimitée",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.8,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "sniper_rank3_reload_1",
+      "name": "As de la Gâchette",
+      "towerTypeId": "sniper",
+      "towerName": "Sniper",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.35,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank1_damage_1",
+      "name": "Surtension I",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 1,
+      "cost": 3,
+      "effect": {
+        "stat": "damage",
+        "modifier": 7.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank1_damage_2",
+      "name": "Surtension II",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "damage",
+        "modifier": 10.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank1_range_1",
+      "name": "Bobine Amplifiée",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank1_reload_1",
+      "name": "Condensateurs Rapides",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 1,
+      "cost": 4,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.25,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank2_damage_1",
+      "name": "Arc Électrique I",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "damage",
+        "modifier": 12.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank2_damage_2",
+      "name": "Arc Électrique II",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 2,
+      "cost": 6,
+      "effect": {
+        "stat": "damage",
+        "modifier": 15.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank2_range_1",
+      "name": "Champ Électromagnétique",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.3,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank2_reload_1",
+      "name": "Générateur Haute Fréquence",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 2,
+      "cost": 5,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.22,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank3_damage_1",
+      "name": "Foudre Dévastatrice",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 3,
+      "cost": 7,
+      "effect": {
+        "stat": "damage",
+        "modifier": 18.0,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank3_range_1",
+      "name": "Tempête Électrique",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "range",
+        "modifier": 0.4,
+        "type": "ADD"
+      }
+    },
+    {
+      "id": "tesla_rank3_reload_1",
+      "name": "Décharge Continue",
+      "towerTypeId": "tesla",
+      "towerName": "Tesla",
+      "towerRank": 3,
+      "cost": 6,
+      "effect": {
+        "stat": "reloadSeconds",
+        "modifier": -0.2,
+        "type": "ADD"
+      }
     }
-  } ]
+  ]
 }
