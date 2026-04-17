@@ -71,11 +71,11 @@
                 </div>
                 <div class="game-controls">
                     <button id="pause-btn" onclick="gameEngine.togglePause()" class="btn btn-small">⏸️ Pause</button>
-                    <select id="speed-selector" onchange="gameEngine.changeTickSpeed(parseInt(this.value))" class="btn btn-small">
-                        <option value="500">🐌 Lent (0.5x)</option>
-                        <option value="200" selected>⚡ Normal (1x)</option>
-                        <option value="100">🚀 Rapide (2x)</option>
-                        <option value="50">⚡⚡ Très rapide (4x)</option>
+                    <select id="speed-selector" onchange="gameEngine.changeTickSpeed(parseFloat(this.value))" class="btn btn-small">
+                        <option value="0.5">🐌 Lent (0.5x)</option>
+                        <option value="1.0" selected>⚡ Normal (1x)</option>
+                        <option value="2.0">🚀 Rapide (2x)</option>
+                        <option value="4.0">⚡⚡ Très rapide (4x)</option>
                     </select>
                     <button onclick="gameManager.quitGame()" class="btn btn-small btn-danger">🚪 Quitter</button>
                     <button onclick="gameEngine.renderer.resetView()" class="btn btn-small">🔄 Reset Vue</button>

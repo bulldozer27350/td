@@ -76,25 +76,7 @@ paths:
                 timestamp: "2026-01-10T14:30:00"
                 details: {}
 
-  /game/tick:
-    post:
-      summary: Advance the game by one tick
-      operationId: tick
-      responses:
-        '204':
-          description: Tick executed successfully
-        '409':
-          description: Cannot tick (game over)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                errorCode: "GAME_OVER"
-                message: "Cannot perform action: game is over"
-                status: 409
-                timestamp: "2026-01-10T14:30:00"
-                details: {}
+
 
   /game/commands/place-tower:
     post:
@@ -230,6 +212,20 @@ paths:
                     details:
                       towerId: "abc-123"
                       reason: "tower is currently under construction"
+
+  /game/commands/speed:
+    post:
+      summary: Modify the game speed
+      operationId: updateSpeed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSpeedRequest'
+      responses:
+        '202':
+          description: Speed updated
 
   /game/commands/sell-tower:
     post:
@@ -645,8 +641,10 @@ components:
           description: ID of the tower type (e.g., "machinegun", "shotgun")
         x:
           type: integer
+          minimum: 0
         y:
           type: integer
+          minimum: 0
       required: [playerId, towerType, x, y]
 
     UpgradeTowerRequest:
@@ -656,8 +654,10 @@ components:
           type: string
         towerXPosition:
           type: integer
+          minimum: 0
         towerYPosition:
           type: integer
+          minimum: 0
       required: [playerId, towerXPosition, towerYPosition]
 
     SellTowerRequest:
@@ -667,6 +667,18 @@ components:
           type: string
         towerXPosition:
           type: integer
+          minimum: 0
         towerYPosition:
           type: integer
+          minimum: 0
       required: [playerId, towerXPosition, towerYPosition]
+
+    UpdateSpeedRequest:
+      type: object
+      properties:
+        speedMultiplier:
+          type: number
+          format: double
+          minimum: 0
+          description: "0.0 = Pause, 1.0 = Normal, 2.0 = 2x, etc."
+      required: [speedMultiplier]

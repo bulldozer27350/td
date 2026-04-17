@@ -157,8 +157,7 @@ class GameEventsHandler {
     }
     
     disconnect() {
-        // NE PAS fermer la connexion SSE ! Juste vider les listeners
-        console.log('⚠️ disconnect() called - clearing listeners only (keeping SSE open)');
+        console.log('🔌 disconnect() called - closing SSE connection');
         this.forceDisconnect();
     }
     

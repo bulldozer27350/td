@@ -10,8 +10,7 @@ class GameEngine {
         this.gameConfig = null;
         this.isRunning = false;
         this.isPaused = false;
-        this.tickInterval = null;
-        this.tickSpeed = 200; // ms entre chaque tick
+        this.tickSpeed = 200; // ms estimé du serveur
         this.currentTick = 0;
         this.playerId = 'player-1';
         this.selectedTowerType = null;
@@ -107,9 +106,10 @@ class GameEngine {
             // Configurer les listeners SSE (retire les doublons)
             this.setupSSEListeners();
 
-            // Écouter les mises à jour d'état (moins fréquentes)
+            // Écouter les mises à jour d'état
             gameEvents.on('state-update', (state) => {
                 this.gameState = state;
+                this.currentTick++;
                 this.updateUI();
                 this.renderer.render(this.gameState);
             });
@@ -136,9 +136,8 @@ class GameEngine {
             this.updateUI();
             this.renderer.render(this.gameState);
             
-            // Démarrer la boucle de jeu
+            // Le jeu démarre asynchronement côté backend
             this.isRunning = true;
-            this.startTickLoop();
             
             console.log('Game started successfully');
         } catch (error) {
@@ -152,69 +151,22 @@ class GameEngine {
     stopGame() {
         this.isRunning = false;
         this.isPaused = false;
-
-        if (this.tickInterval) {
-            clearInterval(this.tickInterval);
-            this.tickInterval = null;
-        }
         
         gameEvents.removeAllListeners();
     }
        
     // ========================================================================
-    // BOUCLE DE TICK
+    // TICK OBSOLETE (DELEGATED TO SERVER)
     // ========================================================================
 
-    startTickLoop() {
-        // S'assurer qu'il n'y a pas déjà une boucle en cours
-        if (this.tickInterval) {
-            clearInterval(this.tickInterval);
-        }
-        
-        this.tickInterval = setInterval(() => {
-            this.executeTick();
-        }, this.tickSpeed);
-    }
-
-    async executeTick() {
-        // Ne pas exécuter si le jeu n'est pas en cours ou est en pause
-        if (!this.isRunning || this.isPaused) {
-            return;
-        }
-        
-        // Éviter les appels trop rapides (throttling)
-        const now = Date.now();
-        if (now - this.lastTickTime < 50) { // Minimum 50ms entre les ticks
-            return;
-        }
-        this.lastTickTime = now;
-        
-        try {
-            // Appeler le tick du moteur
-            await apiClient.tick();
-            this.currentTick++;
-            
-            // Mettre à jour le compteur de tick
-            document.getElementById('current-tick').textContent = this.currentTick;
-        } catch (error) {
-            console.error('Tick error:', error);
-            
-            if (error.message.includes('game is over') || error.message.includes('GAME_OVER')) {
-                this.onGameOver();
-            }
-        }
-    }
-
     changeTickSpeed(newSpeed) {
-        this.tickSpeed = newSpeed;
-        
-        // Redémarrer la boucle avec la nouvelle vitesse
-        if (this.isRunning && this.tickInterval) {
-            this.startTickLoop();
-        }
+        // Envoie la nouvelle vitesse au serveur - isolée par session
+        apiClient.setGameSpeed(newSpeed).catch(err =>
+            console.error('Failed to set speed:', err)
+        );
     }
     
-    togglePause() {
+    async togglePause() {
         this.isPaused = !this.isPaused;
         const btn = document.getElementById('pause-btn');
         btn.textContent = this.isPaused ? '▶️ Reprendre' : '⏸️ Pause';
@@ -222,6 +174,18 @@ class GameEngine {
         const speedSelector = document.getElementById('speed-selector');
         if (speedSelector) {
             speedSelector.disabled = this.isPaused;
+        }
+
+        // Ordonne au serveur de mettre en pause/reprendre cette session uniquement
+        try {
+            if (this.isPaused) {
+                await apiClient.pauseGame();
+            } else {
+                const currentSpeed = speedSelector ? parseFloat(speedSelector.value) : 1.0;
+                await apiClient.setGameSpeed(currentSpeed);
+            }
+        } catch (err) {
+            console.error('Failed to toggle pause:', err);
         }
     }
     

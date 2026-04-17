@@ -16,4 +16,6 @@ public interface GameRuntime {
     boolean isGameOver();
 
     void addObserver(GameStateObserver observer);
+
+    void setSpeed(double speedMultiplier);
 }

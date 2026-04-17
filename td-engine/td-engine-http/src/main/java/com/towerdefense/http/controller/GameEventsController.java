@@ -24,6 +24,8 @@ import com.towerdefense.engine.api.model.events.TowerShotEvent;
 import com.towerdefense.engine.api.model.events.TowerSoldEvent;
 import com.towerdefense.engine.api.model.events.TowerUpgradedEvent;
 
+import com.towerdefense.http.session.GameSessionManager;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -94,7 +96,7 @@ public class GameEventsController {
     /**
      * Crée un observateur dédié pour un client spécifique, résolvant le problème de broadcast global.
      */
-    public GameStateObserver forClient(String clientId) {
+    public GameStateObserver forClient(String clientId, GameSessionManager sessionManager) {
         return new GameStateObserver() {
             @Override
             public void onEnemyHit(EnemyHitEvent event) { sendEventToClient(clientId, "enemy-hit", event); }
@@ -123,12 +125,14 @@ public class GameEventsController {
                 sendEventToClient(clientId, "game-won", state);
                 SseEmitter em = emitters.remove(clientId);
                 if (em != null) em.complete();
+                sessionManager.removeSession(clientId); // Libère la RAM côté serveur
             }
             @Override
             public void onGameLoose(GameStateDTO state) {
                 sendEventToClient(clientId, "game-lost", state);
                 SseEmitter em = emitters.remove(clientId);
                 if (em != null) em.complete();
+                sessionManager.removeSession(clientId); // Libère la RAM côté serveur
             }
         };
     }

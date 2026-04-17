@@ -90,18 +90,31 @@ class APIClient {
         return await response.json();
     }
     
-    async tick() {
-        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/tick`, {
+
+    
+    async setGameSpeed(speedMultiplier) {
+        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/commands/speed`, {
             method: 'POST',
-            headers: { 'X-Client-Id': this.clientId }
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
+            body: JSON.stringify({ speedMultiplier })
         });
-        
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.message || 'Tick failed');
+            throw new Error(error.message || 'Failed to set speed');
         }
     }
-    
+
+    async pauseGame() {
+        return this.setGameSpeed(0.0);
+    }
+
+    async resumeGame() {
+        return this.setGameSpeed(1.0);
+    }
+
     async placeTower(playerId, towerType, x, y) {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/commands/place-tower`, {
             method: 'POST',

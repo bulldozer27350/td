@@ -20,6 +20,7 @@ import com.towerdefense.http.model.GameState;
 import com.towerdefense.http.model.GameStatus;
 import com.towerdefense.http.model.PlaceTowerRequest;
 import com.towerdefense.http.model.SellTowerRequest;
+import com.towerdefense.http.model.UpdateSpeedRequest;
 import com.towerdefense.http.model.UpgradeTowerRequest;
 import com.towerdefense.http.session.GameSessionManager;
 
@@ -60,14 +61,9 @@ public class GameController implements DefaultApi {
         return ResponseEntity.ok(httpState);
     }
 
-    @Override
-    public ResponseEntity<Void> tick() {
-        getGameRuntime().tick();
-        return ResponseEntity.noContent().build();
-    }
 
     @Override
-    public ResponseEntity<Void> placeTower(PlaceTowerRequest request) {
+    public ResponseEntity<Void> placeTower(@Valid PlaceTowerRequest request) {
         UUID playerId = UUID.fromString(request.getPlayerId());
         
         PlaceTowerCommand command = new PlaceTowerCommand(
@@ -82,7 +78,7 @@ public class GameController implements DefaultApi {
     }
 
     @Override
-    public ResponseEntity<Void> upgradeTower(UpgradeTowerRequest request) {
+    public ResponseEntity<Void> upgradeTower(@Valid UpgradeTowerRequest request) {
         UUID playerId = UUID.fromString(request.getPlayerId());
         
         UpgradeTowerCommand command = new UpgradeTowerCommand(
@@ -96,7 +92,7 @@ public class GameController implements DefaultApi {
     }
 
     @Override
-    public ResponseEntity<Void> sellTower(SellTowerRequest request) {
+    public ResponseEntity<Void> sellTower(@Valid SellTowerRequest request) {
         UUID playerId = UUID.fromString(request.getPlayerId());
         
         SellTowerCommand command = new SellTowerCommand(
@@ -122,6 +118,13 @@ public class GameController implements DefaultApi {
         com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
         runtime.initialize(config);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateSpeed(@Valid UpdateSpeedRequest request) {
+        // setSpeed est local à la session du joueur : isolé, pas de globe
+        getGameRuntime().setSpeed(request.getSpeedMultiplier());
+        return ResponseEntity.accepted().build();
     }
 
 }
