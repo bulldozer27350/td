@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -16,8 +21,11 @@ import com.towerdefense.progression.model.UpgradeDefinitions;
 
 public class UpgradePersistenceService {
     
+    private static final Logger log = LoggerFactory.getLogger(UpgradePersistenceService.class);
+    
     private final Path upgradesJsonPath;
     private final ObjectMapper objectMapper;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
     
     public UpgradePersistenceService(Path upgradesJsonPath) {
         this.upgradesJsonPath = upgradesJsonPath;
@@ -26,28 +34,49 @@ public class UpgradePersistenceService {
     }
     
     /**
-     * Charge les upgrades depuis le fichier JSON
+     * Charge les upgrades depuis le fichier JSON de manière Thread-Safe.
      */
     public UpgradeDefinitions loadUpgrades() throws IOException {
-        if (!Files.exists(upgradesJsonPath)) {
-            // Créer un fichier vide avec une liste vide si inexistant
-            UpgradeDefinitions empty = new UpgradeDefinitions(List.of());
-            saveUpgrades(empty);
-            return empty;
+        lock.readLock().lock();
+        try {
+            if (!Files.exists(upgradesJsonPath)) {
+                // Relâcher le lock en lecture, prendre le lock en écriture pour initialiser
+                lock.readLock().unlock();
+                lock.writeLock().lock();
+                try {
+                    if (!Files.exists(upgradesJsonPath)) {
+                        UpgradeDefinitions empty = new UpgradeDefinitions(List.of());
+                        saveUpgradesInternal(empty);
+                        return empty;
+                    }
+                } finally {
+                    // Reprendre le lock en lecture avant de relâcher l'écriture
+                    lock.readLock().lock();
+                    lock.writeLock().unlock();
+                }
+            }
+            return objectMapper.readValue(upgradesJsonPath.toFile(), UpgradeDefinitions.class);
+        } finally {
+            lock.readLock().unlock();
         }
-        return objectMapper.readValue(upgradesJsonPath.toFile(), UpgradeDefinitions.class);
     }
     
     /**
-     * Sauvegarde les upgrades dans le fichier JSON
+     * Sauvegarde les upgrades dans le fichier JSON de manière Thread-Safe.
      */
     public void saveUpgrades(UpgradeDefinitions definitions) throws IOException {
-        // Créer le répertoire parent si nécessaire
+        lock.writeLock().lock();
+        try {
+            saveUpgradesInternal(definitions);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+    
+    private void saveUpgradesInternal(UpgradeDefinitions definitions) throws IOException {
         Files.createDirectories(upgradesJsonPath.getParent());
-        
         objectMapper.writeValue(upgradesJsonPath.toFile(), definitions);
-        System.out.println("[PERSISTENCE] Saved " + definitions.upgrades().size() + 
-                         " upgrades to " + upgradesJsonPath);
+        log.info("[PERSISTENCE] Saved {} upgrades to {}", definitions.upgrades().size(), upgradesJsonPath);
     }
     
     /**

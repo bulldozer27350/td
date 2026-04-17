@@ -2,9 +2,14 @@
 // API CLIENT - Gestion des appels aux APIs
 // ============================================================================
 
+// Détermination dynamique des URLs selon l'environnement
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const host = window.location.hostname;
+const protocol = window.location.protocol;
+
 const API_CONFIG = {
-    PROGRESSION: 'http://localhost:8082/api',
-    GAME_ENGINE: 'http://localhost:8080'
+    PROGRESSION: isLocalhost ? 'http://localhost:8082/api' : `${protocol}//${host}:8082/api`,
+    GAME_ENGINE: isLocalhost ? 'http://localhost:8080' : `${protocol}//${host}:8080`
 };
 
 class APIClient {
