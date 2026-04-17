@@ -8,6 +8,14 @@ const API_CONFIG = {
 };
 
 class APIClient {
+    constructor() {
+        this.clientId = crypto.randomUUID();
+    }
+
+    getClientId() {
+        return this.clientId;
+    }
+
     // ========================================================================
     // PROGRESSION API
     // ========================================================================
@@ -57,7 +65,10 @@ class APIClient {
     async initializeGame(gameConfig) {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/initialize`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
             body: JSON.stringify(gameConfig)
         });
         
@@ -68,13 +79,16 @@ class APIClient {
     }
     
     async getGameState() {
-        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/state`);
+        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/state`, {
+            headers: { 'X-Client-Id': this.clientId }
+        });
         return await response.json();
     }
     
     async tick() {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/tick`, {
-            method: 'POST'
+            method: 'POST',
+            headers: { 'X-Client-Id': this.clientId }
         });
         
         if (!response.ok) {
@@ -86,7 +100,10 @@ class APIClient {
     async placeTower(playerId, towerType, x, y) {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/commands/place-tower`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
             body: JSON.stringify({ playerId, towerType, x, y })
         });
         
@@ -99,7 +116,10 @@ class APIClient {
     async upgradeTower(playerId, x, y) {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/commands/upgrade-tower`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
             body: JSON.stringify({ 
                 playerId, 
                 towerXPosition: x, 
@@ -116,7 +136,10 @@ class APIClient {
     async sellTower(playerId, x, y) {
         const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/commands/sell-tower`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
             body: JSON.stringify({ 
                 playerId, 
                 towerXPosition: x, 
@@ -131,7 +154,9 @@ class APIClient {
     }
     
     async getGameStatus() {
-        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/status`);
+        const response = await fetch(`${API_CONFIG.GAME_ENGINE}/game/status`, {
+            headers: { 'X-Client-Id': this.clientId }
+        });
         return await response.json();
     }
 }

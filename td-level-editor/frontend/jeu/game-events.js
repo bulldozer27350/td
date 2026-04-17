@@ -28,7 +28,7 @@ class GameEventsHandler {
             }
             
             console.log('🔌 Creating new SSE connection');
-            const clientId = crypto.randomUUID(); // UUID, playerId, etc.
+            const clientId = apiClient.getClientId(); // UUID généré par apiClient
             this.eventSource = new EventSource(`http://localhost:8080/game/events?clientId=${clientId}`);
             
             // Événements du jeu

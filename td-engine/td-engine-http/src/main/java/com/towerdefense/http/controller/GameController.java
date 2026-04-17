@@ -2,8 +2,11 @@ package com.towerdefense.http.controller;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.towerdefense.engine.api.GameEngineApi;
 import com.towerdefense.engine.api.GameRuntime;
@@ -18,47 +21,55 @@ import com.towerdefense.http.model.GameStatus;
 import com.towerdefense.http.model.PlaceTowerRequest;
 import com.towerdefense.http.model.SellTowerRequest;
 import com.towerdefense.http.model.UpgradeTowerRequest;
-import com.towerdefense.starter.GameRuntimeImpl;
+import com.towerdefense.http.session.GameSessionManager;
 
 import jakarta.validation.Valid;
 
 @RestController
 public class GameController implements DefaultApi {
 
-    private GameRuntime gameRuntime;
     private final GameStateMapper mapper;
     private final GameConfigMapper configMapper;
-    private final GameEngineApi gameEngineApi;
+    private final GameSessionManager sessionManager;
     
-    private GameEventsController gameEventsController;
+    @Autowired
+    private HttpServletRequest httpRequest;
 
-    public GameController(GameStateMapper mapper, GameConfigMapper configMapper, GameEngineApi engineApi, GameEventsController gameEventsController) {
+    public GameController(GameStateMapper mapper, GameConfigMapper configMapper, GameSessionManager sessionManager) {
         this.mapper = mapper;
         this.configMapper = configMapper;
-        this.gameEngineApi = engineApi;
-        this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
-        this.gameEventsController = gameEventsController;
+        this.sessionManager = sessionManager;
+    }
+    
+    private String resolveClientId() {
+        String clientId = httpRequest.getHeader("X-Client-Id");
+        if (clientId == null) {
+            clientId = httpRequest.getParameter("clientId");
+        }
+        return clientId != null ? clientId : "default-session";
+    }
+
+    private GameRuntime getGameRuntime() {
+        return sessionManager.getOrCreateSession(resolveClientId());
     }
 
     @Override
     public ResponseEntity<GameState> getGameState() {
-        GameStateDTO state = gameRuntime.getState();
+        GameStateDTO state = getGameRuntime().getState();
         GameState httpState = mapper.toHttpModel(state);
         return ResponseEntity.ok(httpState);
     }
 
     @Override
     public ResponseEntity<Void> tick() {
-        this.gameRuntime.tick();
+        getGameRuntime().tick();
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Void> placeTower(PlaceTowerRequest request) {
-        // Convertir le UUID String en UUID
         UUID playerId = UUID.fromString(request.getPlayerId());
         
-        // Créer la commande avec les bons paramètres dans le bon ordre
         PlaceTowerCommand command = new PlaceTowerCommand(
             request.getX(),
             request.getY(),
@@ -66,7 +77,7 @@ public class GameController implements DefaultApi {
             playerId
         );
         
-        gameRuntime.submit(command);
+        getGameRuntime().submit(command);
         return ResponseEntity.accepted().build();
     }
 
@@ -80,7 +91,7 @@ public class GameController implements DefaultApi {
             playerId
         );
         
-        gameRuntime.submit(command);
+        getGameRuntime().submit(command);
         return ResponseEntity.accepted().build();
     }
 
@@ -94,26 +105,23 @@ public class GameController implements DefaultApi {
             playerId
         );
         
-        gameRuntime.submit(command);
+        getGameRuntime().submit(command);
         return ResponseEntity.accepted().build();
     }
 
     @Override
     public ResponseEntity<GameStatus> getGameStatus() {
         GameStatus status = new GameStatus();
-        status.setGameOver(gameRuntime.isGameOver());
+        status.setGameOver(getGameRuntime().isGameOver());
         return ResponseEntity.ok(status);
     }
 
-	@Override
-	public ResponseEntity<Void> initializeGame(@Valid GameConfig gameConfig) {
-		this.gameRuntime = new GameRuntimeImpl(gameEngineApi);
-		
-		// Enregistrer le contrôleur SSE comme observer
-	    gameRuntime.addObserver(gameEventsController);
-	    com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
-	    gameRuntime.initialize(config);
-	    return ResponseEntity.noContent().build();
-	}
+    @Override
+    public ResponseEntity<Void> initializeGame(@Valid GameConfig gameConfig) {
+        GameRuntime runtime = getGameRuntime();
+        com.towerdefense.engine.api.model.configuration.GameConfig config = configMapper.toBusiness(gameConfig);
+        runtime.initialize(config);
+        return ResponseEntity.noContent().build();
+    }
 
 }

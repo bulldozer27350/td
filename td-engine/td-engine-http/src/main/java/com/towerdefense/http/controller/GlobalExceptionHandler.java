@@ -300,23 +300,20 @@ public class GlobalExceptionHandler {
             .body(error);
     }
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * Gère toutes les exceptions non gérées (500 Internal Server Error).
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        // Log l'exception pour le debugging
-        ex.printStackTrace();
+        log.error("An unexpected error occurred", ex);
         
         ErrorResponse error = new ErrorResponse(
             "INTERNAL_ERROR",
             "An unexpected error occurred",
             HttpStatus.INTERNAL_SERVER_ERROR.value()
         );
-        
-        // En développement, on peut ajouter plus de détails
-        // error.addDetail("exception", ex.getClass().getName());
-        // error.addDetail("message", ex.getMessage());
         
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
