@@ -48,7 +48,7 @@ services:
     # En développement local : construit depuis les sources
     # En production (après CI/CD) : utilise l'image publiée sur GHCR
     # Décommenter la ligne "image" et commenter "build" pour la production :
-    # image: ghcr.io/${GITHUB_REPOSITORY}/td-engine:latest
+    image: ${IMAGE_PATH:-td}/td-engine:${IMAGE_TAG:-latest}
     build:
       context: .                          # Racine du projet = contexte de build
       dockerfile: docker/Dockerfile.engine
@@ -102,7 +102,7 @@ services:
   # Gère les niveaux débloqués, étoiles, points d'amélioration.
   # ──────────────────────────────────────────────────────────────────────────
   td-progression:
-    # image: ghcr.io/${GITHUB_REPOSITORY}/td-progression:latest
+    image: ${IMAGE_PATH:-td}/td-progression:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.progression
@@ -152,7 +152,7 @@ services:
   # Service réservé aux créateurs de contenu.
   # ──────────────────────────────────────────────────────────────────────────
   td-level-editor:
-    # image: ghcr.io/${GITHUB_REPOSITORY}/td-level-editor:latest
+    image: ${IMAGE_PATH:-td}/td-level-editor:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.editor
@@ -197,7 +197,7 @@ services:
   # Sert les fichiers statiques et proxifie les appels API.
   # ──────────────────────────────────────────────────────────────────────────
   nginx:
-    # image: ghcr.io/${GITHUB_REPOSITORY}/td-nginx:latest
+    image: ${IMAGE_PATH:-td}/td-nginx:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.nginx
