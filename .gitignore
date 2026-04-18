@@ -1,5 +1,21 @@
 *.prefs
 .project
 .classpath
-target
+target/
 /bin/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+# Le fichier .env contient des secrets (mots de passe, tokens) → jamais sur Git !
+.env
+# .env.example est un modèle sans secrets → OK à commiter
+!.env.example
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.settings/
+*.launch
+.vscode/
+.idea/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

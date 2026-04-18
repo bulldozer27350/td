@@ -1,0 +1,258 @@
+# ============================================================================
+# docker-compose.yml — Orchestration de tous les services Tower Defense
+# ============================================================================
+#
+# Docker Compose permet de démarrer TOUS les conteneurs en une seule commande.
+# C'est l'équivalent d'un "chef d'orchestre" pour tes conteneurs Docker.
+#
+# ── COMMANDES ESSENTIELLES ────────────────────────────────────────────────────
+#
+#   Démarrer tout (en arrière-plan) :
+#     docker-compose up -d
+#
+#   Démarrer en reconstruisant les images :
+#     docker-compose up --build -d
+#
+#   Voir les logs en direct :
+#     docker-compose logs -f
+#     docker-compose logs -f td-engine     ← logs d'un seul service
+#
+#   Arrêter tout :
+#     docker-compose down
+#
+#   Arrêter et supprimer les volumes (⚠️ efface les données !) :
+#     docker-compose down -v
+#
+#   Voir le statut :
+#     docker-compose ps
+#
+# ── VARIABLES D'ENVIRONNEMENT ─────────────────────────────────────────────────
+# Les valeurs comme ${TD_DATA_DIR} sont lues depuis le fichier .env
+# (copier .env.example → .env et remplir les valeurs).
+#
+# ── RÉSEAU INTERNE ────────────────────────────────────────────────────────────
+# Tous les services partagent le réseau "td-network".
+# Dans ce réseau, ils se parlent par leur NOM de service (ex: "td-engine"),
+# pas par "localhost". Nginx proxifie vers "http://td-engine:8080".
+# ============================================================================
+
+version: '3.9'
+
+services:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # MOTEUR DE JEU — td-engine-http
+  # Gère les sessions de jeu, la pose de tours, les ennemis, etc.
+  # ──────────────────────────────────────────────────────────────────────────
+  td-engine:
+    # En développement local : construit depuis les sources
+    # En production (après CI/CD) : utilise l'image publiée sur GHCR
+    # Décommenter la ligne "image" et commenter "build" pour la production :
+    # image: ghcr.io/${GITHUB_REPOSITORY}/td-engine:latest
+    build:
+      context: .                          # Racine du projet = contexte de build
+      dockerfile: docker/Dockerfile.engine
+
+    # Nom du conteneur (visible dans "docker ps")
+    container_name: td-engine
+
+    # ── Ports ──────────────────────────────────────────────────────────────
+    # Format : "PORT_HOTE:PORT_CONTENEUR"
+    # Le port hôte 8080 est exposé pour le développement.
+    # En production derrière Nginx, on peut retirer ce port (Nginx proxifie
+    # en interne sans passer par le port hôte).
+    ports:
+      - "8080:8080"
+
+    # ── Variables d'environnement ──────────────────────────────────────────
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      # CORS : autorise les requêtes depuis ton domaine public
+      # En développement, mettre "*" ; en production, mettre ton domaine exact
+      - APP_CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
+      - JAVA_OPTS=-Xms128m -Xmx512m
+
+    # ── Politique de redémarrage ───────────────────────────────────────────
+    # "unless-stopped" : redémarre automatiquement si le conteneur crashe,
+    # sauf si tu l'arrêtes manuellement avec "docker-compose stop"
+    restart: unless-stopped
+
+    # ── Healthcheck ────────────────────────────────────────────────────────
+    # Docker vérifie régulièrement que le service répond.
+    # Si le healthcheck échoue, le service est marqué "unhealthy".
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s    # Vérifie toutes les 30 secondes
+      timeout: 10s     # Abandonne la vérification après 10 secondes
+      retries: 3       # Marque unhealthy après 3 échecs consécutifs
+      start_period: 60s # Laisse 60s au service pour démarrer avant le premier check
+
+    networks:
+      - td-network
+
+    # ── Logs ───────────────────────────────────────────────────────────────
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"   # Limite la taille du fichier de log
+        max-file: "3"     # Garde 3 fichiers de log max
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # SERVICE DE PROGRESSION — td-progression-http
+  # Gère les niveaux débloqués, étoiles, points d'amélioration.
+  # ──────────────────────────────────────────────────────────────────────────
+  td-progression:
+    # image: ghcr.io/${GITHUB_REPOSITORY}/td-progression:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.progression
+
+    container_name: td-progression
+
+    ports:
+      - "8082:8082"
+
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - APP_CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
+      - JAVA_OPTS=-Xms64m -Xmx256m
+      # Répertoire où le service lit les fichiers de niveaux JSON
+      # Cette variable est lue par application.yml du service
+      - TD_DATA_DIR=/app/data
+
+    # ── Volumes ────────────────────────────────────────────────────────────
+    # Un "volume" monte un répertoire de la machine hôte DANS le conteneur.
+    # Ici : ./exportables (sur ta machine) → /app/data (dans le conteneur)
+    # Ainsi, le service peut lire les fichiers JSON de niveaux.
+    # ⚠️ Les données survivent aux redémarrages du conteneur, contrairement
+    # aux fichiers écrits directement dans le système de fichiers du conteneur.
+    volumes:
+      - ./exportables:/app/data:ro   # ":ro" = read-only (lecture seule)
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    networks:
+      - td-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # ÉDITEUR DE NIVEAUX — td-level-editor-http
+  # Service réservé aux créateurs de contenu.
+  # ──────────────────────────────────────────────────────────────────────────
+  td-level-editor:
+    # image: ghcr.io/${GITHUB_REPOSITORY}/td-level-editor:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.editor
+
+    container_name: td-level-editor
+
+    ports:
+      - "8081:8081"
+
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - APP_CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-*}
+      - JAVA_OPTS=-Xms64m -Xmx256m
+      # Variables qui surchargent application.properties du service
+      - EDITOR_STORAGE_BASE_DIRECTORY=/app/data
+
+    # L'éditeur a besoin d'écrire (pas de ":ro" ici)
+    volumes:
+      - td-game-data:/app/data
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    networks:
+      - td-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # FRONTEND + REVERSE PROXY — Nginx
+  # Point d'entrée unique pour tous les clients (joueurs et éditeurs).
+  # Sert les fichiers statiques et proxifie les appels API.
+  # ──────────────────────────────────────────────────────────────────────────
+  nginx:
+    # image: ghcr.io/${GITHUB_REPOSITORY}/td-nginx:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nginx
+
+    container_name: td-nginx
+
+    ports:
+      # Port 80 : HTTP (accès via http://tondomaine.ddns.net)
+      - "80:80"
+      # Port 443 : HTTPS (à activer quand tu auras un certificat SSL)
+      # - "443:443"
+
+    # Nginx doit démarrer APRÈS les services Java (depends_on)
+    # Note : depends_on attend que le conteneur soit "started", pas forcément
+    # qu'il soit "healthy". Pour attendre le healthcheck, utiliser condition: service_healthy
+    depends_on:
+      td-engine:
+        condition: service_started
+      td-progression:
+        condition: service_started
+      td-level-editor:
+        condition: service_started
+
+    restart: unless-stopped
+
+    networks:
+      - td-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+# ============================================================================
+# VOLUMES NOMMÉS
+# ============================================================================
+# Les volumes nommés sont gérés par Docker (stockés dans /var/lib/docker/volumes).
+# Avantage sur les bind mounts (./chemin:/conteneur) : portables entre machines.
+volumes:
+  # Données partagées entre l'éditeur et le service progression
+  # Contient les niveaux, tours, ennemis créés via l'éditeur
+  td-game-data:
+    driver: local
+
+
+# ============================================================================
+# RÉSEAU INTERNE
+# ============================================================================
+# Tous les services partagent ce réseau.
+# - Les services se parlent par leur nom (ex: "td-engine" → résout en IP)
+# - Les ports non exposés ne sont PAS accessibles depuis l'extérieur du réseau
+networks:
+  td-network:
+    driver: bridge
+    # Nom explicite pour éviter le préfixe automatique (ex: tower_defense_td-network)
+    name: td-network

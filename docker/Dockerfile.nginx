@@ -1,0 +1,59 @@
+# ============================================================================
+# Dockerfile — Frontend (Interface web + Reverse Proxy Nginx)
+# ============================================================================
+#
+# Ce conteneur remplit deux rôles :
+#
+# 1. SERVEUR DE FICHIERS STATIQUES
+#    Sert les fichiers HTML/JS/CSS du jeu et du studio (éditeur de niveaux)
+#    - /jeu/    → l'interface de jeu accessible aux joueurs
+#    - /studio/ → l'interface d'édition (accès admin uniquement)
+#
+# 2. REVERSE PROXY
+#    Redirige les appels API du navigateur vers les services Java appropriés.
+#    Le navigateur n'a besoin de connaître qu'un seul port (80), Nginx
+#    s'occupe d'aiguiller vers le bon service en coulisses.
+#
+#    Sans reverse proxy, le navigateur devrait connaître les ports 8080, 8081,
+#    8082 et les CORS seraient plus complexes à gérer.
+#
+# Architecture :
+#    Navigateur → port 80 (Nginx) → /api/engine/    → td-engine:8080
+#                                 → /api/progression/ → td-progression:8082
+#                                 → /api/editor/     → td-level-editor:8081
+# ============================================================================
+
+FROM nginx:1.27-alpine
+
+LABEL org.opencontainers.image.title="Tower Defense — Frontend"
+LABEL org.opencontainers.image.description="Nginx servant les assets statiques et proxifiant les APIs"
+LABEL org.opencontainers.image.source="https://github.com/bulldozer27350/td"
+
+# ── Fichiers statiques ────────────────────────────────────────────────────────
+
+# Interface de jeu (accessible à tous les joueurs)
+COPY td-level-editor/frontend/jeu/   /usr/share/nginx/html/jeu/
+
+# Interface Studio/éditeur (accès restreint — pour l'instant pas protégé,
+# sera sécurisé par authentification dans une prochaine version)
+COPY td-level-editor/frontend/v2/    /usr/share/nginx/html/studio/
+
+# ── Configuration Nginx ───────────────────────────────────────────────────────
+# Remplace la config par défaut par notre config personnalisée
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+# ── Sécurité ──────────────────────────────────────────────────────────────────
+# Nginx par défaut tourne en root. On configure les permissions pour
+# lui permettre de tourner en utilisateur non-root (nginx).
+RUN chown -R nginx:nginx /usr/share/nginx/html \
+    && chown -R nginx:nginx /var/cache/nginx \
+    && chown -R nginx:nginx /var/log/nginx \
+    && touch /var/run/nginx.pid \
+    && chown -R nginx:nginx /var/run/nginx.pid
+
+USER nginx
+
+EXPOSE 80
+
+# Nginx démarre en mode foreground (nécessaire pour Docker)
+CMD ["nginx", "-g", "daemon off;"]

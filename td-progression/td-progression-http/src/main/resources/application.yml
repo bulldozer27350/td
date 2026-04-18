@@ -3,7 +3,9 @@ server:
 
 tdmeta:
   data:
-    directory: D:/Depots/tower_defense/exportables/
+    # TD_DATA_DIR est défini par Docker (dans docker-compose.yml → /app/data)
+    # En développement local sans Docker, le chemin Windows est utilisé par défaut
+    directory: ${TD_DATA_DIR:D:/Depots/tower_defense/exportables/}
   upgrades:
     file: ${TD_UPGRADES_FILE:src/main/resources/upgrades/tower-upgrades.json}
 

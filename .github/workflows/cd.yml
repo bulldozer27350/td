@@ -1,0 +1,407 @@
+# ============================================================================
+# .github/workflows/cd.yml — Pipeline de Déploiement Continu (CD)
+# ============================================================================
+#
+# Ce workflow GitHub Actions se déclenche automatiquement à chaque fois que
+# tu pousses du code sur la branche "main".
+#
+# ── CE QUE ÇA FAIT ───────────────────────────────────────────────────────────
+#
+#   1. Récupère le code source (git checkout)
+#   2. Compile chaque service Java avec Maven
+#   3. Construit une image Docker pour chaque service
+#   4. Publie ces images sur GitHub Container Registry (GHCR)
+#   5. Tague les images avec le numéro de commit et "latest"
+#
+# ── ANALOGIE MAVEN ───────────────────────────────────────────────────────────
+# Ta comparaison avec Maven est bonne !
+#
+#   Maven :                          Docker / GHCR :
+#   pom.xml              →           Dockerfile
+#   mvn package          →           docker build
+#   mvn deploy           →           docker push
+#   Maven Central / Nexus →          GitHub Container Registry (ghcr.io)
+#   groupId:artifactId:version →     ghcr.io/org/repo/image:tag
+#
+# Donc oui : une fois les images publiées sur ghcr.io, il suffit de faire
+# "docker pull ghcr.io/ton-org/td-engine:latest"
+# pour télécharger la dernière version, exactement comme un artefact Maven.
+#
+# ── DÉCLENCHEMENT ────────────────────────────────────────────────────────────
+# Ce workflow se déclenche :
+#   - À chaque push sur "main"
+#   - Manuellement depuis GitHub → Actions → "Run workflow"
+#
+# ── PERMISSIONS NÉCESSAIRES ───────────────────────────────────────────────────
+# Pour que ce workflow puisse publier sur GHCR, il faut activer les permissions
+# dans GitHub → Settings → Actions → General → Workflow permissions
+# → Sélectionner "Read and write permissions"
+# ============================================================================
+
+name: 🐳 Build & Publish Docker Images
+
+# ── Déclenchement du workflow ─────────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - main        # Se déclenche à chaque push sur main
+    paths-ignore:
+      # Ne pas déclencher si seuls ces fichiers changent (optimisation)
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+
+  # Permet de déclencher manuellement depuis l'interface GitHub
+  workflow_dispatch:
+    inputs:
+      force_rebuild_all:
+        description: 'Reconstruire TOUTES les images (même si pas de changements)'
+        required: false
+        default: 'false'
+        type: boolean
+
+# ── Permissions du workflow ───────────────────────────────────────────────────
+# Ces permissions sont nécessaires pour publier sur GitHub Container Registry
+permissions:
+  contents: read    # Lire le code source
+  packages: write   # Écrire des packages (images Docker) dans GHCR
+
+# ── Variables globales ────────────────────────────────────────────────────────
+env:
+  # URL du registry GitHub Container Registry
+  REGISTRY: ghcr.io
+  # Nom de base des images : ghcr.io/ton-org/ton-repo
+  # github.repository = "ton-org/ton-repo" (automatique, pas besoin de changer)
+  IMAGE_BASE: ghcr.io/${{ github.repository }}
+
+jobs:
+
+  # ============================================================================
+  # JOB 1 : Détecter quels services ont été modifiés
+  # ============================================================================
+  # Principe : si seul td-engine a changé, on ne reconstruit pas td-progression.
+  # Cela économise du temps et des ressources de build.
+  # ============================================================================
+  detect-changes:
+    name: 🔍 Détecter les changements
+    runs-on: ubuntu-latest
+    outputs:
+      # Ces "outputs" sont lus par les jobs suivants
+      engine_changed:    ${{ steps.changes.outputs.engine }}
+      progression_changed: ${{ steps.changes.outputs.progression }}
+      editor_changed:    ${{ steps.changes.outputs.editor }}
+      nginx_changed:     ${{ steps.changes.outputs.nginx }}
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # L'action "paths-filter" compare les fichiers modifiés dans le commit
+      # avec les patterns définis ci-dessous.
+      - name: Détecter les modules modifiés
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            engine:
+              # Reconstruit td-engine si l'un de ces chemins a changé :
+              - 'td-engine/**'
+              - 'docker/Dockerfile.engine'
+              - 'pom.xml'
+
+            progression:
+              - 'td-progression/**'
+              - 'docker/Dockerfile.progression'
+              - 'pom.xml'
+
+            editor:
+              - 'td-level-editor/**'
+              - 'docker/Dockerfile.editor'
+              - 'docker/Dockerfile.nginx'
+              - 'docker/nginx.conf'
+              - 'pom.xml'
+
+            nginx:
+              - 'td-level-editor/frontend/**'
+              - 'docker/Dockerfile.nginx'
+              - 'docker/nginx.conf'
+
+
+  # ============================================================================
+  # JOB 2 : Build & Push — Moteur de jeu (td-engine-http)
+  # ============================================================================
+  build-engine:
+    name: 🎮 Build td-engine
+    runs-on: ubuntu-latest
+    needs: detect-changes
+
+    # Ce job s'exécute SI :
+    # - Le moteur a changé OU
+    # - On force la reconstruction de tout OU
+    # - C'est un déclenchement manuel
+    if: |
+      needs.detect-changes.outputs.engine_changed == 'true' ||
+      github.event.inputs.force_rebuild_all == 'true' ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      # ── Étape 1 : Récupérer le code ─────────────────────────────────────
+      - name: 📥 Checkout du code source
+        uses: actions/checkout@v4
+
+      # ── Étape 2 : Configurer QEMU ────────────────────────────────────────
+      # QEMU permet de construire des images pour plusieurs architectures CPU.
+      # Ex: construire une image ARM64 (Raspberry Pi, Mac M1, serveurs OVH)
+      # depuis un runner Ubuntu x86_64.
+      - name: 🔧 Configurer QEMU (multi-architecture)
+        uses: docker/setup-qemu-action@v3
+
+      # ── Étape 3 : Configurer Docker Buildx ───────────────────────────────
+      # Buildx est le builder Docker avancé qui supporte le multi-stage et
+      # le multi-architecture.
+      - name: 🔧 Configurer Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ── Étape 4 : Se connecter au registry GHCR ───────────────────────────
+      # github.actor = ton nom d'utilisateur GitHub
+      # secrets.GITHUB_TOKEN = token automatique créé par GitHub Actions
+      # (pas besoin de le créer manuellement, GitHub le fournit)
+      - name: 🔑 Connexion à GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Étape 5 : Générer les tags de l'image ────────────────────────────
+      # Cette action génère automatiquement plusieurs tags :
+      # - "latest" pour la branche main
+      # - Le numéro de commit SHA (ex: "sha-abc1234")
+      # - La date (ex: "20240418")
+      # Ainsi tu peux toujours revenir à une version précédente.
+      - name: 🏷️ Générer les métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}/td-engine
+          tags: |
+            # Tag "latest" pour les pushs sur main
+            type=raw,value=latest,enable={{is_default_branch}}
+            # Tag avec le SHA du commit (7 premiers caractères)
+            type=sha,prefix=sha-,format=short
+            # Tag avec la date (format AAAA.MM.JJ)
+            type=schedule,pattern={{date 'YYYY.MM.DD'}}
+
+      # ── Étape 6 : Construire et publier l'image───────────────────────────
+      - name: 🏗️ Build et Push de l'image td-engine
+        uses: docker/build-push-action@v6
+        with:
+          # Contexte = racine du projet (contient tous les modules Maven)
+          context: .
+          file: docker/Dockerfile.engine
+
+          # push: true = publier sur GHCR après le build
+          # (mettre false pour tester sans publier)
+          push: true
+
+          # Tags générés à l'étape précédente
+          tags: ${{ steps.meta.outputs.tags }}
+
+          # Labels OCI standards (auteur, source, version...)
+          labels: ${{ steps.meta.outputs.labels }}
+
+          # ── Cache Docker ──────────────────────────────────────────────────
+          # Le cache évite de retélécharger Maven et les dépendances à chaque build.
+          # GitHub Actions met en cache les couches Docker entre les exécutions.
+          cache-from: type=gha            # Lire depuis le cache GitHub Actions
+          cache-to: type=gha,mode=max     # Écrire dans le cache (mode=max = cache complet)
+
+          # ── Multi-architecture ────────────────────────────────────────────
+          # Construit pour x86_64 (PC standard) et ARM64 (Mac M1, Raspberry Pi...)
+          # Retirer "linux/arm64" si tu veux accélérer le build
+          platforms: linux/amd64,linux/arm64
+
+
+  # ============================================================================
+  # JOB 3 : Build & Push — Service de progression (td-progression-http)
+  # ============================================================================
+  build-progression:
+    name: 📈 Build td-progression
+    runs-on: ubuntu-latest
+    needs: detect-changes
+
+    if: |
+      needs.detect-changes.outputs.progression_changed == 'true' ||
+      github.event.inputs.force_rebuild_all == 'true' ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: 📥 Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: 🔧 Configurer QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🔧 Configurer Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Connexion à GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Générer les métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}/td-progression
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - name: 🏗️ Build et Push de l'image td-progression
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.progression
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+
+  # ============================================================================
+  # JOB 4 : Build & Push — Éditeur de niveaux (td-level-editor-http)
+  # ============================================================================
+  build-editor:
+    name: ✏️ Build td-level-editor
+    runs-on: ubuntu-latest
+    needs: detect-changes
+
+    if: |
+      needs.detect-changes.outputs.editor_changed == 'true' ||
+      github.event.inputs.force_rebuild_all == 'true' ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: 📥 Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: 🔧 Configurer QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🔧 Configurer Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Connexion à GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Générer les métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}/td-level-editor
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - name: 🏗️ Build et Push de l'image td-level-editor
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.editor
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+
+  # ============================================================================
+  # JOB 5 : Build & Push — Frontend Nginx
+  # ============================================================================
+  build-nginx:
+    name: 🌐 Build td-nginx (frontend)
+    runs-on: ubuntu-latest
+    needs: detect-changes
+
+    if: |
+      needs.detect-changes.outputs.nginx_changed == 'true' ||
+      github.event.inputs.force_rebuild_all == 'true' ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: 📥 Checkout du code source
+        uses: actions/checkout@v4
+
+      - name: 🔧 Configurer QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🔧 Configurer Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Connexion à GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Générer les métadonnées de l'image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}/td-nginx
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - name: 🏗️ Build et Push de l'image td-nginx
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.nginx
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+
+  # ============================================================================
+  # JOB 6 : Résumé final
+  # ============================================================================
+  # Ce job s'exécute toujours en dernier et affiche un résumé des builds.
+  # ============================================================================
+  summary:
+    name: 📋 Résumé du déploiement
+    runs-on: ubuntu-latest
+    # S'exécute après tous les jobs de build, même si certains ont été ignorés
+    needs: [build-engine, build-progression, build-editor, build-nginx]
+    # "always()" = s'exécute même si des jobs précédents ont été skippés
+    if: always()
+
+    steps:
+      - name: 📋 Afficher le résumé
+        run: |
+          echo "## 🐳 Build Docker terminé" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Statut |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| td-engine     | ${{ needs.build-engine.result }}     |" >> $GITHUB_STEP_SUMMARY
+          echo "| td-progression| ${{ needs.build-progression.result }}|" >> $GITHUB_STEP_SUMMARY
+          echo "| td-level-editor| ${{ needs.build-editor.result }}   |" >> $GITHUB_STEP_SUMMARY
+          echo "| td-nginx      | ${{ needs.build-nginx.result }}      |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry**: \`ghcr.io/${{ github.repository }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

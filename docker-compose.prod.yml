@@ -1,0 +1,54 @@
+# ============================================================================
+# docker-compose.prod.yml — Surcharge pour la production
+# ============================================================================
+#
+# Ce fichier REMPLACE les sections "build" par des sections "image"
+# pour utiliser les images pré-construites depuis GHCR.
+#
+# UTILISATION :
+#   Sur le serveur de production, lancer :
+#     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Ou définir la variable COMPOSE_FILE dans .env :
+#     COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+# Puis simplement :
+#     docker-compose up -d
+#
+# ── POURQUOI DEUX FICHIERS ? ─────────────────────────────────────────────────
+# docker-compose.yml       = configuration commune (ports, volumes, réseau...)
+# docker-compose.prod.yml  = surcharge spécifique à la production (images GHCR)
+#
+# En développement : docker-compose up  (build local)
+# En production    : docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+#
+# ── MISE À JOUR D'UNE IMAGE EN PRODUCTION ────────────────────────────────────
+# 1. Sur ta machine locale : git push → GitHub Actions construit l'image
+# 2. Sur le serveur :
+#    docker-compose pull          ← télécharge les nouvelles images depuis GHCR
+#    docker-compose up -d         ← redémarre les conteneurs avec les nouvelles images
+#
+# Exactement comme "mvn dependency:resolve" + redéploiement !
+# ============================================================================
+
+version: '3.9'
+
+services:
+
+  td-engine:
+    # En production, on utilise l'image pré-construite sur GHCR
+    # au lieu de construire depuis les sources (plus rapide, plus fiable)
+    image: ghcr.io/${GITHUB_REPOSITORY}/td-engine:latest
+    # Supprime la section "build" du fichier de base
+    build: !reset null
+
+  td-progression:
+    image: ghcr.io/${GITHUB_REPOSITORY}/td-progression:latest
+    build: !reset null
+
+  td-level-editor:
+    image: ghcr.io/${GITHUB_REPOSITORY}/td-level-editor:latest
+    build: !reset null
+
+  nginx:
+    image: ghcr.io/${GITHUB_REPOSITORY}/td-nginx:latest
+    build: !reset null

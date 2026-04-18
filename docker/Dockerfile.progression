@@ -1,0 +1,75 @@
+# ============================================================================
+# Dockerfile — td-progression-http (Service de progression joueur)
+# ============================================================================
+#
+# Gère la progression du joueur : niveaux débloqués, étoiles, points.
+# Port : 8082 (défini dans application.yml du service)
+# ============================================================================
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ÉTAPE 1 : Construction du JAR avec Maven
+# ─────────────────────────────────────────────────────────────────────────────
+FROM maven:3.9-eclipse-temurin-21 AS builder
+
+WORKDIR /build
+
+# Copie des POM en premier pour optimiser le cache Docker
+COPY pom.xml ./pom.xml
+COPY td-progression/pom.xml                         td-progression/pom.xml
+COPY td-progression/td-progression-core/pom.xml     td-progression/td-progression-core/pom.xml
+COPY td-progression/td-progression-http/pom.xml     td-progression/td-progression-http/pom.xml
+
+# Téléchargement des dépendances (mis en cache si les POM n'ont pas changé)
+RUN mvn dependency:go-offline \
+      -pl td-progression/td-progression-http \
+      -am \
+      --no-transfer-progress \
+      --batch-mode
+
+# Copie du code source
+COPY td-progression/ td-progression/
+
+# Compilation sans tests
+RUN mvn package \
+      -pl td-progression/td-progression-http \
+      -am \
+      -DskipTests \
+      --no-transfer-progress \
+      --batch-mode
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ÉTAPE 2 : Image d'exécution finale
+# ─────────────────────────────────────────────────────────────────────────────
+FROM eclipse-temurin:21-jre-alpine
+
+LABEL org.opencontainers.image.title="Tower Defense — Progression joueur"
+LABEL org.opencontainers.image.description="Service Spring Boot gérant la progression et les niveaux"
+LABEL org.opencontainers.image.source="https://github.com/bulldozer27350/td"
+
+# Utilisateur non-root pour la sécurité
+RUN addgroup -S tdgroup && adduser -S tduser -G tdgroup
+
+WORKDIR /app
+
+COPY --from=builder /build/td-progression/td-progression-http/target/*.jar app.jar
+
+# ── Données de jeu (niveaux, tours, ennemis) ──────────────────────────────────
+# Le service progression lit les fichiers JSON depuis un répertoire externe.
+# En production Docker, ces fichiers seront montés via un volume.
+# Le répertoire /app/data est le point de montage attendu.
+RUN mkdir -p /app/data/levels /app/data/towers /app/data/enemies
+
+RUN chown -R tduser:tdgroup /app
+USER tduser
+
+EXPOSE 8082
+
+ENV SPRING_PROFILES_ACTIVE=prod
+# Ces variables seront surchargées par docker-compose.yml :
+# TD_DATA_DIR pointe vers le volume contenant les JSON de niveaux
+ENV TD_DATA_DIR=/app/data
+ENV JAVA_OPTS="-Xms128m -Xmx256m"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
