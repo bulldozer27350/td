@@ -49,6 +49,7 @@ RUN mvn dependency:go-offline \
       --batch-mode
 
 # Copie du code source
+COPY td-engine/ td-engine/
 COPY td-level-editor/ td-level-editor/
 
 # Compilation sans tests
