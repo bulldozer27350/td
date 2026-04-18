@@ -17,14 +17,31 @@ FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
-# Copie des POM en premier pour optimiser le cache Docker
-COPY pom.xml ./pom.xml
-COPY td-level-editor/pom.xml                                    td-level-editor/pom.xml
-COPY td-level-editor/td-level-editor-api/pom.xml                td-level-editor/td-level-editor-api/pom.xml
-COPY td-level-editor/td-level-editor-analyzer/pom.xml           td-level-editor/td-level-editor-analyzer/pom.xml
-COPY td-level-editor/td-level-editor-core/pom.xml               td-level-editor/td-level-editor-core/pom.xml
-COPY td-level-editor/td-level-editor-http/pom.xml               td-level-editor/td-level-editor-http/pom.xml
-COPY td-level-editor/td-level-editor-ui/pom.xml                 td-level-editor/td-level-editor-ui/pom.xml
+# ── Optimisation du cache Docker ──────────────────────────────────────────────
+COPY pom.xml ./
+COPY td-console-viewer/pom.xml                      td-console-viewer/
+COPY td-engine/pom.xml                              td-engine/
+COPY td-engine/td-engine-api/pom.xml                td-engine/td-engine-api/
+COPY td-engine/td-engine-core/pom.xml               td-engine/td-engine-core/
+COPY td-engine/td-engine-core/td-aop/pom.xml        td-engine/td-engine-core/td-aop/
+COPY td-engine/td-engine-core/td-config/pom.xml     td-engine/td-engine-core/td-config/
+COPY td-engine/td-engine-core/td-domain/pom.xml     td-engine/td-engine-core/td-domain/
+COPY td-engine/td-engine-core/td-engine-starter/pom.xml td-engine/td-engine-core/td-engine-starter/
+COPY td-engine/td-engine-core/td-exceptions/pom.xml td-engine/td-engine-core/td-exceptions/
+COPY td-engine/td-engine-core/td-gameplay/pom.xml   td-engine/td-engine-core/td-gameplay/
+COPY td-engine/td-engine-core/td-sequencer/pom.xml   td-engine/td-engine-core/td-sequencer/
+COPY td-engine/td-engine-http/pom.xml               td-engine/td-engine-http/
+COPY td-engine/td-engine-tests/pom.xml              td-engine/td-engine-tests/
+COPY td-level-editor/pom.xml                        td-level-editor/
+COPY td-level-editor/td-level-editor-analyzer/pom.xml td-level-editor/td-level-editor-analyzer/
+COPY td-level-editor/td-level-editor-api/pom.xml    td-level-editor/td-level-editor-api/
+COPY td-level-editor/td-level-editor-core/pom.xml   td-level-editor/td-level-editor-core/
+COPY td-level-editor/td-level-editor-http/pom.xml   td-level-editor/td-level-editor-http/
+COPY td-level-editor/td-level-editor-ui/pom.xml     td-level-editor/td-level-editor-ui/
+COPY td-progression/pom.xml                         td-progression/
+COPY td-progression/td-progression-core/pom.xml     td-progression/td-progression-core/
+COPY td-progression/td-progression-http/pom.xml     td-progression/td-progression-http/
+COPY td-runner/pom.xml                              td-runner/
 
 # Téléchargement des dépendances (mis en cache si les POM n'ont pas changé)
 RUN mvn dependency:go-offline \
