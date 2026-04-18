@@ -57,8 +57,6 @@ RUN mvn dependency:go-offline \
 # ── Copie du code source ───────────────────────────────────────────────────────
 # On copie maintenant les sources (après le cache des dépendances)
 COPY td-engine/       td-engine/
-COPY td-runner/       td-runner/
-COPY td-console-viewer/ td-console-viewer/
 
 # ── Compilation ────────────────────────────────────────────────────────────────
 # -DskipTests : on ne lance pas les tests ici (la CI s'en charge séparément)
