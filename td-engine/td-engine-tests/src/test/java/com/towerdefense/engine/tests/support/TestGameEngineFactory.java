@@ -7,190 +7,110 @@ import com.towerdefense.engine.api.model.configuration.EnemiesConfig;
 import com.towerdefense.engine.api.model.configuration.GameConfig;
 import com.towerdefense.engine.api.model.configuration.LevelConfig;
 import com.towerdefense.engine.api.model.configuration.TowersConfig;
-import com.towerdefense.runner.config.loader.JsonConfigLoader;
 
 /**
  * Fabrique de GameEngineApi pour les tests avec pattern Builder.
- *
- * Valeurs par défaut :
- * - levelPath: "levels/rank-1.json"
- * - pathsPath: "paths/paths-1.json"
- * - towersPath: "towers/towers.json"
- * - enemiesPath: "enemies/enemies.json"
- *
- * Exemple d'utilisation :
- * <pre>
- * // Utilise toutes les valeurs par défaut
- * GameEngineApi engine = TestGameEngineFactory.builder().build();
  * 
- * // Override certaines valeurs
- * GameEngineApi engine = TestGameEngineFactory.builder()
- *     .withLevel("configs/level1.json")
- *     .withPaths("configs/paths1.json")
- *     .build();
- *     
- * // ✅ NOUVEAU : Utilise une LevelConfig générée aléatoirement
- * GameEngineApi engine = TestGameEngineFactory.builder()
- *     .withLevel(randomLevelConfig)
- *     .build();
- * </pre>
+ * Cette factory scanne dynamiquement le dossier 'exportables/' pour charger
+ * les configurations de tours, d'ennemis et de niveaux.
  */
 public final class TestGameEngineFactory {
 
-    private static final JsonConfigLoader loader = new JsonConfigLoader();
-
-    // Valeurs par défaut
-    private String levelPath = "levels/rank-1.json";
-    private String towersPath = "towers/towers.json";
-    private String enemiesPath = "enemies/enemies.json";
-    
-    // ✅ NOUVEAU : Support des configs directes (pour property-based testing)
+    private String levelId = "niveau_01"; // ID par défaut
     private LevelConfig directLevelConfig = null;
     private TowersConfig directTowersConfig = null;
     private EnemiesConfig directEnemiesConfig = null;
 
-    /**
-     * Constructeur public pour permettre l'instanciation directe.
-     * Usage: new TestGameEngineFactory().withLevel(...).build()
-     */
     public TestGameEngineFactory() {
     }
 
-    /**
-     * Méthode factory statique (style plus fluent/idiomatique).
-     * Usage: TestGameEngineFactory.builder().withLevel(...).build()
-     */
     public static TestGameEngineFactory builder() {
         return new TestGameEngineFactory();
     }
 
-    // ========================
-    // CONFIGURATION PAR CHEMIN (existant)
-    // ========================
-
-    public TestGameEngineFactory withLevel(String levelPath) {
-        if (levelPath == null || levelPath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Le chemin du rank ne peut pas être null ou vide");
-        }
-        this.levelPath = levelPath;
-        this.directLevelConfig = null; // Reset le mode direct
+    public TestGameEngineFactory withLevel(String levelId) {
+        this.levelId = levelId;
+        this.directLevelConfig = null;
         return this;
     }
 
-    public TestGameEngineFactory withPaths(String pathsPath) {
-        if (pathsPath == null || pathsPath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Le chemin des paths ne peut pas être null ou vide");
-        }
-        return this;
-    }
-
-    public TestGameEngineFactory withTowers(String towersPath) {
-        if (towersPath == null || towersPath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Le chemin des towers ne peut pas être null ou vide");
-        }
-        this.towersPath = towersPath;
-        this.directTowersConfig = null;
-        return this;
-    }
-
-    public TestGameEngineFactory withEnemies(String enemiesPath) {
-        if (enemiesPath == null || enemiesPath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Le chemin des enemies ne peut pas être null ou vide");
-        }
-        this.enemiesPath = enemiesPath;
-        this.directEnemiesConfig = null;
-        return this;
-    }
-
-    // ========================
-    // ✅ NOUVEAU : CONFIGURATION DIRECTE (pour property-based testing)
-    // ========================
-
-    /**
-     * Utilise une LevelConfig directement (au lieu de charger depuis un fichier).
-     * Utile pour les tests property-based avec configs générées aléatoirement.
-     */
     public TestGameEngineFactory withLevel(LevelConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("LevelConfig ne peut pas être null");
-        }
         this.directLevelConfig = config;
-        this.levelPath = null;
+        this.levelId = null;
         return this;
     }
 
-    /**
-     * Utilise une TowersConfig directement.
-     */
     public TestGameEngineFactory withTowers(TowersConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("TowersConfig ne peut pas être null");
-        }
         this.directTowersConfig = config;
-        this.towersPath = null;
         return this;
     }
 
-    /**
-     * Utilise une EnemiesConfig directement.
-     */
     public TestGameEngineFactory withEnemies(EnemiesConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("EnemiesConfig ne peut pas être null");
-        }
         this.directEnemiesConfig = config;
-        this.enemiesPath = null;
         return this;
     }
 
     /**
-     * Construit et initialise le GameEngineApi avec la configuration fournie.
-     * 
-     * @return GameEngineApi initialisé et prêt à l'emploi
+     * Construit et initialise le GameEngineApi avec la configuration découverte.
      */
     public GameEngineApi build() {
-        // 1. Contexte Spring minimal, basé sur la config réelle du moteur
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext("com.towerdefense");
-
+        // 1. Contexte Spring minimal
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.towerdefense");
         GameEngineApi engine = context.getBean(GameEngineApi.class);
 
-        // 2. Chargement de la configuration de jeu
-        LevelConfig level = loadLevelConfig();
-        TowersConfig towers = loadTowersConfig();
-        EnemiesConfig enemies = loadEnemiesConfig();
+        // 2. Chargement dynamique
+        GameDataScanner scanner = new GameDataScanner();
+        
+        try {
+            // A. Niveau
+            LevelConfig level = loadLevel(scanner);
+            
+            // B. Tours (Agrégation de tous les fichiers de exportables/towers)
+            TowersConfig towers = (directTowersConfig != null) ? directTowersConfig 
+                                : aggregateTowers(scanner);
+            
+            // C. Ennemis (Agrégation de tous les fichiers de exportables/enemies)
+            EnemiesConfig enemies = (directEnemiesConfig != null) ? directEnemiesConfig 
+                                  : aggregateEnemies(scanner);
 
-        GameConfig gameConfig = new GameConfig(level, towers, enemies);
+            GameConfig gameConfig = new GameConfig(level, towers, enemies);
 
-        // 3. Initialisation explicite du moteur
-        engine.initialize(gameConfig);
-
-        return engine;
+            // 3. Initialisation du moteur
+            engine.initialize(gameConfig);
+            
+            return engine;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de l'initialisation du moteur de test", e);
+        }
     }
 
-    // ========================
-    // MÉTHODES PRIVÉES DE CHARGEMENT
-    // ========================
-
-    private LevelConfig loadLevelConfig() {
-        if (directLevelConfig != null) {
-            return directLevelConfig;
-        }
-        LevelConfig levelConfig = loader.load(levelPath, LevelConfig.class);
-        return levelConfig;
+    private LevelConfig loadLevel(GameDataScanner scanner) throws java.io.IOException {
+        if (directLevelConfig != null) return directLevelConfig;
+        
+        var allLevels = scanner.loadAllLevels();
+        if (allLevels.isEmpty()) throw new IllegalStateException("Aucun niveau trouvé dans exportables/levels");
+        
+        return allLevels.stream()
+                .filter(l -> l.getId().equalsIgnoreCase(levelId))
+                .findFirst()
+                .orElse(allLevels.get(0)); // Prend le premier par défaut si ID non trouvé
     }
 
-    private TowersConfig loadTowersConfig() {
-        if (directTowersConfig != null) {
-            return directTowersConfig;
+    private TowersConfig aggregateTowers(GameDataScanner scanner) throws java.io.IOException {
+        TowersConfig config = new TowersConfig();
+        config.setTowers(scanner.loadAllTowers());
+        if (config.getTowers().isEmpty()) {
+            System.err.println("[WARNING] Aucune tour chargée depuis exportables/towers");
         }
-        return loader.load(towersPath, TowersConfig.class);
+        return config;
     }
 
-    private EnemiesConfig loadEnemiesConfig() {
-        if (directEnemiesConfig != null) {
-            return directEnemiesConfig;
+    private EnemiesConfig aggregateEnemies(GameDataScanner scanner) throws java.io.IOException {
+        EnemiesConfig config = new EnemiesConfig();
+        config.setEnemies(scanner.loadAllEnemies());
+        if (config.getEnemies().isEmpty()) {
+            System.err.println("[WARNING] Aucun ennemi chargé depuis exportables/enemies");
         }
-        return loader.load(enemiesPath, EnemiesConfig.class);
+        return config;
     }
 }

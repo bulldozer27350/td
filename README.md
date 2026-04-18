@@ -35,19 +35,12 @@ Etat actuel
 
 ✔ Java 21 uniquement (aucune dette legacy)
 
-✔ Architecture modulaire Maven
-
-✔ Moteur de jeu totalement headless
-
-✔ Boucle de jeu basée sur des ticks
-
-✔ Configuration du gameplay par fichiers (niveaux, vagues, tours, ennemis)
-
-✔ API publique stable (DTOs, commandes, observateurs)
-
-✔ Rendu ASCII console et fichier
-
-✔ CI GitHub Actions avec build incrémental
+✔️ Architecture modulaire Maven
+✔️ Moteur de jeu totalement headless
+✔️ Boucle de jeu basée sur des ticks
+✔️ Configuration du gameplay par fichiers (niveaux, vagues, tours, ennemis)
+✔️ API publique stable (DTOs, commandes, observateurs)
+✔️ CI GitHub Actions avec build incrémental
 
 
 ---
@@ -72,8 +65,6 @@ tower-defense
 │   ├── td-engine-http           # Exposition HTTP (expérimental)
 │   └── td-engine-tests          # Tests du moteur
 │
-├── td-console-viewer            # Rendu ASCII console / fichier
-├── td-runner                    # Lanceur de parties
 ├── td-level-editor              # Éditeur de niveaux (WIP)
 ├── td-progression               # Utilitaires transverses
 │
@@ -233,21 +224,6 @@ Cette séparation permet :
 - de rejouer une partie passée avec de nouvelles règles de progression
 - de supporter plusieurs modes de jeu (campagne, sandbox, hardcore)
 ---
-### 🖥️ Rendu ASCII (`td-console-viewer`)
-
-Le viewer console fournit un rendu ASCII riche :
-
-* 🗺️ Plateau en grille
-* 🗼 Tours, 👾 ennemis, ▪️ projectiles
-* ➡️ Chemins directionnels
-* 💰 Or, ❤️ vies, 📊 progression
-
-Deux modes sont disponibles :
-
-* `ConsoleViewer` → affichage temps réel
-* `FileViewer` → dump ASCII par tick dans un fichier
-
-Le rendu repose sur un **registre de renderers extensible**.
 
 ---
 
@@ -287,13 +263,9 @@ flowchart LR
     Engine["⚙️ td-engine-core
     Gameplay temps réel"]
 
-    Viewer["🖥️ td-console-viewer
-    Rendu ASCII"]
-
     StudioUI -->|HTTP / OpenAPI| LevelEditor
     LevelEditor -->|Lecture JSON| Progression
     Progression -->|JSON projeté| Engine
-    Engine -->|État final| Viewer
     Engine -->|Statistiques fin de partie| Progression
 ```
 
@@ -336,7 +308,7 @@ Victoire ☑ ou Défaite ✖
 
 ## 🧩 Séquence d’exécution (vue haut niveau)
 
-![Séquence d’exécution du moteur](docs/sequence-runner.png)
+![Séquence d’exécution du moteur](docs/sequence-engine.png)
 
 ---
 ## 🛠️ Build & exécution
@@ -386,8 +358,6 @@ Voir : `.github/workflows/ci.yml`
 ## 🚧 État actuel du projet
 
 ✔ Moteur de jeu : fonctionnel
-
-✔ Viewer console : fonctionnel
 
 ⚠ Couche HTTP : expérimentale
 

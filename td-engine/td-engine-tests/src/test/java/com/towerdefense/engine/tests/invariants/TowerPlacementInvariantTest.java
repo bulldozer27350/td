@@ -1,5 +1,6 @@
 package com.towerdefense.engine.tests.invariants;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,21 +26,24 @@ class TowerPlacementInvariantTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
 
         // Place une première tour
-        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "mitrailleuse", playerId));
         engine.tick();
         
         int towerCountAfterFirst = engine.getState().towers().size();
         
         // Tente de placer une deuxième tour au même endroit
-        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
-        engine.tick();
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> engine.dispatch(new PlaceTowerCommand(5, 5, "mitrailleuse", playerId)),
+            "On ne peut pas placer deux tours à la même position"
+        );
         
         int towerCountAfterSecond = engine.getState().towers().size();
         
         assertEquals(
             towerCountAfterFirst,
             towerCountAfterSecond,
-            "On ne peut pas placer deux tours à la même position"
+            "Le nombre de tours ne doit pas avoir changé"
         );
     }
 
@@ -53,17 +57,18 @@ class TowerPlacementInvariantTest {
         // Épuise l'argent en achetant des tours
 //        int initialTowerCount = engine.getState().towers().size();
         
-        for (int x = 0; x < 15; x++) {
-            for (int y = 0; y < 15; y++) {
+        for (int x = 0; x < 12; x++) {
+            for (int y = 0; y < 12; y++) {
                 if (engine.getState().player().currentGold() < 50) {
-                    // Plus assez d'argent, tente quand même d'acheter
-//                    int goldBefore = engine.getState().player().currentGold();
+                    final int fx = x;
+                    final int fy = y;
                     int towersBefore = engine.getState().towers().size();
-                    
-                    engine.dispatch(new PlaceTowerCommand(x, y, "machinegun", playerId));
-                    engine.tick();
-                    
                     // Vérifie qu'aucune tour n'a été ajoutée
+                    assertThrows(
+                        IllegalArgumentException.class,
+                        () -> engine.dispatch(new PlaceTowerCommand(fx, fy, "mitrailleuse", playerId))
+                    );
+                    
                     assertEquals(
                         towersBefore,
                         engine.getState().towers().size(),
@@ -72,8 +77,12 @@ class TowerPlacementInvariantTest {
                     return;
                 }
                 
-                engine.dispatch(new PlaceTowerCommand(x, y, "machinegun", playerId));
-                engine.tick();
+                try {
+                    engine.dispatch(new PlaceTowerCommand(x, y, "mitrailleuse", playerId));
+                    engine.tick();
+                } catch (IllegalArgumentException e) {
+                    // Ignore occupied positions or out of bounds during gold depletion
+                }
             }
         }
     }
@@ -87,7 +96,7 @@ class TowerPlacementInvariantTest {
         int initialCount = engine.getState().towers().size();
         
         // Place une tour
-        engine.dispatch(new PlaceTowerCommand(7, 7, "machinegun", playerId));
+        engine.dispatch(new PlaceTowerCommand(7, 7, "mitrailleuse", playerId));
         
         // Attend que la construction se termine (buildTimeTicks)
         for (int i = 0; i < 20; i++) {
@@ -107,7 +116,7 @@ class TowerPlacementInvariantTest {
 
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
-        engine.dispatch(new PlaceTowerCommand(3, 3, "machinegun", playerId));
+        engine.dispatch(new PlaceTowerCommand(3, 3, "mitrailleuse", playerId));
         engine.tick();
         
         int towerCount = engine.getState().towers().size();

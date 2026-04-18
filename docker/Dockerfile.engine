@@ -23,7 +23,6 @@ WORKDIR /build
 # ── Optimisation du cache Docker ──────────────────────────────────────────────
 # On doit copier TOUS les poms car Maven scanne la structure complète du projet
 COPY pom.xml ./
-COPY td-console-viewer/pom.xml                      td-console-viewer/
 COPY td-engine/pom.xml                              td-engine/
 COPY td-engine/td-engine-api/pom.xml                td-engine/td-engine-api/
 COPY td-engine/td-engine-core/pom.xml               td-engine/td-engine-core/
@@ -45,7 +44,6 @@ COPY td-level-editor/td-level-editor-ui/pom.xml     td-level-editor/td-level-edi
 COPY td-progression/pom.xml                         td-progression/
 COPY td-progression/td-progression-core/pom.xml     td-progression/td-progression-core/
 COPY td-progression/td-progression-http/pom.xml     td-progression/td-progression-http/
-COPY td-runner/pom.xml                              td-runner/
 
 # Téléchargement des dépendances (mis en cache si les POM n'ont pas changé)
 # -pl  : liste des modules à construire

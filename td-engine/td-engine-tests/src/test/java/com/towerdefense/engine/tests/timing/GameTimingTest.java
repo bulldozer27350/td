@@ -23,7 +23,7 @@ class GameTimingTest {
 		UUID playerId = UUID.fromString(engine.getState().player().id());
 
 		// Place une tour
-		engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
+		engine.dispatch(new PlaceTowerCommand(5, 5, "mitrailleuse", playerId));
 
 		// Attend que la tour soit construite
 		for (int i = 0; i < 20; i++) {

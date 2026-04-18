@@ -316,7 +316,7 @@ class GameInvariantsPropertyTest {
                 10,  // startTick
                 20,  // spawnInterval
                 5,   // count
-                "fast", // enemy
+                "goblin", // enemy
                 "1" // path
             );
             
@@ -327,7 +327,24 @@ class GameInvariantsPropertyTest {
             
             config.setAttacks(java.util.List.of(attack));
             
+            // ✅ Ajoute un chemin valide pour correspondre à la vague
+            com.towerdefense.engine.api.model.configuration.PathConfig path = 
+                new com.towerdefense.engine.api.model.configuration.PathConfig();
+            path.setId("1");
+            path.setPoints(java.util.List.of(
+                createPoint(0, 0),
+                createPoint(0, 11)
+            ));
+            config.setPaths(java.util.List.of(path));
+            
             return config;
         });
+    }
+
+    private com.towerdefense.engine.api.model.configuration.PointConfig createPoint(int x, int y) {
+        var p = new com.towerdefense.engine.api.model.configuration.PointConfig();
+        p.setX(x);
+        p.setY(y);
+        return p;
     }
 }

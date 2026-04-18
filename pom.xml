@@ -19,8 +19,6 @@
 	<modules>
 		<module>td-level-editor</module>
 		<module>td-engine</module>
-		<module>td-console-viewer</module>
 		<module>td-progression</module>
-		<module>td-runner</module>
 	</modules>
 </project>

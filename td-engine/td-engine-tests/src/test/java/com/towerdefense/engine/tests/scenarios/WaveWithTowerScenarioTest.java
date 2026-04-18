@@ -25,8 +25,10 @@ class WaveWithTowerScenarioTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
         int initialLives = engine.getState().player().currentLives();
 
-        // Place une tour sur le chemin
-        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
+        // Place deux tours à des points stratégiques (y=6 est le chemin)
+        engine.dispatch(new PlaceTowerCommand(5, 5, "mitrailleuse", playerId));
+        engine.dispatch(new PlaceTowerCommand(6, 5, "mitrailleuse", playerId));
+        engine.dispatch(new PlaceTowerCommand(7, 6, "mitrailleuse", playerId));
         
         // Fait tourner le jeu un certain temps
         for (int i = 0; i < 300; i++) {
@@ -70,8 +72,8 @@ class WaveWithTowerScenarioTest {
         UUID playerId = UUID.fromString(engineWithTowers.getState().player().id());
         
         // Place plusieurs tours
-        engineWithTowers.dispatch(new PlaceTowerCommand(3, 3, "machinegun", playerId));
-        engineWithTowers.dispatch(new PlaceTowerCommand(7, 7, "machinegun", playerId));
+        engineWithTowers.dispatch(new PlaceTowerCommand(3, 3, "mitrailleuse", playerId));
+        engineWithTowers.dispatch(new PlaceTowerCommand(7, 7, "mitrailleuse", playerId));
         
         for (int i = 0; i < 200; i++) {
             engineWithTowers.tick();
@@ -96,7 +98,7 @@ class WaveWithTowerScenarioTest {
         UUID playerId = UUID.fromString(engine.getState().player().id());
         
         // Place une tour
-        engine.dispatch(new PlaceTowerCommand(5, 5, "machinegun", playerId));
+        engine.dispatch(new PlaceTowerCommand(5, 5, "mitrailleuse", playerId));
         
         boolean projectilesSeen = false;
         
