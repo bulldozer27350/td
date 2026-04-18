@@ -29,7 +29,8 @@ class GameEventsHandler {
             
             console.log('🔌 Creating new SSE connection');
             const clientId = apiClient.getClientId(); // UUID généré par apiClient
-            this.eventSource = new EventSource(`http://localhost:8080/game/events?clientId=${clientId}`);
+            // Chemin relatif passant par le proxy Nginx (/api/engine/)
+            this.eventSource = new EventSource(`/api/engine/game/events?clientId=${clientId}`);
             
             // Événements du jeu
 

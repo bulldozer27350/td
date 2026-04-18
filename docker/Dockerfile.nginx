@@ -34,9 +34,8 @@ LABEL org.opencontainers.image.source="https://github.com/bulldozer27350/td"
 # Interface de jeu (accessible à tous les joueurs)
 COPY td-level-editor/frontend/jeu/   /usr/share/nginx/html/jeu/
 
-# Interface Studio/éditeur (accès restreint — pour l'instant pas protégé,
-# sera sécurisé par authentification dans une prochaine version)
-COPY td-level-editor/frontend/v2/    /usr/share/nginx/html/studio/
+# Interface d'administration / éditeur de niveaux
+COPY td-level-editor/frontend/administration/    /usr/share/nginx/html/administration/
 
 # ── Configuration Nginx ───────────────────────────────────────────────────────
 # Remplace la config par défaut par notre config personnalisée

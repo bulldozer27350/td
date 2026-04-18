@@ -8,8 +8,8 @@ const host = window.location.hostname;
 const protocol = window.location.protocol;
 
 const API_CONFIG = {
-    PROGRESSION: isLocalhost ? 'http://localhost:8082/api' : `${protocol}//${host}:8082/api`,
-    GAME_ENGINE: isLocalhost ? 'http://localhost:8080' : `${protocol}//${host}:8080`
+    PROGRESSION: '/api/progression',
+    GAME_ENGINE: '/api/engine'
 };
 
 class APIClient {
