@@ -44,7 +44,7 @@ name: 🐳 Build & Publish Docker Images
 on:
   push:
     branches:
-      - main        # Se déclenche à chaque push sur main
+      - develop        # Se déclenche à chaque push sur develop
     paths-ignore:
       # Ne pas déclencher si seuls ces fichiers changent (optimisation)
       - '**.md'
