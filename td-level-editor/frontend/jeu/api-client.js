@@ -14,7 +14,19 @@ const API_CONFIG = {
 
 class APIClient {
     constructor() {
-        this.clientId = crypto.randomUUID();
+        // Fallback pour les contextes non-sécurisés (HTTP sur domaine public)
+        // car crypto.randomUUID() nécessite HTTPS ou localhost.
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            this.clientId = crypto.randomUUID();
+        } else {
+            // Fallback simple compatible avec tous les navigateurs
+            this.clientId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            console.warn('⚠️ Utilisation du fallback UUID (contexte non-sécurisé)');
+        }
     }
 
     getClientId() {
