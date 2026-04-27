@@ -21,12 +21,6 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
 @Component
 public class GameOverSystem implements GameSystem {
     
-    private final LevelProgressionSystem levelProgressionSystem;
-    
-    public GameOverSystem(LevelProgressionSystem levelProgressionSystem) {
-        this.levelProgressionSystem = levelProgressionSystem;
-    }
-    
     @Override
     public void process(GameState state, int tick, List<GameStateObserver> observers) {
         // Vérifie la défaite (plus de vies)
@@ -36,7 +30,7 @@ public class GameOverSystem implements GameSystem {
         }
         
         // Vérifie la victoire (toutes les vagues terminées + aucun ennemi)
-        if (levelProgressionSystem.isLevelFinished() && state.enemies().isEmpty()) {
+        if (state.levelProgress() != null && state.levelProgress().isFinished() && state.enemies().isEmpty()) {
             state.setState(StateEnum.TERMINATED);
         }
     }

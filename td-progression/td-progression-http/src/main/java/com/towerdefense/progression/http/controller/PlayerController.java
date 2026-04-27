@@ -3,10 +3,13 @@ package com.towerdefense.progression.http.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.towerdefense.progression.domain.game.GameConfig;
 import com.towerdefense.progression.http.api.PlayerApi;
@@ -23,15 +26,24 @@ public class PlayerController implements PlayerApi {
 
     private final ReloadableBeansManager beansManager;
     private final PlayerHttpMapper mapper;
+    
+    @Autowired
+    private HttpServletRequest httpRequest;
 
     public PlayerController(ReloadableBeansManager beansManager, PlayerHttpMapper mapper) {
         this.beansManager = beansManager;
         this.mapper = mapper;
     }
+    
+    private String resolveClientId() {
+        String clientId = httpRequest.getHeader("X-Client-Id");
+        return clientId != null ? clientId : "default-player";
+    }
 
     @Override
     public ResponseEntity<PlayerProgressResponse> getPlayerProgress() {
-        var progress = this.beansManager.getMetaGameService().getPlayerProgress();
+        String clientId = resolveClientId();
+        var progress = this.beansManager.getMetaGameService().getPlayerProgress(clientId);
         PlayerProgressResponse response = new PlayerProgressResponse();
 
         response.setCompletedLevels(progress.getCompletedLevelIds().size());
@@ -43,7 +55,8 @@ public class PlayerController implements PlayerApi {
 
     @Override
     public ResponseEntity<List<AvailableLevel>> getAvailableLevels() {
-        List<com.towerdefense.progression.service.AvailableLevel> levels = this.beansManager.getMetaGameService().getAvailableLevels();
+        String clientId = resolveClientId();
+        List<com.towerdefense.progression.service.AvailableLevel> levels = this.beansManager.getMetaGameService().getAvailableLevels(clientId);
         List<AvailableLevel> dtos = levels.stream().map(l -> {
             AvailableLevel level = new AvailableLevel();
             level.setId(l.id());
@@ -58,7 +71,8 @@ public class PlayerController implements PlayerApi {
 
     @Override
     public ResponseEntity<GameConfiguration> prepareLevel(@PathVariable("levelId") String levelId) {
-        GameConfig config = this.beansManager.getMetaGameService().prepareLevel(levelId);
+        String clientId = resolveClientId();
+        GameConfig config = this.beansManager.getMetaGameService().prepareLevel(clientId, levelId);
         GameConfiguration gameConfig = new GameConfiguration();
         gameConfig.setLevelConfig(mapper.toHttp(config.level()));
         gameConfig.setTowersConfig(mapper.toTowersHttp(config.towers()));
@@ -70,9 +84,10 @@ public class PlayerController implements PlayerApi {
     public ResponseEntity<LevelCompletionResponse> completeLevel(@PathVariable("levelId") String levelId,
             @RequestBody LevelCompletionRequest request) {
 
-        int previousPoints = this.beansManager.getMetaGameService().getPlayerProgress().getUpgradePoints();
-        this.beansManager.getMetaGameService().onLevelComplete(levelId, request.getStars());
-        int newPoints = this.beansManager.getMetaGameService().getPlayerProgress().getUpgradePoints();
+        String clientId = resolveClientId();
+        int previousPoints = this.beansManager.getMetaGameService().getPlayerProgress(clientId).getUpgradePoints();
+        this.beansManager.getMetaGameService().onLevelComplete(clientId, levelId, request.getStars());
+        int newPoints = this.beansManager.getMetaGameService().getPlayerProgress(clientId).getUpgradePoints();
         int earned = newPoints - previousPoints;
 
         LevelCompletionResponse response = new LevelCompletionResponse();
@@ -83,3 +98,4 @@ public class PlayerController implements PlayerApi {
         return ResponseEntity.ok(response);
     }
 }
+

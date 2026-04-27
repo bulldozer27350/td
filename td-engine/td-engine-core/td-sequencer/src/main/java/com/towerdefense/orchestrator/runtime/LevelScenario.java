@@ -51,7 +51,8 @@ public class LevelScenario {
 	public LevelProgress snapshot() {
 	    return new LevelProgress(
 	        levelId,
-	        currentAttack
+	        currentAttack,
+	        isFinished()
 	    );
 	}
 

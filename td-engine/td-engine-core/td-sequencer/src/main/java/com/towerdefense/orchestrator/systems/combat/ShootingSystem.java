@@ -38,26 +38,26 @@ public class ShootingSystem implements GameSystem {
             }
 
             // Vérifie si la tour a une cible
-            targetingSystem.getTarget(tower.id()).ifPresent(targetId -> {
+            targetingSystem.findTarget(tower, state).ifPresent(target -> {
                 // Déclenche le tir
                 tower.triggerShot();
 
                 // Crée le projectile
-                Projectile projectile = createProjectile(tower, targetId.id());
+                Projectile projectile = createProjectile(tower, target.id());
                 state.addProjectile(projectile);
 
                 System.out.println("[Tick " + tick + "]Sending event : Tower " + tower.id().value() + " shot toward Enemy "
-                        + targetId.id().value() + " with Projectile " + projectile.id().value());
+                        + target.id().value() + " with Projectile " + projectile.id().value());
                 observers.forEach(
-                        observer -> observer.onTowerShot(this.createTowerShotEvent(tick, tower, targetId, projectile)));
+                        observer -> observer.onTowerShot(this.createTowerShotEvent(tick, tower, target, projectile)));
             });
         }
     }
 
-    private TowerShotEvent createTowerShotEvent(int tick, Tower tower, Enemy targetId, Projectile projectile) {
-        return new TowerShotEvent(tower.id().value(), targetId.id().value(),
+    private TowerShotEvent createTowerShotEvent(int tick, Tower tower, Enemy target, Projectile projectile) {
+        return new TowerShotEvent(tower.id().value(), target.id().value(),
                 projectile.id().value(), new PositionDTO(tower.position().x(), tower.position().y()),
-                new PositionDTO(targetId.position().x(), targetId.position().y()), tick);
+                new PositionDTO(target.position().x(), target.position().y()), tick);
     }
 
     /**

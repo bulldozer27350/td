@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.towerdefense.domain.GameState;
+
 import com.towerdefense.domain.StateEnum;
 import com.towerdefense.engine.api.GameStateObserver;
 import com.towerdefense.orchestrator.runtime.LevelScenario;
@@ -15,7 +17,6 @@ import com.towerdefense.orchestrator.systems.cleanup.OutOfBoundsCleanupSystem;
 import com.towerdefense.orchestrator.systems.combat.CollisionSystem;
 import com.towerdefense.orchestrator.systems.combat.ProjectileSystem;
 import com.towerdefense.orchestrator.systems.combat.ShootingSystem;
-import com.towerdefense.orchestrator.systems.combat.TargetingSystem;
 import com.towerdefense.orchestrator.systems.core.GameSystem;
 import com.towerdefense.orchestrator.systems.economy.LifeManagementSystem;
 import com.towerdefense.orchestrator.systems.economy.RewardSystem;
@@ -41,7 +42,9 @@ import com.towerdefense.orchestrator.systems.notification.ObserverNotificationSy
  * Notifications (LOWEST)
  */
 @Component
+@Scope("prototype")
 public class Sequencer {
+
 
 	// ========================
 	// SYSTEMS (injectés par Spring)
@@ -51,7 +54,6 @@ public class Sequencer {
 
 	// Systems avec état ou nécessitant un accès direct
 	private final LevelProgressionSystem levelProgressionSystem;
-	private final TargetingSystem targetingSystem;
 	private final ObserverNotificationSystem observerNotificationSystem;
 
 	/**
@@ -60,17 +62,16 @@ public class Sequencer {
 	 * Spring injecte automatiquement tous les beans GameSystem.
 	 */
 	public Sequencer(TimeManagementSystem timeManagementSystem, LevelProgressionSystem levelProgressionSystem,
-			EntityMovementSystem entityMovementSystem, TargetingSystem targetingSystem, ShootingSystem shootingSystem,
+			EntityMovementSystem entityMovementSystem, ShootingSystem shootingSystem,
 			ProjectileSystem projectileSystem, CollisionSystem collisionSystem, RewardSystem rewardSystem,
 			LifeManagementSystem lifeManagementSystem, GameOverSystem gameOverSystem,
 			DeadEntityCleanupSystem deadEntityCleanupSystem, OutOfBoundsCleanupSystem outOfBoundsCleanupSystem,
 			ObserverNotificationSystem observerNotificationSystem) {
 		this.levelProgressionSystem = levelProgressionSystem;
-		this.targetingSystem = targetingSystem;
 		this.observerNotificationSystem = observerNotificationSystem;
 		// Initialise la liste des systems dans l'ordre de priorité
 		this.systems = new ArrayList<>(List.of(timeManagementSystem, levelProgressionSystem, entityMovementSystem,
-				targetingSystem, shootingSystem, projectileSystem, collisionSystem, rewardSystem, lifeManagementSystem,
+				shootingSystem, projectileSystem, collisionSystem, rewardSystem, lifeManagementSystem,
 				gameOverSystem, deadEntityCleanupSystem, outOfBoundsCleanupSystem, observerNotificationSystem));
 
 		// Trie les systems par priorité
@@ -104,8 +105,6 @@ public class Sequencer {
 			}
 		}
 
-		// Nettoie les caches après le tick
-		targetingSystem.clearCache();
 	}
 	
 	// ========================
@@ -115,7 +114,7 @@ public class Sequencer {
 	/**
 	 * Définit le niveau à gérer.
 	 * 
-	 * @param rank le scénario du niveau
+	 * @param level le scénario du niveau
 	 */
 	public void setLevel(LevelScenario level) {
 		levelProgressionSystem.setLevel(level);

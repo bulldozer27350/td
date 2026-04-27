@@ -28,16 +28,13 @@ import com.towerdefense.services.TowerServices;
 public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCommand> {
 
 	private final TowerServices towerServices;
-	
-	private final EngineContext context;
 
-	public PlaceTowerCommandHandler(TowerServices towerServices, EngineContext engineContext) {
+	public PlaceTowerCommandHandler(TowerServices towerServices) {
 		this.towerServices = towerServices;
-		this.context = engineContext;
 	}
 	
 	@Override
-	public void handle(PlaceTowerCommand cmd, GameState state, List<GameStateObserver> observers, int tick) {
+	public void handle(PlaceTowerCommand cmd, GameState state, EngineContext context, List<GameStateObserver> observers, int tick) {
 	    TowerType towerType;
 	    if (!positionFree(state, cmd.x(), cmd.y())) {
             throw new IllegalArgumentException(
@@ -45,12 +42,12 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
             );
         }
 	    try {
-	        towerType = this.context.towerTypeRegistry().get(cmd.towerType());
+	        towerType = context.towerTypeRegistry().get(cmd.towerType());
 	    } catch (UnknownTowerTypeException e) {
 	        throw e;
 	    }
 	    
-	    if (!isTowerAllowedOnLevel(cmd.towerType())) {
+	    if (!isTowerAllowedOnLevel(context, cmd.towerType())) {
 	        throw new IllegalArgumentException(
 	            "Tower type " + cmd.towerType() + " is not allowed on this level"
 	        );
@@ -70,13 +67,10 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
 	}
 
 	private boolean positionFree(GameState state, int x, int y) {
-	    // Vérifie si la position est libre (pas de tour ou d'ennemi)
-	    // Il est permis de construire sur une place occupée par un projectile
 	    return state.objectAt(new Position(x, y)) == null || state.objectAt(new Position(x, y)) instanceof Projectile;
     }
 
     private static TowerDTO toDTO(Tower tower) {
-        // Détermine l'état de la tour
         String state;
         if (tower.isUnderBuilding()) {
             state = "BUILDING";
@@ -91,10 +85,10 @@ public class PlaceTowerCommandHandler implements GameCommandHandler<PlaceTowerCo
                 TowerStateEnum.valueOf(state));
     }
 	
-	private boolean isTowerAllowedOnLevel(String towerTypeId) {
+	private boolean isTowerAllowedOnLevel(EngineContext context, String towerTypeId) {
 	    LevelScenarioDefinition level = context.levelScenarioDefinition();
 	    if (level == null || level.getTowerCapacities() == null) {
-	        return true; // Rétrocompatibilité : si non spécifié, tout est autorisé
+	        return true; 
 	    }
 	    
 	    return level.getTowerCapacities().stream()

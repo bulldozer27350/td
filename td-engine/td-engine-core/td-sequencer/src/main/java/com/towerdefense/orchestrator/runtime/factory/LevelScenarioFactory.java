@@ -37,7 +37,7 @@ public class LevelScenarioFactory {
 	private Attack createAttack(AttackDefinition definition, EnemyFactoryProvider enemyFactories,
 			Map<String, EnemyPath> paths) {
 		List<EnemyWave> waves = definition.getWaves().stream()
-				.map(w -> new EnemyWave(w.getStartTick(), w.getSpawnInterval(), w.getSpawnInterval(), w.getCount(),
+				.map(w -> new EnemyWave(0, w.getStartTick(), w.getSpawnInterval(), w.getCount(),
 						enemyFactories.get(w.getEnemyTypeId()), resolvePath(w, paths)))
 				.toList();
 

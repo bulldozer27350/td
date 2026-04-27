@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.towerdefense.config.EngineContext;
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
 import com.towerdefense.domain.GameState;
@@ -27,7 +28,7 @@ public class UpgradeTowerCommandHandler implements GameCommandHandler<UpgradeTow
 	}
 
 	@Override
-	public void handle(UpgradeTowerCommand cmd, GameState state, List<GameStateObserver> observers, int tick) {
+	public void handle(UpgradeTowerCommand cmd, GameState state, EngineContext context, List<GameStateObserver> observers, int tick) {
 		GameObject tower = state.objectAt(new Position(cmd.towerXPosition(), cmd.towerYPosition()));
 		if (tower instanceof Tower t) {
 			UpgradeTowerIntention intention = new UpgradeTowerIntention(new EntityId(cmd.playerId()), t.id());

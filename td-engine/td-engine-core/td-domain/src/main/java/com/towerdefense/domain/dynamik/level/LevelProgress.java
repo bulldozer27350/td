@@ -6,5 +6,5 @@ package com.towerdefense.domain.dynamik.level;
  * @param levelIndex  the index of the current rank
  * @param attackIndex the index of the current attack within the rank
  */
-public record LevelProgress(String levelIndex, int attackIndex) {
+public record LevelProgress(String levelIndex, int attackIndex, boolean isFinished) {
 }

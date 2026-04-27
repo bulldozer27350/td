@@ -2,7 +2,9 @@ package com.towerdefense.orchestrator.systems.lifecycle;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.engine.api.GameStateObserver;
@@ -19,7 +21,9 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
  * - Met à jour le LevelProgress
  */
 @Component
+@Scope("prototype")
 public class LevelProgressionSystem implements GameSystem {
+
     
     private LevelScenario level;
     

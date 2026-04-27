@@ -3,7 +3,9 @@ package com.towerdefense.orchestrator.systems.notification;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.StateEnum;
@@ -21,7 +23,9 @@ import com.towerdefense.orchestrator.systems.core.SystemPriority;
  * - Gère la liste des observateurs
  */
 @Component
+@Scope("prototype")
 public class ObserverNotificationSystem implements GameSystem {
+
     
     private final List<GameStateObserver> observers = new ArrayList<>();
     

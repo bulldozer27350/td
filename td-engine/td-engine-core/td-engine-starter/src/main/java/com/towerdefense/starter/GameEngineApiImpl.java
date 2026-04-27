@@ -7,12 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.towerdefense.config.EngineContext;
 import com.towerdefense.config.assembler.EnemyFactoryAssembler;
 import com.towerdefense.config.assembler.LevelAssembler;
-import com.towerdefense.config.assembler.PathAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 import com.towerdefense.config.mapper.EnemyPathMapper;
 import com.towerdefense.config.registry.EnemyFactoryRegistry;
@@ -50,8 +47,7 @@ import com.towerdefense.services.GameCommandHandler;
  */
 public class GameEngineApiImpl implements GameEngineApi {
 
-    @Autowired
-    private Sequencer sequencer;
+    private final Sequencer sequencer;
     private EntityId playerId;
     private GameState state;
     private EngineContext context;
@@ -66,6 +62,7 @@ public class GameEngineApiImpl implements GameEngineApi {
     private int tickNumber;
 
     public GameEngineApiImpl(LevelScenarioFactory levelScenarioFactory, EngineContext context,
+            Sequencer sequencer,
             TowerTypeAssembler towerTypeAssembler, EnemyFactoryAssembler enemyFactoryAssembler,
             LevelAssembler levelAssembler, Map<Class<?>, GameCommandHandler<?>> handlers) {
         this.handlers = handlers;
@@ -75,15 +72,19 @@ public class GameEngineApiImpl implements GameEngineApi {
 
         this.levelScenarioFactory = levelScenarioFactory;
         this.context = context;
+        this.sequencer = sequencer;
 
         this.towerTypeAssembler = towerTypeAssembler;
         this.enemyFactoryAssembler = enemyFactoryAssembler;
         this.levelAssembler = levelAssembler;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void dispatch(GameCommand command) {
         GameCommandHandler handler = handlers.get(command.getClass());
-        handler.handle(command, this.state, this.observers, tickNumber);
+        if (handler != null) {
+            handler.handle(command, this.state, this.context, this.observers, tickNumber);
+        }
     }
 
     @Override
@@ -91,7 +92,7 @@ public class GameEngineApiImpl implements GameEngineApi {
         this.state = new GameState();
         this.configureLevel(gameConfig);
         this.configureGameMap();
-        this.state.setLevelProgress(new LevelProgress(gameConfig.levelConfig().getId(), 0));
+        this.state.setLevelProgress(new LevelProgress(gameConfig.levelConfig().getId(), 0, false));
         this.state.setState(StateEnum.IN_PROGRESS);
         this.state.setEnemyPaths(this.context.enemyPaths());
         this.tickNumber = 0;

@@ -8,13 +8,17 @@ import com.towerdefense.config.assembler.EnemyFactoryAssembler;
 import com.towerdefense.config.assembler.LevelAssembler;
 import com.towerdefense.config.assembler.TowerTypeAssembler;
 
+import org.springframework.context.annotation.Scope;
+
 @Configuration
 public class EngineInternalConfiguration {
 
 	@Bean
+	@Scope("prototype")
 	EngineContext engineContext() {
 		return new EngineContext();
 	}
+
 
 	@Bean
 	TowerTypeAssembler towerTypeConfiguration() {

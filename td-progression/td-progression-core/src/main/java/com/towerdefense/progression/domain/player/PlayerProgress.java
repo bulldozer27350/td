@@ -5,10 +5,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PlayerProgress {
+    @JsonProperty("completedLevels")
     private final Map<String, LevelCompletion> completedLevels = new HashMap<>();
+    @JsonProperty("unlockedUpgrades")
     private final Set<String> unlockedUpgrades = new HashSet<>();
+    @JsonProperty("upgradePoints")
     private int upgradePoints = 0;
+
     
     // Compléter un niveau
     public void completeLevel(String levelId, int stars) {

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.towerdefense.config.EngineContext;
 import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameObject;
 import com.towerdefense.domain.GameState;
@@ -27,7 +28,7 @@ public class SellTowerCommandHandler implements GameCommandHandler<SellTowerComm
 	}
 
 	@Override
-	public void handle(SellTowerCommand cmd, GameState state, List<GameStateObserver> observers, int tick) {
+	public void handle(SellTowerCommand cmd, GameState state, EngineContext context, List<GameStateObserver> observers, int tick) {
 		GameObject tower = state.objectAt(new Position(cmd.towerXPosition(), cmd.towerYPosition()));
 		if (tower instanceof Tower t) {
 			SellTowerIntention intention = new SellTowerIntention(new EntityId(cmd.playerId()), t.id());

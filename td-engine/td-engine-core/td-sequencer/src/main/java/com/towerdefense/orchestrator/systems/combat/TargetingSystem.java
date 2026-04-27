@@ -1,8 +1,5 @@
 package com.towerdefense.orchestrator.systems.combat;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -11,61 +8,26 @@ import com.towerdefense.domain.EntityId;
 import com.towerdefense.domain.GameState;
 import com.towerdefense.domain.dynamik.enemy.Enemy;
 import com.towerdefense.domain.dynamik.tower.Tower;
-import com.towerdefense.engine.api.GameStateObserver;
-import com.towerdefense.orchestrator.systems.core.GameSystem;
-import com.towerdefense.orchestrator.systems.core.SystemPriority;
 
 /**
  * Sélectionne les cibles pour chaque tour.
  * 
  * Responsabilités : - Trouve l'ennemi le plus proche à portée pour chaque tour
- * - Maintient un cache des cibles pour le tick courant - Applique la stratégie
- * de ciblage (future extension)
+ * - Applique la stratégie de ciblage (future extension)
+ * Ce composant est sans état (stateless).
  */
 @Component
-public class TargetingSystem implements GameSystem {
-
-    /**
-     * Cache des cibles sélectionnées pour le tick courant. Clé : ID de la tour,
-     * Valeur : ID de l'ennemi ciblé
-     */
-    private final Map<EntityId, Enemy> targetCache = new HashMap<>();
+public class TargetingSystem {
 
     /**
      * Stratégie de ciblage actuelle. Par défaut : CLOSEST_TO_EXIT
      */
     private TargetingStrategy strategy = TargetingStrategy.CLOSEST_TO_EXIT;
 
-    @Override
-    public void process(GameState state, int tick, List<GameStateObserver> observers) {
-        // Réinitialise le cache
-        targetCache.clear();
-
-        // Pour chaque tour prête à tirer
-        for (Tower tower : state.towers()) {
-            if (!tower.isReady()) {
-                continue;
-            }
-
-            // Sélectionne la cible selon la stratégie
-            findTarget(tower, state).ifPresent(target -> targetCache.put(tower.id(), target));
-        }
-    }
-
-    /**
-     * Trouve la cible sélectionnée pour une tour donnée.
-     * 
-     * @param towerId l'ID de la tour
-     * @return l'ID de l'ennemi ciblé, ou empty si aucune cible
-     */
-    public Optional<Enemy> getTarget(EntityId towerId) {
-        return Optional.ofNullable(targetCache.get(towerId));
-    }
-
     /**
      * Sélectionne une cible selon la stratégie configurée.
      */
-    private Optional<Enemy> findTarget(Tower tower, GameState state) {
+    public Optional<Enemy> findTarget(Tower tower, GameState state) {
         return switch (strategy) {
         case CLOSEST_TO_EXIT -> findClosestToExit(tower, state);
         case MOST_ADVANCED -> findMostAdvanced(tower, state);
@@ -145,17 +107,5 @@ public class TargetingSystem implements GameSystem {
      */
     public void setStrategy(TargetingStrategy strategy) {
         this.strategy = strategy;
-    }
-
-    @Override
-    public SystemPriority priority() {
-        return SystemPriority.HIGH;
-    }
-
-    /**
-     * Nettoie le cache (appelé à la fin du tick).
-     */
-    public void clearCache() {
-        targetCache.clear();
     }
 }

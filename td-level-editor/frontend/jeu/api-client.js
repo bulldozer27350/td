@@ -14,20 +14,29 @@ const API_CONFIG = {
 
 class APIClient {
     constructor() {
-        // Fallback pour les contextes non-sécurisés (HTTP sur domaine public)
-        // car crypto.randomUUID() nécessite HTTPS ou localhost.
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            this.clientId = crypto.randomUUID();
+        const STORAGE_KEY = 'td_client_id';
+        const savedId = localStorage.getItem(STORAGE_KEY);
+        
+        if (savedId) {
+            this.clientId = savedId;
         } else {
-            // Fallback simple compatible avec tous les navigateurs
-            this.clientId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-            console.warn('⚠️ Utilisation du fallback UUID (contexte non-sécurisé)');
+            // Fallback pour les contextes non-sécurisés (HTTP sur domaine public)
+            // car crypto.randomUUID() nécessite HTTPS ou localhost.
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                this.clientId = crypto.randomUUID();
+            } else {
+                // Fallback simple compatible avec tous les navigateurs
+                this.clientId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                console.warn('⚠️ Utilisation du fallback UUID (contexte non-sécurisé)');
+            }
+            localStorage.setItem(STORAGE_KEY, this.clientId);
         }
     }
+
 
     getClientId() {
         return this.clientId;
@@ -38,42 +47,59 @@ class APIClient {
     // ========================================================================
     
     async getPlayerProgress() {
-        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/progress`);
-        return await response.json();
-    }
-    
-    async getAvailableLevels() {
-        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/levels`);
-        return await response.json();
-    }
-    
-    async prepareLevel(levelId) {
-        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/levels/${levelId}/prepare`, {
-            method: 'POST'
+        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/progress`, {
+            headers: { 'X-Client-Id': this.clientId }
         });
         return await response.json();
     }
+
+    
+    async getAvailableLevels() {
+        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/levels`, {
+            headers: { 'X-Client-Id': this.clientId }
+        });
+        return await response.json();
+    }
+
+    
+    async prepareLevel(levelId) {
+        const response = await fetch(`${API_CONFIG.PROGRESSION}/player/levels/${levelId}/prepare`, {
+            method: 'POST',
+            headers: { 'X-Client-Id': this.clientId }
+        });
+        return await response.json();
+    }
+
     
     async completeLevel(levelId, stars) {
         const response = await fetch(`${API_CONFIG.PROGRESSION}/player/levels/${levelId}/complete`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Client-Id': this.clientId
+            },
             body: JSON.stringify({ stars })
         });
         return await response.json();
     }
+
     
     async getAllUpgrades() {
-        const response = await fetch(`${API_CONFIG.PROGRESSION}/upgrades`);
-        return await response.json();
-    }
-    
-    async purchaseUpgrade(upgradeId) {
-        const response = await fetch(`${API_CONFIG.PROGRESSION}/upgrades/${upgradeId}/purchase`, {
-            method: 'POST'
+        const response = await fetch(`${API_CONFIG.PROGRESSION}/upgrades`, {
+            headers: { 'X-Client-Id': this.clientId }
         });
         return await response.json();
     }
+
+    
+    async purchaseUpgrade(upgradeId) {
+        const response = await fetch(`${API_CONFIG.PROGRESSION}/upgrades/${upgradeId}/purchase`, {
+            method: 'POST',
+            headers: { 'X-Client-Id': this.clientId }
+        });
+        return await response.json();
+    }
+
     
     // ========================================================================
     // GAME ENGINE API
